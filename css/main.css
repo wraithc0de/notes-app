@@ -1,0 +1,69 @@
+* {box-sizing:border-box}
+
+:root {
+    --nav-w: 200px;
+}
+
+body {
+    background: var(--bg-2);
+    color: var(--textb);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+
+    * {
+        
+    }
+
+    header {
+        display: flex;
+        width: 100%;
+        height: 2rem;
+        background: ;
+        border-bottom: var(--border-sep);
+    }
+
+    #midsect {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        gap: 4px;
+        padding: 0 4px;
+        background: ;
+
+        > * {
+            border: 1px solid var(--border-sep);
+            border-radius: 2px;
+        }
+
+        nav {
+            width: var(--nav-w);
+            background: var(--bg-2);
+        }
+
+        main {
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            background: var(--bg);
+            border: 1px solid var(--border-sep);
+
+            #tabs {
+                width: 100%;
+                height: 2rem;
+                background: var(--bg-3);
+            }
+
+            #workspace {
+                flex-grow: 1;
+            }
+        }
+    }
+
+    footer {
+        height: 2rem;
+        background: ;
+    }
+}

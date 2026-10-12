@@ -1,0 +1,9 @@
+.theme-dark {
+    --bg: #111;
+    --bg-2: #181818;
+    --bg-3: #1d1d1d;
+    --textb: #f8f8f8;
+    --textm: #999;
+    --border-sep: #333;
+    --accent: #833;
+}
