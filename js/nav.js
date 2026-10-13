@@ -1,4 +1,5 @@
 // RESIZING
+const MIN_PANEL_W = 10;
 const nr = document.getElementById("navresize");
 
 var tmx;
@@ -9,12 +10,18 @@ nr.addEventListener("mousedown", (e) => {
 });
 
 function handleMove(e) {
+    var currentVal = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--nav-w").trim().replace("px", ""));
     var mx = e.clientX;
 
-    var currentVal = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--nav-w").trim().replace("px", ""));
     console.log(currentVal);
-    document.documentElement.style.setProperty("--nav-w", (currentVal + (mx - tmx)) + "px");
+    var moveto = currentVal + (mx - tmx);
+
+    if (moveto < remToPx(MIN_PANEL_W)) {moveto = remToPx(MIN_PANEL_W)}
+    if (moveto > document.getElementById("midsect").clientWidth - remToPx(MIN_PANEL_W)) {moveto = document.getElementById("midsect").clientWidth - remToPx(MIN_PANEL_W)}
+
     tmx = mx;
+
+    document.documentElement.style.setProperty("--nav-w", moveto + "px");
 }
 
 window.addEventListener("mouseup", () => {

@@ -2,40 +2,88 @@
 <html class="theme-dark lo-nl lo-tt">
     <head>
         <title>Notes</title>
-        <meta charset="UTF-8">
-        <link rel="icon" href="assets/favicon.ico">
+        <link rel="icon" href="/assets/favicon.ico">
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.49.0/tabler-icons.min.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&display=swap" rel="stylesheet">
 
         <link rel="stylesheet" href="/css/main.css">
         <link rel="stylesheet" href="/css/themes.css">
+        <link rel="stylesheet" href="/css/mobile.css">
     </head>
     <body>
-        <header>
+        <div id="ctxmenu">
 
+        </div>
+
+        <header>
+            <button>File</button>
+            <button>Tools</button>
+            <button>Settings</button>
         </header>
 
         <div id="midsect">
             <nav>
-
+                <header>
+                    <span>Manager</span>
+                    <div class="spacer"></div>
+                    <button id="lockednotesbtn"><i class="ti ti-lock"></i></button>
+                </header>
+                <section>
+                    <header>
+                        <i class="ti ti-chevron-right expanded-indic"></i>
+                        <span>Recent</span>
+                    </header>
+                    <div id="recentitems" class="itemlist">
+                        <span class="no-notes">Nothing to display.</span>
+                    </div>
+                </section>
+                <section>
+                    <header>
+                        <i class="ti ti-chevron-right expanded-indic"></i>
+                        <span>All Notes</span>
+                    </header>
+                    <div id="allnotes" class="itemlist">
+                        <div class="item">
+                            <span>File Name</span>
+                            <div class="spacer"></div>
+                            <i class="ti ti-pin pinned-indic"></i>
+                        </div>
+                        <span class="no-notes">Nothing to display.</span>
+                    </div>
+                </section>
             </nav>
+
             <div id="navresize"></div>
 
             <main>
                 <section id="formatting">
-
+                    Formatting tools go here
                 </section>
 
                 <section id="workspace">
+                    <textarea id="textarea">Main editing area
+                    </textarea>
+                </section>
 
+                <section id="formatting">
+                    Find and replace goes here
                 </section>
             </main>
         </div>
 
         <footer>
-
+            <span>Currently Editing: &nbsp; "<span id="ft-currentediting">File Name</span>"</span>
+            <div class="spacer"></div>
+            <span>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. All rights reserved.</span>
         </footer>
 
+        <script src="/js/helpers.js"></script>
         <script src="/js/main.js"></script>
         <script src="/js/nav.js"></script>
     </body>

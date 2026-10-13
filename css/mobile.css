@@ -1,0 +1,8 @@
+@media (max-width: 500px) {
+    nav {
+        display: none;
+    }
+    #navresize {
+        display: none;
+    }
+}
