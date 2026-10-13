@@ -11,7 +11,7 @@ i.ti {font-size: 1.2em;}
 
 body {
     background: var(--bg);
-    transition: background 0.2s ease;
+    transition: background 0.15s ease;
     color: var(--textb);
     display: flex;
     flex-direction: column;
@@ -201,5 +201,44 @@ body {
 
     &:has(#textarea:focus) {
         background: var(--bg-2);
+    }
+}
+
+#ctxmenu {
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 999;
+    background: var(--bg);
+    border: 1px solid var(--border-sep);
+    border-radius: 2px;
+    max-width: 16rem;
+    display: none;
+
+    button {
+        width: 100%;
+        height: 1.6rem;
+        background: none;
+        border: none;
+        border-radius: 2px;
+        color: var(--textm);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: background: 0.15s ease;
+
+        &:hover {
+            cursor: pointer;
+            background: var(--btn-highlight);
+        }
+
+        span:first-child {
+            width: 100%;
+            display: flex;
+            gap: 4px;
+
+            i.ti {
+                display: block;
+            }
+        }
     }
 }
