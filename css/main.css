@@ -21,6 +21,64 @@ body {
     font-family: var(--font);
     font-size: 0.8rem;
 
+    /* GENERAL/STANDARDIZED ELEM STYLES */
+    button {
+        background: none;
+        border: none;
+        color: var(--textm);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 2px;
+
+        &:hover {
+            cursor: pointer;
+            background: var(--btn-highlight);
+        }
+    }
+
+    .cinput {
+        display: flex;
+        border: 1px solid var(--border-sep);
+        border-radius: 2px;
+        transition: border 0.15s ease;
+
+        input {
+            background: none;
+            border: none;
+            color: var(--textb);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-left: 4px;
+
+            &:focus {
+                border: none;
+                outline: none;
+            }
+        }
+
+        button {
+            height: 100%;
+        }
+
+        /* shift focus highlight from input element to custom wrapper */
+        &:has(input:focus) {
+            border-color: var(--accent);
+        }
+    }
+
+    /* globally fix annoying icons off center */
+    span:has(>i.ti) {
+        display: flex;
+        align-items: center;
+        >i.ti {
+            margin-top: 0.1em;
+        }
+    }
+    /* END STANDARDIZED */
+
     >header {
         display: flex;
         width: 100%;
@@ -63,19 +121,12 @@ body {
                 display: flex;
                 align-items: center;
                 white-space: nowrap;
-                padding: 0 8px;
+                padding: 0 2px;
+                padding-left: 8px;
                 font-weight: 500;
 
-                #lockednotesbtn {
-                    background: none;
-                    border: none;
-                    color: var(--textm);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
+                button {
                     aspect-ratio: 1/1;
-                    border-radius: 2px;
-                    margin-right: -6px;
 
                     &:hover {
                         cursor: pointer;
@@ -125,6 +176,48 @@ body {
                         height: 1.8rem;
                         padding: 0 4px;
                         font-weight: 300;
+                        position: relative;
+
+                        /* child line */
+                        &:before {
+                            content: "";
+                            display: block;
+                            position: absolute;
+                            top: 0;
+                            left: calc(0.4rem + 4px);
+                            height: 100%;
+                            width: 1px;
+                            background: var(--border-sep);
+                        }
+
+                        /* darken for better visibility/contrast */
+                        &:hover:before {
+                            background: var(--bg-2);
+                        }
+
+                        /* lil unsaved dot */
+                        &.unsaved:after {
+                            content: "";
+                            display: block;
+                            height: 5px;
+                            width: 5px;
+                            border-radius: 50%;
+                            background: var(--accent);
+                            position: absolute;
+                            left: calc(0.4rem + 4px - 5.5px);
+                            border: 4px solid var(--bg-2)
+                        }
+
+                        /* not using a mask for this one gng */
+                        &.unsaved:hover:after {
+                            border-color: var(--btn-highlight);
+                        }
+
+                        .pinned-indic {margin-top: 0.1em;}
+                        /* hide pin icon if item wrapper doesn't have .pinned class */
+                        &:not(&.pinned) .pinned-indic {
+                            display: none;
+                        }
                     }
                 }
 
@@ -146,6 +239,7 @@ body {
             transition: background 0.1s, filter 0.2s;
 
             &:hover, &.inuse {
+                transition-delay: 0.5s;
                 cursor: col-resize;
                 background: var(--accent);
                 filter: drop-shadow(0 0 16px var(--accent));
@@ -161,11 +255,18 @@ body {
 
             #formatting, #findandreplace {
                 width: 100%;
-                height: 2rem;
-                background: var(--bg-3);
                 display: flex;
                 align-items: center;
-                padding: 0 4px;
+            }
+
+            #formatting {
+                background: var(--bg-3);
+                padding: 0 2px;
+                height: calc(2rem + 2px);
+
+                button {
+                    aspect-ratio: 1/1;
+                }
             }
 
             #workspace {
@@ -187,6 +288,40 @@ body {
                     }
                 }
             }
+
+            #findandreplace {
+                height: 4rem;
+                background: var(--bg-2);
+                padding: 4px;
+                display: flex;
+                gap: 4px;
+
+                >div {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+
+                    >div {
+                        height: 50%;
+                        display: flex;
+                        align-items: center;
+
+                        >button {
+                            height: 100%;
+                        }
+                    }
+
+                    &:first-child {
+                        flex-grow: 1;
+                    }
+                }
+
+                .cinput {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
         }
     }
 
@@ -197,6 +332,9 @@ body {
         white-space: nowrap;
         align-items: center;
         padding: 4px;
+
+        footer:not(&.display-saving) #saving-text {display: none;}
+        footer:not(&.display-autosaving) #autosaving-text {display: none;}
     }
 
     &:has(#textarea:focus) {
@@ -224,7 +362,7 @@ body {
         display: flex;
         align-items: center;
         gap: 16px;
-        transition: background: 0.15s ease;
+        transition: background 0.15s ease;
 
         &:hover {
             cursor: pointer;

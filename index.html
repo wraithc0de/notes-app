@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="/css/main.css">
         <link rel="stylesheet" href="/css/themes.css">
         <link rel="stylesheet" href="/css/mobile.css">
+        <link rel="stylesheet" href="/css/tooltips.css">
     </head>
     <body>
         <div id="ctxmenu">
@@ -37,7 +38,8 @@
                 <header>
                     <span>Manager</span>
                     <div class="spacer"></div>
-                    <button id="lockednotesbtn"><i class="ti ti-lock"></i></button>
+                    <button id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes"><i class="ti ti-search"></i></button>
+                    <button id="lockednotesbtn" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
                 </header>
                 <section>
                     <header>
@@ -54,6 +56,11 @@
                         <span>All Notes</span>
                     </header>
                     <div id="allnotes" class="itemlist">
+                        <div class="item pinned unsaved">
+                            <span>File Name</span>
+                            <div class="spacer"></div>
+                            <i class="ti ti-pin pinned-indic"></i>
+                        </div>
                         <div class="item">
                             <span>File Name</span>
                             <div class="spacer"></div>
@@ -68,7 +75,11 @@
 
             <main>
                 <section id="formatting">
-                    Formatting tools go here
+                    <button class="tt-b-m" data-tooltip="Bold"><i class="ti ti-bold"></i></button>
+                    <button class="tt-b-m" data-tooltip="Italic"><i class="ti ti-italic"></i></button>
+                    <button class="tt-b-m" data-tooltip="Underline"><i class="ti ti-underline"></i></button>
+                    <button class="tt-b-m" data-tooltip="Strikethrough"><i class="ti ti-strikethrough"></i></button>
+                    <button class="tt-b-m" data-tooltip="Highlight"><i class="ti ti-highlight"></i></button>
                 </section>
 
                 <section id="workspace">
@@ -76,14 +87,49 @@
                     </textarea>
                 </section>
 
-                <section id="formatting">
-                    Find and replace goes here
+                <section id="findandreplace">
+                    <div>
+                        <div>
+                            <div class="cinput">
+                                <input placeholder="Find...">
+                                <button class="tt-t-m" data-tooltip="Case-sensitive toggle"><i class="ti ti-letter-case"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="cinput">
+                                <input placeholder="Replace...">
+                                <button class="tt-t-m" data-tooltip="Preserve case"><i class="ti ti-arrow-big-up-line"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <span>No results</span>
+                        </div>
+                        <div>
+                            <button class="tt-t-m" data-tooltip="Replace current"><i class="ti ti-a-b-2"></i></button>
+                            <button class="tt-t-m" data-tooltip="Replace all instances"><i class="ti ti-replace"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <button class="tt-t-m" data-tooltip="Previous"><i class="ti ti-chevron-up"></i></button>
+                            <button class="tt-t-m" data-tooltip="Next"><i class="ti ti-chevron-down"></i></button>
+                            <button class="tt-t-r" data-tooltip="Exit F&R"><i class="ti ti-x"></i></button>
+                        </div>
+                        <div>
+                            <!-- empty cell for easier styling -->
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
 
-        <footer>
+        <footer class="display-autosaving">
             <span>Currently Editing: &nbsp; "<span id="ft-currentediting">File Name</span>"</span>
+            <div class="spacer"></div>
+            <span id="saving-text"><i class="ti ti-device-floppy"></i> &nbsp; Saving...</span>
+            <span id="autosaving-text"><i class="ti ti-robot"></i> &nbsp; Autosaving...</span>
             <div class="spacer"></div>
             <span>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. All rights reserved.</span>
         </footer>
