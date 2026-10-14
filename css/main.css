@@ -1,8 +1,34 @@
-* {box-sizing:border-box}
+* {
+    box-sizing: border-box;
+    scrollbar-gutter: stable;
+}
 
 :root {
     --nav-w: 200px;
     --font: "Commissioner";
+}
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 10px;
+}
+*::-webkit-scrollbar-track {
+    background: var(--border-sep);
+    border-radius: 2px;
+    border-right: 1px solid transparent;
+    background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 2px;
+    border-right: 1px solid transparent;
+    background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+    cursor: grab;
+}
+*::-webkit-scrollbar-thumb:active {
+    cursor: grabbing;
 }
 
 .spacer {height: 100%; width: 100%;}
@@ -30,16 +56,27 @@ body {
         justify-content: center;
         align-items: center;
         border-radius: 2px;
+        transition: background 0.15s ease;
 
         &:hover {
             cursor: pointer;
             background: var(--btn-highlight);
         }
+
+        /* all except for ones inside inputs bc those are slightly off */
+        &:not(.cinput button):has(> i.ti:only-child) {
+            aspect-ratio: 1/1;
+        }
+    }
+
+    hr {
+        border: 0.5px solid var(--border-sep);
+        width: calc(100% - 16px);
     }
 
     .cinput {
         display: flex;
-        border: 1px solid var(--border-sep);
+        border: 1px solid var(--border-m);
         border-radius: 2px;
         transition: border 0.15s ease;
 
@@ -52,6 +89,7 @@ body {
             overflow: hidden;
             text-overflow: ellipsis;
             padding-left: 4px;
+            font-size: 0.95em;
 
             &:focus {
                 border: none;
@@ -66,6 +104,58 @@ body {
         /* shift focus highlight from input element to custom wrapper */
         &:has(input:focus) {
             border-color: var(--accent);
+        }
+    }
+
+    .dialog-container {
+        height: 100vh;
+        width: 100vw;
+        backdrop-filter: brightness(100%) blur(0px);
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transition: all 0.15s ease;
+
+        .dialog-window {
+            background: var(--bg);
+            padding: 8px;
+            border: 1px solid var(--border-sep);
+            border-radius: 2px;
+            position: relative;
+            min-width: 100px;
+            min-height: 50px;
+            max-width: 90%;
+            max-height: 80%;
+            opacity: 0;
+            transform: scale(0.2);
+            transition: all 0.15s ease;
+
+            >header {
+                width: 100%;
+                height: 2rem;
+                display: flex;
+                white-space: nowrap;
+                align-items: center;
+                gap: 2rem;
+                
+                h2 {
+                    margin: 0;
+                }
+            }
+        }
+
+        &.dialog-open {
+            backdrop-filter: brightness(60%) blur(2px);
+            pointer-events: all;
+
+            .dialog-window {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     }
 
@@ -126,7 +216,6 @@ body {
                 font-weight: 500;
 
                 button {
-                    aspect-ratio: 1/1;
 
                     &:hover {
                         cursor: pointer;
@@ -152,24 +241,27 @@ body {
 
                 .itemlist {
 
-                    >* {
+                    >*:not(.navsearchresult):not(.no-notes) {
                         padding-left: calc(0.8rem + 8px) !important;
                     }
 
-                    /* "Nothing to display." */
+                    /* "Recently opened notes will appear here!" "No notes. Create one to get started!" */
                     .no-notes {
                         color: var(--textm);
                         display: flex;
                         align-items: center;
-                        height: 1.6rem;
-                    } /* automatically display when no items present */
+                        height: auto;
+                        text-align: center;
+                        padding: 4px 8px;
+                    }
+                    /* automatically display when no items present */
                     &:has(.item) {
                         .no-notes {
                             display: none;
                         }
                     }
 
-                    .item {
+                    .item, .navsearchresult {
                         display: flex;
                         align-items: center;
                         white-space: nowrap;
@@ -179,7 +271,7 @@ body {
                         position: relative;
 
                         /* child line */
-                        &:before {
+                        &.item:before {
                             content: "";
                             display: block;
                             position: absolute;
@@ -188,6 +280,7 @@ body {
                             height: 100%;
                             width: 1px;
                             background: var(--border-sep);
+                            transition: background 0.15s ease;
                         }
 
                         /* darken for better visibility/contrast */
@@ -202,10 +295,11 @@ body {
                             height: 5px;
                             width: 5px;
                             border-radius: 50%;
-                            background: var(--accent);
+                            background: var(--unsaved);
                             position: absolute;
                             left: calc(0.4rem + 4px - 5.5px);
-                            border: 4px solid var(--bg-2)
+                            border: 4px solid var(--bg-2);
+                            transition: border 0.15s ease;
                         }
 
                         /* not using a mask for this one gng */
@@ -213,21 +307,64 @@ body {
                             border-color: var(--btn-highlight);
                         }
 
-                        .pinned-indic {margin-top: 0.1em;}
+                        /* all this wonky back and forth is so the pin icon will fade on hover without instantly snapping to textb &vcvsa */
+                        .pinned-indic {
+                            margin-top: 0.1em;
+                            color: var(--textm);
+                        }
+                        &.pinned .pinned-indic {color: var(--textb);}
                         /* hide pin icon if item wrapper doesn't have .pinned class */
-                        &:not(&.pinned) .pinned-indic {
-                            display: none;
+                        &:not(&.pinned) {
+                            .pinned-indic {
+                                opacity: 0;
+                                transition: opacity 0.15s ease;
+                            }
+                            &:hover .pinned-indic {
+                                opacity: 1;
+                            }
                         }
                     }
                 }
 
-                header, .itemlist .item {
+                header, .itemlist .item, .navsearchresult {
                     border-radius: 2px;
+                    transition: background 0.15s ease;
 
                     &:hover {
                         cursor: pointer;
                         background: var(--btn-highlight);
                     }
+
+                    &:has(>button:hover) {
+                        background: none;
+                        &:before {background: var(--border-sep);}
+                        &:after {border-color: var(--bg-2) !important;}
+                    }
+                }
+            }
+
+            section#navsearch {
+                display: none;
+
+                header {
+                    background: transparent; cursor: default;
+                    height: calc(2rem - 8px);
+                    padding: 0 8px;
+                }
+                .cinput {
+                    height: 100%; width: 100%;
+                }
+                #navsearchresults {
+                    max-height: 5.4rem;
+                    overflow-y: scroll;
+
+                    .navsearchresult {
+                        padding: 0 8px;
+                    }
+                }
+
+                &.shown {
+                    display: block;
                 }
             }
         }
@@ -263,10 +400,6 @@ body {
                 background: var(--bg-3);
                 padding: 0 2px;
                 height: calc(2rem + 2px);
-
-                button {
-                    aspect-ratio: 1/1;
-                }
             }
 
             #workspace {
@@ -281,6 +414,7 @@ body {
                     color: var(--textb);
                     padding: 8px;
                     resize: none;
+                    font-family: inherit;
 
                     &:focus {
                         outline: none;
@@ -335,6 +469,8 @@ body {
 
         footer:not(&.display-saving) #saving-text {display: none;}
         footer:not(&.display-autosaving) #autosaving-text {display: none;}
+        /* automatically hide timestamp text when any type of saving text is displayed */
+        &[class*="display-"] #saved-timestamp-text {display: none;}
     }
 
     &:has(#textarea:focus) {
@@ -362,7 +498,6 @@ body {
         display: flex;
         align-items: center;
         gap: 16px;
-        transition: background 0.15s ease;
 
         &:hover {
             cursor: pointer;

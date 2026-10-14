@@ -1,10 +1,13 @@
 .theme-dark {
     --bg: #111;
     --bg-2: #181818;
-    --bg-3: #1d1d1d;
+    --bg-3: #222;
     --textb: #f8f8f8;
-    --textm: #999;
+    --textm: #aaa;
+    --disabled: #777;
+    --border-m: #555;
     --border-sep: #333;
-    --accent: #ba4a4a;
+    --accent: #d35b5b;
     --btn-highlight: #2a2a2a;
+    --unsaved: #76bffa;
 }
