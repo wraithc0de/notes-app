@@ -31,9 +31,15 @@
             <div class="header-dropdown">
                 <button>File</button>
                 <div>
-                    <button>Export <span>Ctrl+E</span></button>
-                    <button>Import <span>Ctrl+Y</span></button>
-                    <button>Save <span>Ctrl+S</span></button>
+                    <button>Export <span>Ctrl + E</span></button>
+                    <button>Import <span>Ctrl + Y</span></button>
+                    <div class="header-dropdown">
+                        <button>Saving</button>
+                        <div>
+                            <button>Save <span>Ctrl + S</span></button>
+                            <button>Toggle Autosave <span>Ctrl + Alt + S</span></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="header-dropdown">
@@ -172,11 +178,9 @@
 
         <footer class="display-autosaving">
             <span>Currently Editing: &nbsp; "<span id="ft-currentediting">File Name</span>"</span>
-            <div class="spacer"></div>
             <span id="saving-text"><i class="ti ti-device-floppy"></i> &nbsp; Saving...</span>
             <span id="autosaving-text"><i class="ti ti-robot"></i> &nbsp; Autosaving...</span>
             <span id="saved-timestamp-text"><i class="ti ti-check"></i> &nbsp; Saved at 00:00:00</span>
-            <div class="spacer"></div>
         </footer>
 
         <!-- POPUP WINDOWS -->
@@ -207,6 +211,16 @@
             </div>
         </div>
 
+        <!-- END POPUP WINDOWS -->
+        <div class="notification n-success n-3s">
+            <header>
+                <span>Settings</span>
+                <button><i class="ti ti-x"></i></button>
+            </header>
+            <div>
+                <span>Autosaving successfully toggled.</span>
+            </div>
+        </div>
 
         <script src="/js/helpers.js"></script>
         <script src="/js/main.js"></script>
