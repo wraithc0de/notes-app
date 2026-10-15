@@ -28,9 +28,23 @@
         </div>
 
         <header>
-            <button>File</button>
-            <button>Tools</button>
-            <button>Settings</button>
+            <div class="header-dropdown">
+                <button>File</button>
+                <div>
+                    <button>Export <span>Ctrl+E</span></button>
+                    <button>Import <span>Ctrl+Y</span></button>
+                    <button>Save <span>Ctrl+S</span></button>
+                </div>
+            </div>
+            <div class="header-dropdown">
+                <button>Tools</button>
+                <div>
+                    <button>Placeholder</button>
+                    <button>Placeholder</button>
+                    <button>Placeholder</button>
+                </div>
+            </div>
+            <button onclick="openDialog('settings')">Settings</button>
             <div class="spacer"></div>
             <button onclick="openDialog('about')">About</button>
         </header>
@@ -115,7 +129,7 @@
                 </section>
 
                 <section id="workspace">
-                    <textarea id="textarea" placeholder="Write here..."></textarea>
+                    <div contenteditable="true" id="text-area" data-placeholder="Write here..."></div>
                 </section>
 
                 <section id="findandreplace">
@@ -176,6 +190,19 @@
                 <main>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                     <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. All rights reserved.</p>
+                </main>
+            </div>
+        </div>
+
+        <div class="dialog-container" id="dialog-settings">
+            <div class="dialog-window">
+                <header>
+                    <h2>Settings</h2>
+                    <div class="spacer"></div>
+                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                </header>
+                <main>
+                    <p>Put settings here yo</p>
                 </main>
             </div>
         </div>

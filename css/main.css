@@ -180,12 +180,49 @@ body {
             border: none;
             background: none;
             border-radius: 2px;
-            color: var(--textm);
+            color: var(--textb);
             font-size: 0.8rem;
+            display: flex;
 
             &:hover {
                 cursor: pointer;
                 background: var(--btn-highlight);
+            }
+
+            &>span {
+                color: var(--textm);
+            }
+        }
+
+        .header-dropdown {
+            position: relative;
+            display: flex;
+
+            &:hover > div {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            &:has(>div:hover) >button {
+                background: var(--btn-highlight);
+            }
+
+            >div {
+                position: absolute;
+                top: 100%;
+                background: var(--bg);
+                border: 1px solid var(--border-sep);
+                border-radius: 2px;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.15s ease;
+                transition-delay: 0.1s;
+
+                button {
+                    height: 1.4rem;
+                    display: flex;
+                    justify-content: space-evenly;
+                }
             }
         }
     }
@@ -406,7 +443,7 @@ body {
                 flex-grow: 1;
                 background: var(--bg);
 
-                #textarea {
+                #text-area {
                     height: 100%;
                     width: 100%;
                     background: none;
@@ -419,6 +456,12 @@ body {
                     &:focus {
                         outline: none;
                         border: none;
+                    }
+
+                    &:empty:before {
+                        content: attr(data-placeholder);
+                        color: var(--textm);
+                        pointer-events: none;
                     }
                 }
             }
@@ -473,7 +516,7 @@ body {
         &[class*="display-"] #saved-timestamp-text {display: none;}
     }
 
-    &:has(#textarea:focus) {
+    &:has(#text-area:focus) {
         background: var(--bg-2);
     }
 }
