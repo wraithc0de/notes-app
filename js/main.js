@@ -36,4 +36,37 @@ document.addEventListener("click", (event) => {
     if (!nsearchsect.contains(event.target) && !nsearchbtn.contains(event.target)) {
         deactivateNavSearch();
     }
-})
+});
+
+function notification(type = '', content, from = 'wNotes', length = 3) {
+    const notif = document.createElement("div");
+    notif.classList.add("notification");
+    notif.classList.add("n-"+type);
+    notif.innerHTML = `
+        <header>
+            <span>${from}</span>
+            <button onclick="removeNotif(this.parentElement.parentElement)"><i class="ti ti-x"></i></button>
+        </header>
+        <div>
+            <span>${content}</span>
+        </div>
+    `;
+
+    notif.style.setProperty('--ndecayt', length+'s');
+
+    document.getElementById("notificationsContainer").appendChild(notif);
+    requestAnimationFrame(() => {
+        notif.classList.add('displayed');
+    });
+    setTimeout(() => {
+        removeNotif(notif);
+    }, length*1000);
+}
+
+function removeNotif(pointer) {
+    pointer.classList.add('gettingRemoved');
+    pointer.classList.remove('displayed');
+    setTimeout(() => {
+        pointer.remove();
+    }, 1000);
+}

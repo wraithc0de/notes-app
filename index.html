@@ -60,8 +60,9 @@
                 <header>
                     <span>Manager</span>
                     <div class="spacer"></div>
+                    <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i></button>
                     <button onclick="activateNavSearch()" id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes"><i class="ti ti-search"></i></button>
-                    <button id="lockednotesbtn" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
+                    <button onclick="openDialog('unlocknotes')" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
                 </header>
                 <section id="navsearch">
                     <header>
@@ -82,6 +83,7 @@
                         <div class="navsearchresult">
                             <span>Search Result 4</span>
                         </div>
+                        <span>Enter a search query</span>
                     </div>
                     <hr/>
                 </section>
@@ -92,25 +94,6 @@
                     </header>
                     <div id="il-recentitems" class="itemlist">
                         <span class="no-notes">Recently opened notes will appear here.</span>
-                    </div>
-                </section>
-                <section>
-                    <header>
-                        <i class="ti ti-chevron-right expanded-indic"></i>
-                        <span>All Notes</span>
-                    </header>
-                    <div id="il-allnotes" class="itemlist">
-                        <div class="item pinned unsaved">
-                            <span>File Name</span>
-                            <div class="spacer"></div>
-                            <button><i class="ti ti-pin pinned-indic"></i></button>
-                        </div>
-                        <div class="item">
-                            <span>File Name</span>
-                            <div class="spacer"></div>
-                            <button><i class="ti ti-pin pinned-indic"></i></button>
-                        </div>
-                        <span class="no-notes">No notes. Create one to get started.</span>
                     </div>
                 </section>
             </nav>
@@ -211,15 +194,60 @@
             </div>
         </div>
 
-        <!-- END POPUP WINDOWS -->
-        <div class="notification n-success n-3s">
-            <header>
-                <span>Settings</span>
-                <button><i class="ti ti-x"></i></button>
-            </header>
-            <div>
-                <span>Autosaving successfully toggled.</span>
+        <div class="dialog-container" id="dialog-newobject">
+            <div class="dialog-window">
+                <header>
+                    <h2>New Object</h2>
+                    <div class="spacer"></div>
+                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                </header>
+                <main>
+                    <div>
+                        <label for="noop1"><input type="radio" id="noop1" name="nos" checked> Note</label><br>
+                        <label for="noop2"><input type="radio" id="noop2" name="nos"> Folder</label>
+                    </div>
+                    <div class="cinput">
+                        <input placeholder="Name...">
+                        <button class="tt-t-m" data-tooltip="Create New"><i class="ti ti-chevron-right"></i></button>
+                    </div>
+                </main>
             </div>
+        </div>
+
+        <div class="dialog-container" id="dialog-unlocknotes">
+            <div class="dialog-window">
+                <header>
+                    <h2>Enter Passcode</h2>
+                    <div class="spacer"></div>
+                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                </header>
+                <main>
+                    <div class="cinput">
+                        <input type="password" placeholder="...">
+                        <button class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.querySelector('.dialog-close').click();openDialog('changepass')">Change</button>
+                </main>
+            </div>
+        </div>
+
+        <div class="dialog-container" id="dialog-changepass">
+            <div class="dialog-window">
+                <header>
+                    <h2>Change Passcode</h2>
+                    <div class="spacer"></div>
+                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                </header>
+                <main>
+                    yea idk bro yo might be fried
+                </main>
+            </div>
+        </div>
+
+        <!-- END POPUP WINDOWS -->
+
+        <div id="notificationsContainer">
+            <!-- js -->
         </div>
 
         <script src="/js/helpers.js"></script>
