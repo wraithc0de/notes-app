@@ -16,7 +16,13 @@ function handleMove(e) {
     var mx = e.clientX;
 
     console.log(currentVal);
-    var moveto = currentVal + (mx - tmx);
+
+    // for layout opts, could be more compact but is like this for simplicity
+    if (document.documentElement.classList.contains("lo-nr")) {
+        var moveto = currentVal - (mx - tmx);
+    } else {
+        var moveto = currentVal + (mx - tmx);
+    }
 
     if (moveto < remToPx(MIN_PANEL_W)) {moveto = remToPx(MIN_PANEL_W)}
     if (moveto > document.getElementById("midsect").clientWidth - remToPx(MIN_PANEL_W)) {moveto = document.getElementById("midsect").clientWidth - remToPx(MIN_PANEL_W)}

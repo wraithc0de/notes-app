@@ -1,5 +1,10 @@
-.lo-nl {}
-.lo-nr {}
-
-.lo-ft {}
-.lo-fb {}
+.lo-nl {
+    #midsect {
+        flex-direction: row;
+    }
+}
+.lo-nr {
+    #midsect {
+        flex-direction: row-reverse;
+    }
+}

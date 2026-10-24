@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="theme-dark lo-nl lo-tt">
+<html class="theme-dark lo-nl">
     <head>
         <title>Notes</title>
         <link rel="icon" href="/assets/favicon.ico">
@@ -16,17 +16,24 @@
         <link rel="stylesheet" href="/css/themes.css">
         <link rel="stylesheet" href="/css/mobile.css">
         <link rel="stylesheet" href="/css/tooltips.css">
+        <link rel="stylesheet" href="/css/layouts.css">
     </head>
     <body>
         <div id="ctxmenu">
-            <div id="ctx-listitem">
-                <button>
-                    <i class="ti ti-pencil"></i> Rename
-                    <i>F2</i>
-                </button>
+            <div id="ctx-listitem" class="ctxsect">
+                <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
+                <button><i class="ti ti-pencil"></i> Move <span></span></button>
+            </div>
+            <div id="ctx-folder" class="ctxsect">
+                <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
+            </div>
+            <div id="ctx-navbase" class="ctxsect">
+                <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i> New Object <span>Ctrl + N</span></button>
+                <button><i class="ti ti-palette"></i> Change Theme <span></span></button>
             </div>
         </div>
 
+        
         <header>
             <div class="header-dropdown">
                 <button>File</button>
@@ -62,7 +69,7 @@
                     <div class="spacer"></div>
                     <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i></button>
                     <button onclick="activateNavSearch()" id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes"><i class="ti ti-search"></i></button>
-                    <button onclick="openDialog('unlocknotes')" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
+                    <button onclick="openDialog('unlocknotes');document.getElementById('lockednotesinput').focus()" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
                 </header>
                 <section id="navsearch">
                     <header>
@@ -100,7 +107,7 @@
 
             <div id="navresize"></div>
 
-            <main>
+            <main class="editor">
                 <section id="formatting">
                     <button class="tt-b-m" data-tooltip="Undo"><i class="ti ti-arrow-back-up"></i></button>
                     <button class="tt-b-m" data-tooltip="Redo"><i class="ti ti-arrow-forward-up"></i></button>
@@ -175,13 +182,13 @@
                     <button class="dialog-close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>wNotes, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting both desktop and mobile devices, wNotes targets user-friendliness and functionality above all else.</p>
                     <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. All rights reserved.</p>
                 </main>
             </div>
         </div>
 
-        <div class="dialog-container" id="dialog-settings">
+        <div class="dialog-container dialog-open" id="dialog-settings">
             <div class="dialog-window">
                 <header>
                     <h2>Settings</h2>
@@ -189,7 +196,65 @@
                     <button class="dialog-close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <p>Put settings here yo</p>
+                    <nav>
+                        <header>
+                            <div class="cinput">
+                                <input placeholder="Search...">
+                            </div>
+                        </header>
+                        <div>
+                            <button class="current"><i class="ti ti-palette"></i> <span>Appearance</span></button>
+                            <button><i class="ti ti-server-2"></i> <span>Storage</span></button>
+                        </div>
+                    </nav>
+                    <div class="settings-pages">
+                        <div id="sp-appearance">
+                            <section>
+                                <h2>Theme</h2>
+                                <label>
+                                    Current theme:
+                                    <select id="themeselect">
+                                        <button>
+                                            <selectedcontent></selectedcontent>
+                                        </button>
+                                        <!-- js -->
+                                    </select>
+                                </label>
+                                
+                                <label>System Theme <input type="checkbox" role="switch"></label>
+                            </section>
+                            <section>
+                                <h2>Layout</h2>
+                                <div>
+                                    <div class="layoutoption selected" onclick="changeLayout('nl')">
+                                        <div>
+                                            <div></div>
+                                            <div class="w">
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                            <div></div>
+                                        </div>
+                                        <span>Sidebar Left</span>
+                                    </div>
+                                    <div class="layoutoption" onclick="changeLayout('nr')">
+                                        <div>
+                                            <div></div>
+                                            <div style="flex-direction: row-reverse"  class="w">
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                            <div></div>
+                                        </div>
+                                        <span>Sidebar Right</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div id="sp-storage">
+                            
+                        </div>
+                    </div>
                 </main>
             </div>
         </div>
@@ -223,8 +288,8 @@
                 </header>
                 <main>
                     <div class="cinput">
-                        <input type="password" placeholder="...">
-                        <button class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
+                        <input type="password" placeholder="..." id="lockednotesinput">
+                        <button onclick="alert(1)" class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
                     </div>
                     <button onclick="this.parentElement.parentElement.querySelector('.dialog-close').click();openDialog('changepass')">Change</button>
                 </main>
@@ -253,5 +318,7 @@
         <script src="/js/helpers.js"></script>
         <script src="/js/main.js"></script>
         <script src="/js/nav.js"></script>
+        <script src="/js/ctxmenu.js"></script>
+        <script src="/js/settings.js"></script>
     </body>
 </html>

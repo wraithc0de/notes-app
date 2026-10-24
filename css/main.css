@@ -69,10 +69,131 @@ body {
         }
     }
 
-    label {
+    select, ::picker(select) {
+        appearance: base-select;
+    }
+    select {
+        background: none;
+        color: var(--textb);
+        height: calc(2rem - 8px);
+        border: 1px solid var(--border-m);
+        border-radius: 2px;
+
+        &::picker-icon {
+            font-family: "tabler-icons";
+            content: "\ea61";
+            margin-top: 0.15em;
+            transition: transform 0.15s ease;
+        }
+        &:open::picker-icon {
+            transform: rotate(90deg);
+        }
+
+        button {
+            color: var(--textb);
+            
+            selectedcontent {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+        }
+        
+        option {
+            color: var(--textb);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-left: 1.5rem;
+
+            &:hover {
+                cursor: pointer;
+                background: var(--btn-highlight);
+            }
+
+            &::checkmark {
+                color: var(--textm);
+                font-family: 'tabler-icons';
+                content: "\ea5e";
+                margin-top: 0.15em;
+                position: absolute;
+                left: 0.25rem;
+            }
+
+        }
+        /* color wheel */
+        button selectedcontent >div, option >div {
+            height: 1em;
+            width: 1em;
+            border-radius: 50%;
+            border: 1px solid var(--border-m);
+        }
+        
+    }
+    ::picker(select) {
+        background: var(--bg-2);
+        border: 1px solid var(--border-m);
+    }
+
+    /* custom toggle switch */
+    input[type="checkbox"][role="switch"] {
+        appearance: none;
+        height: 1em;
+        width: 2em;
+        vertical-align: text-bottom;
+        outline: 1px solid var(--border-m);
+        outline-offset: 0.125em;
+        border-radius: 1em;
+
+        &:before {
+            content: "";
+            display: block;
+            height: 1em;
+            width: 1em;
+            background: var(--border-sep);
+            border-radius: 1em;
+        }
+    }
+    label:not(:has(input[type="radio"])) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+
+    label:has(input[type="radio"]) {
+        width: 100%;
+        padding-left: 12px;
+        position: relative;
+        display: flex;
+        gap: 0;
+
+        &:not(&:first-child) {
+            margin-top: -8px;
+        }
 
         input[type="radio"] {
-            accent-color: var(--accent);
+            appearance: none;
+        }
+
+        &:before {
+            display: block;
+            content: "";
+            position: absolute;
+            background: var(--border-m);
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            top: 50%;
+            left: 4px;
+            transform: translateY(-50%);
+            outline: 1px solid var(--border-m);
+            outline-offset: 2px;
+        }
+
+        &:has(input[type="radio"]:checked):before {
+            background: var(--accent);
+            outline-color: var(--accent);
         }
     }
 
@@ -378,7 +499,7 @@ body {
         display: flex;
         padding: 0 4px;
 
-        nav, main>* {
+        >nav, main>* {
             border: 1px solid var(--border-sep);
             border-radius: 2px;
         }
@@ -718,6 +839,8 @@ body {
     max-width: 16rem;
     display: none;
 
+    &.shown {display: flex;}
+
     button {
         width: 100%;
         height: 1.6rem;
@@ -727,20 +850,151 @@ body {
         color: var(--textm);
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 0.5rem;
+        white-space: nowrap;
+        color: var(--textb);
+        justify-content: flex-start;
+
+        i, span {
+            color: var(--textm);
+        }
 
         &:hover {
             cursor: pointer;
             background: var(--btn-highlight);
         }
+    }
 
-        span:first-child {
-            width: 100%;
+    .ctxsect {
+        display: none;
+
+        &.shown {
+            display: block;
+        }
+    }
+}
+
+
+#dialog-settings {
+    .dialog-window {
+        padding-bottom: 0;
+    }
+
+    main {
+        display: flex;
+        flex-direction: row;
+
+        nav {
+            border-right: 1px solid var(--border-sep);
+            padding-right: 8px;
             display: flex;
-            gap: 4px;
+            flex-direction: column;
+            padding-bottom: 8px;
 
-            i.ti {
-                display: block;
+            >div {
+                width: 100%;
+                margin-top: 8px;
+
+                button {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 8px;
+                    height: 1.5rem;
+
+                    &.current {
+                        color: var(--textb);
+                        background: var(--accentm);
+                    }
+                }
+            }
+        }
+
+        .settings-pages {
+            padding: 0.5rem 0;
+
+            section {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+
+                &:not(:first-child) {
+                    margin-top: 1rem;
+                }
+
+                h2 {
+                    width: 100%;
+                    height: 2em;
+                    border-bottom: 1px solid var(--border-sep);
+                    margin: 0;
+                    margin-bottom: 0.5rem;
+                }
+            }
+
+            #sp-appearance {
+
+                div:has(> .layoutoption) {
+                    width: 100%;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                    justify-content: center;
+
+                    .layoutoption {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.5rem;
+                        border-radius: 2px;
+                        border: 1px solid transparent;
+                        transition: border-color 0.15s ease;
+
+                        /* I KNOW THIS IS SOME DIV SPAGHETTI SHUT UP */
+
+                        div:not(.w) {
+                            border: 1px solid var(--accentm);
+                            padding: 0.25rem;
+                            background: color-mix(in srgb, var(--accentm) 50%, transparent 50%);
+                            border-radius: 2px;
+                        }
+
+                        >div {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.25rem;
+                            aspect-ratio: 1/1;
+
+                            >:first-child, >:last-child {
+                                height: 0.5rem;
+                            }
+                        }
+
+                        .w {
+                            display: flex;
+                            gap: 0.25rem;
+                            height: 2rem;
+
+                            :first-child {
+                                width: 1rem;
+                            }
+                            :last-child {
+                                width: 100%;
+                            }
+                        }
+
+                        &.selected {
+                            background: var(--bg-3) !important;
+                            border: 1px solid var(--border-sep);
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                            border-color: var(--border-sep);
+                        }
+                    }
+                }
             }
         }
     }

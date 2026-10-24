@@ -70,3 +70,12 @@ function removeNotif(pointer) {
         pointer.remove();
     }, 1000);
 }
+
+
+document.querySelectorAll(".cinput:not(:has(button ~ button)) input").forEach(i => {
+    i.addEventListener("keydown", (e) => {
+        if (e.key === 'Enter') {
+            i.querySelector("button").click();
+        }
+    });
+});
