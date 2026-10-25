@@ -20,24 +20,8 @@
     </head>
     <body>
         <div id="ctxmenu">
-            <div id="ctx-listitem" class="ctxsect">
-                <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
-                <button><i class="ti ti-file-arrow-right"></i> Move <span></span></button>
-                <button class="danger"><i class="ti ti-trash"></i> Delete <span></span></button>
-            </div>
-            <div id="ctx-folder" class="ctxsect">
-                <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
-                <button class="danger"><i class="ti ti-trash"></i> Delete <span></span></button>
-            </div>
-            <div id="ctx-navbase" class="ctxsect">
-                <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i> New Object <span>Ctrl + N</span></button>
-                <button onclick="openSetting('appearance.theme')"><i class="ti ti-color-swatch"></i> Change Theme <span></span></button>
-            </div>
-            <div id="ctx-toolbar" class="ctxsect">
-                <button><i class="ti ti-reorder"></i> Reorder <span></span></button>
-            </div>
+            <!-- js -->
         </div>
-
         
         <header>
             <div class="header-dropdown">
@@ -259,7 +243,7 @@
                             </section>
                         </div>
                         <div id="sp-storage">
-                            
+                            <span>Placeholder, gonna work on more settings next week.</span>
                         </div>
                     </div>
                 </main>
@@ -296,7 +280,7 @@
                 <main>
                     <div class="cinput">
                         <input type="password" placeholder="..." id="lockednotesinput">
-                        <button onclick="alert(1)" class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
+                        <button onclick="alert('gonna do this next ship')" class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
                     </div>
                     <button onclick="this.parentElement.parentElement.querySelector('.dialog-close').click();openDialog('changepass')">Change</button>
                 </main>
@@ -311,7 +295,24 @@
                     <button class="dialog-close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    yea idk bro yo might be fried
+                    yea idk bro yo might be fried (gonna do this next ship)
+                </main>
+            </div>
+        </div>
+
+        <div class="dialog-container" id="dialog-deleteconfirmation">
+            <div class="dialog-window">
+                <header>
+                    <h2>Confirm Deletion</h2>
+                    <div class="spacer"></div>
+                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                </header>
+                <main>
+                    <span>Are you sure you want to delete <b id="deleteconfirmationName"></b>?</span>
+                    <div>
+                        <button onclick="closeDialog('deleteconfirmation')">Cancel</button>
+                        <button id="deleteconfirmationBtn">Confirm</button>
+                    </div>
                 </main>
             </div>
         </div>

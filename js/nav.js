@@ -15,8 +15,6 @@ function handleMove(e) {
     var currentVal = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--nav-w").trim().replace("px", ""));
     var mx = e.clientX;
 
-    console.log(currentVal);
-
     // for layout opts, could be more compact but is like this for simplicity
     if (document.documentElement.classList.contains("lo-nr")) {
         var moveto = currentVal - (mx - tmx);
@@ -65,12 +63,14 @@ document.addEventListener("click", (event) => {
 nsearchinput.addEventListener("input", () => {
     nresults.innerHTML = "";
     var numResults = 0;
-    for (var note of notesRef) {
-        if (note[0].toLowerCase().includes(nsearchinput.value.toLowerCase())) {
+    for (var id in notesRef) {
+        const note = notesRef[id];
+        if (note.name.toLowerCase().includes(nsearchinput.value.toLowerCase())) {
             numResults++;
             var result = document.createElement("div");
             result.classList.add("navsearchresult");
-            result.innerHTML = `<span>${note[0]}</span>`;
+            result.innerHTML = `<span>${note.name}</span>`;
+            result.onclick = () => openNote(note.id);
             nresults.appendChild(result);
         }
     }
@@ -94,21 +94,23 @@ document.querySelector("#recentnotessection header").addEventListener("click", (
 const listRecent = document.getElementById("il-recentitems");
 const sectionsContainer = document.getElementById("navnoteslistarea");
 
-var notesRef = [];
-var notesRefLocked = [];
+var notesRef = {};
 var recentNotes = [];
-var folders = ["Folder 1"];
+var folders = {};
+
+var openFolders = [];
 
 function renderNav() {
     sectionsContainer.innerHTML = "";
-    folders.forEach((f) => {
+    Object.values(folders).forEach((f) => {
         var folder = document.createElement("section");
         folder.innerHTML = `
             <header>
                 <i class="ti ti-chevron-right expanded-indic"></i>
-                <span>${f}</span>
+                <span>${f.name}</span>
+                <b class="idreference" style="display: none !important;">${f.id}</b>
             </header>
-            <div id="il-${f.replaceAll(' ', '')}" class="itemlist">
+            <div id="il-${f.id}" class="itemlist">
                 <span class="no-notes">This folder is empty!</span>
             </div>
         `;
@@ -117,33 +119,42 @@ function renderNav() {
         sectionsContainer.appendChild(folder);
     });
 
-    notesRef.forEach((n) => {
+    Object.values(notesRef).forEach((n) => {
         var item = document.createElement("div");
         item.classList.add("item");
         item.innerHTML = `
-            <span>${n[0]}</span>
+            <span>${n.name}</span>
             <div class="spacer"></div>
-            <b class="itemidreference" style="display: none !important;">${n[1]}</b>
+            <b class="idreference" style="display: none !important;">${n.id}</b>
         `;
-        item.onclick = () => openNote(n[1]);
+        item.onclick = () => openNote(n.id);
 
-        if (n[2] != "") document.getElementById("il-"+n[2].replaceAll(' ', '')).appendChild(item);
+        if (n.location != "") document.getElementById("il-"+n.location).appendChild(item);
         else sectionsContainer.appendChild(item);
     });
 
-    document.getElementById("il-recentitems").innerHTML = "";
-    recentNotes.forEach((n) => {
-        ref = notesRef.findIndex(x => x[1] === n);
-        var item = document.createElement("div");
-        item.classList.add("item");
-        item.innerHTML = `
-            <span>${notesRef[ref][0]}</span>
-            <div class="spacer"></div>
-        `;
-        item.onclick = () => openNote(notesRef[ref][1]);
+    renderRecent();
+}
 
-        listRecent.appendChild(item);
-    });
+function renderRecent() {
+    document.getElementById("il-recentitems").innerHTML = "<span class='no-notes'>Recently opened notes will appear here.</span>";
+    if (recentNotes.length > 0) {
+        document.getElementById("il-recentitems").innerHTML = "";
+        recentNotes.forEach((id) => {
+            const ref = notesRef[id];
+            if (ref) {
+                var item = document.createElement("div");
+                item.classList.add("item");
+                item.innerHTML = `
+                    <span>${ref.name}</span>
+                    <div class="spacer"></div>
+                `;
+                item.onclick = () => openNote(ref.id);
+
+                listRecent.appendChild(item);
+            }
+        });
+    }
 }
 
 // end rendering
@@ -154,50 +165,95 @@ var noteContents = {};
 const textArea = document.getElementById("text-area");
 var currentNote = null;
 
-function openNote(id) {console.log(id);
+function openNote(id, isInitializing = false) {
     if (currentNote != id) {
         currentNote = id;
-        textArea.innerHTML = noteContents[id];
+        textArea.innerHTML = noteContents[id] || "";
         textArea.focus();
     }
     localStorage.setItem("LAST_OPEN", id);
-    
+    if (!isInitializing) {
+        recentNotes.reverse();
+        if (recentNotes.includes(id)) {
+            recentNotes.splice(recentNotes.indexOf(id), 1);
+            recentNotes.push(id);
+        } else {
+            if (recentNotes.length > 2) {
+                recentNotes.shift();
+            }
+            recentNotes.push(id);
+        }
+        recentNotes.reverse();
+
+        localStorage.setItem("recent_notes", JSON.stringify(recentNotes));
+        renderRecent();
+    }
 }
 
 function createObject(type, name) {
     if (type == "folder") {
-        folders.push(name);
+        const id = generateId(16);
+        folders[id] = {"id": id, "name": name || id};
         localStorage.setItem("folders", JSON.stringify(folders));
     } else if (type == "note") {
-        const id = generateId(8);
+        const id = generateId(16);
         // if blank name, set name as the id
-        notesRef.push([name.trim()!=""?name:id, id, ""]);
+        notesRef[id] = {"id": id, "name": name || id, "location": "", "locked": false};
         localStorage.setItem("notes_reference", JSON.stringify(notesRef));
+        localStorage.setItem("note_"+id, "");
+        noteContents[id] = localStorage.getItem("note_"+id);
     }
-
+    closeDialog('newobject');
     renderNav();
 }
 
-//////
-// loading and saving shi, move to another file thats name more appropriately later
-window.addEventListener("load", () => {
-    notesRef = JSON.parse(localStorage.getItem("notes_reference")) || [];
-    folders = JSON.parse(localStorage.getItem("folders")) || [];
+function deleteNote(id) {
+    closeDialog('deleteconfirmation');
+    confirmBtn.onclick = null;
 
-    notesRef.forEach((i) => {
-        noteContents[i[1]] = localStorage.getItem("note_"+i[1]) || "";
-    });
+    if (!notesRef[id]) return;
 
-    renderNav();
-    openNote(localStorage.getItem("LAST_OPEN"));
-});
-
-
-
-
-setInterval(() => {
-    if (currentNote) {
-        noteContents[currentNote] = textArea.innerHTML;
-        localStorage.setItem("note_"+currentNote, noteContents[currentNote]);
+    const index = recentNotes.indexOf(id);
+    if (index !== -1) {
+        recentNotes.splice(index, 1);
     }
-}, 500);
+
+    const noteName = notesRef[id].name;
+    delete notesRef[id];
+    localStorage.setItem("notes_reference", JSON.stringify(notesRef));
+    localStorage.removeItem("note_"+id);
+    renderNav();
+    notification('success', `Successfully deleted "${noteName}".`);
+}
+
+function deleteFolder(id) {
+    closeDialog('deleteconfirmation');
+    confirmBtn.onclick = null;
+    const folderName = folders[id].name;
+    delete folders[id];
+    localStorage.setItem("folders", JSON.stringify(folders));
+    renderNav();
+    notification('success', `Successfully deleted "${folderName}" and all its contents.`);
+}
+
+const confirmBtn = document.getElementById("deleteconfirmationBtn");
+const confirmNameText = document.getElementById("deleteconfirmationName");
+function deleteConfirmation(type, id) {
+    if (type == 'note') {
+        confirmBtn.onclick = () => deleteNote(id);
+        confirmNameText.innerText = `"${notesRef[id].name}"`;
+    } else if (type == 'folder') {
+        confirmBtn.onclick = () => deleteFolder(id);
+        confirmNameText.innerText = `"${folders[id].name}" and all its contents`;
+    }
+    openDialog('deleteconfirmation');
+}
+
+
+function cleanupRecentNotes() {
+    const validRecentNotes = recentNotes.filter(id => id in notesRef);
+    if (validRecentNotes.length !== recentNotes.length) {
+        recentNotes = validRecentNotes;
+        localStorage.setItem("recent_notes", JSON.stringify(recentNotes));
+    }
+}

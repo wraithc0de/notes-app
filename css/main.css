@@ -98,6 +98,10 @@ body {
                 align-items: center;
             }
         }
+
+        &:disabled {
+            opacity: 0.6;
+        }
         
         option {
             color: var(--textb);
@@ -482,7 +486,7 @@ body {
                 opacity: 0;
                 pointer-events: none;
                 transition: all 0.15s ease;
-                transition-delay: 0.1s;
+                transition-delay: 0.5s;
                 box-shadow: 0 0 4px #000;
 
                 button {
@@ -862,6 +866,7 @@ body {
     border-radius: 2px;
     max-width: 16rem;
     display: none;
+    flex-direction: column;
 
     &.shown {display: flex;}
 
@@ -890,14 +895,6 @@ body {
 
         &.danger {
             color: var(--danger);
-        }
-    }
-
-    .ctxsect {
-        display: none;
-
-        &.shown {
-            display: block;
         }
     }
 }
@@ -1032,6 +1029,23 @@ body {
                     }
                 }
             }
+        }
+    }
+}
+
+#dialog-deleteconfirmation {
+
+    #deleteconfirmationBtn {
+        color: var(--danger);
+    }
+    main>div {
+        width: 100%;
+        display: flex;
+        gap: 0.25rem;
+
+        button {
+            padding: 0.25rem;
+            width: 100%;
         }
     }
 }

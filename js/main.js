@@ -1,22 +1,27 @@
 var dialogs = document.querySelectorAll(".dialog-container");
-function closeDialog(pointer) {
-    pointer.classList.remove("dialog-open");
-}
 
 function openDialog(id) {
     document.getElementById("dialog-"+id).classList.add("dialog-open");
 }
 
+function closeDialog(id) {
+    document.getElementById("dialog-"+id).classList.remove("dialog-open");
+}
+
+function closeDialogByPointer(pointer) {
+    pointer.classList.remove("dialog-open");
+}
+
 dialogs.forEach(dialog => {
     // x button
-    dialog.querySelector(".dialog-close").addEventListener("click", () => { closeDialog(dialog); });
+    dialog.querySelector(".dialog-close").addEventListener("click", () => { closeDialogByPointer(dialog); });
     // click outside dialog window
     dialog.addEventListener("click", (event) => {
-        if (event.target === event.currentTarget) { closeDialog(dialog); }
+        if (event.target === event.currentTarget) { closeDialogByPointer(dialog); }
     });
     // esc key close
     dialog.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") { closeDialog(dialog); }
+        if (event.key === "Escape") { closeDialogByPointer(dialog); }
     });
 });
 
@@ -62,10 +67,26 @@ document.querySelectorAll(".cinput:not(:has(button ~ button)) input").forEach(i 
     });
 });
 
+//////
+// loading and saving stuff
 
-function openSetting(location) {
-    const [page, header] = location.split(".");
-    openDialog("settings");
-    settingsPage(page);
-    document.getElementById(`sp-${page.substring(0,2)}-${header}`).scrollIntoView();
-}
+window.addEventListener("load", () => {
+    notesRef = JSON.parse(localStorage.getItem("notes_reference")) || {};
+    folders = JSON.parse(localStorage.getItem("folders")) || {};
+
+    recentNotes = JSON.parse(localStorage.getItem("recent_notes")) || [];
+
+    Object.keys(notesRef).forEach((id) => {
+        noteContents[id] = localStorage.getItem("note_"+id) || "";
+    });
+    cleanupRecentNotes();
+    renderNav();
+    openNote(localStorage.getItem("LAST_OPEN"), true);
+});
+
+setInterval(() => {
+    if (currentNote) {
+        noteContents[currentNote] = textArea.innerHTML;
+        localStorage.setItem("note_"+currentNote, noteContents[currentNote]);
+    }
+}, 500);
