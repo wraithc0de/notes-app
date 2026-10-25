@@ -20,24 +20,6 @@ dialogs.forEach(dialog => {
     });
 });
 
-
-const nsearchinput = document.getElementById("navsearchinput");
-const nsearchsect = document.getElementById("navsearch");
-const nsearchbtn = document.getElementById("navsearchbtn");
-function activateNavSearch() {
-    nsearchsect.classList.add("shown");
-    nsearchinput.focus();
-}
-function deactivateNavSearch() {
-    nsearchinput.blur();
-    nsearchsect.classList.remove("shown");
-}
-document.addEventListener("click", (event) => {
-    if (!nsearchsect.contains(event.target) && !nsearchbtn.contains(event.target)) {
-        deactivateNavSearch();
-    }
-});
-
 function notification(type = '', content, from = 'wNotes', length = 3) {
     const notif = document.createElement("div");
     notif.classList.add("notification");
@@ -79,3 +61,11 @@ document.querySelectorAll(".cinput:not(:has(button ~ button)) input").forEach(i 
         }
     });
 });
+
+
+function openSetting(location) {
+    const [page, header] = location.split(".");
+    openDialog("settings");
+    settingsPage(page);
+    document.getElementById(`sp-${page.substring(0,2)}-${header}`).scrollIntoView();
+}

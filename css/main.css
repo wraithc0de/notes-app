@@ -144,6 +144,7 @@ body {
         outline: 1px solid var(--border-m);
         outline-offset: 0.125em;
         border-radius: 1em;
+        transition: all 0.15s ease;
 
         &:before {
             content: "";
@@ -152,6 +153,23 @@ body {
             width: 1em;
             background: var(--border-sep);
             border-radius: 1em;
+            transform: translateX(0);
+            transition: all 0.15s ease;
+        }
+
+        &:hover {
+            cursor: pointer;
+            outline-color: var(--textm);
+        }
+
+        &:checked {
+            outline-color: var(--accent);
+            background: var(--accentm);
+
+            &:before {
+                transform: translateX(1em);
+                background: var(--accent);
+            }
         }
     }
     label:not(:has(input[type="radio"])) {
@@ -527,7 +545,7 @@ body {
                 }
             }
 
-            > .item {
+            #navnoteslistarea .item {
                 display: flex;
                 align-items: center;
                 white-space: nowrap;
@@ -678,6 +696,12 @@ body {
 
                     .navsearchresult {
                         padding: 0 8px;
+                    }
+
+                    >span {
+                        width: 100%;
+                        text-align: center;
+                        color: var(--textm);
                     }
                 }
 
@@ -856,12 +880,16 @@ body {
         justify-content: flex-start;
 
         i, span {
-            color: var(--textm);
+            opacity: 60%;
         }
 
         &:hover {
             cursor: pointer;
             background: var(--btn-highlight);
+        }
+
+        &.danger {
+            color: var(--danger);
         }
     }
 
@@ -911,8 +939,16 @@ body {
             }
         }
 
-        .settings-pages {
+        #settings-pages {
             padding: 0.5rem 0;
+
+            >div {
+                display: none;
+
+                &.page-current {
+                    display: block;
+                }
+            }
 
             section {
                 display: flex;

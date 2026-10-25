@@ -8,6 +8,8 @@ document.addEventListener("contextmenu", (e) => {
         showCtx("listitem", e);
     } else if (e.target.closest("nav section:not(#navsearch) header")) {
         showCtx("folder", e);
+    } else if (e.target.closest("#toolbar")) {
+        showCtx("toolbar", e);
     }
 });
 

@@ -1,3 +1,23 @@
+const settings = [
+    {"name": "Theme", "icon": "color-swatch", "aliases": ["colors", "themes", "dark mode", "light mode", "system theme"], "location": "appearance.theme"},
+    {"name": "Layout", "icon": "layout", "aliases": ["organization", "order", "sidebar"], "location": "appearance.layout"}
+];
+
+const spbtnscontainer = document.getElementById("settingsPageButtons");
+const pagescontainer = document.getElementById("settings-pages");
+// wow im so consistent with name formatting fr T-T
+function settingsPage(name) {
+    document.querySelectorAll("#settings-pages>div").forEach((p) => {p.classList.remove("page-current")});
+    document.querySelector("#settings-pages>div#sp-"+name).classList.add("page-current");
+    document.querySelectorAll("#settingsPageButtons>button").forEach((p) => {p.classList.remove("current")});
+    document.querySelector("#settingsPageButtons>button#spb-"+name).classList.add("current");
+}
+
+
+
+
+
+
 const dropdown = document.getElementById("themeselect");
 
 parseThemes("/css/themes.css").then((data) => {
@@ -18,6 +38,7 @@ function changeTheme(name) {
         }
     }
     document.documentElement.classList.add("theme-"+name);
+    notification('success', `Successfully changed theme to ${name}!`, 'Settings', 4);
 }
 
 dropdown.addEventListener("change", () => {

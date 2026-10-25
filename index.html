@@ -22,14 +22,19 @@
         <div id="ctxmenu">
             <div id="ctx-listitem" class="ctxsect">
                 <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
-                <button><i class="ti ti-pencil"></i> Move <span></span></button>
+                <button><i class="ti ti-file-arrow-right"></i> Move <span></span></button>
+                <button class="danger"><i class="ti ti-trash"></i> Delete <span></span></button>
             </div>
             <div id="ctx-folder" class="ctxsect">
                 <button><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
+                <button class="danger"><i class="ti ti-trash"></i> Delete <span></span></button>
             </div>
             <div id="ctx-navbase" class="ctxsect">
                 <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i> New Object <span>Ctrl + N</span></button>
-                <button><i class="ti ti-palette"></i> Change Theme <span></span></button>
+                <button onclick="openSetting('appearance.theme')"><i class="ti ti-color-swatch"></i> Change Theme <span></span></button>
+            </div>
+            <div id="ctx-toolbar" class="ctxsect">
+                <button><i class="ti ti-reorder"></i> Reorder <span></span></button>
             </div>
         </div>
 
@@ -90,11 +95,10 @@
                         <div class="navsearchresult">
                             <span>Search Result 4</span>
                         </div>
-                        <span>Enter a search query</span>
                     </div>
                     <hr/>
                 </section>
-                <section>
+                <section id="recentnotessection">
                     <header>
                         <i class="ti ti-chevron-right expanded-indic"></i>
                         <span>Recent</span>
@@ -103,6 +107,9 @@
                         <span class="no-notes">Recently opened notes will appear here.</span>
                     </div>
                 </section>
+                <div id="navnoteslistarea">
+                    
+                </div>
             </nav>
 
             <div id="navresize"></div>
@@ -188,7 +195,7 @@
             </div>
         </div>
 
-        <div class="dialog-container dialog-open" id="dialog-settings">
+        <div class="dialog-container" id="dialog-settings">
             <div class="dialog-window">
                 <header>
                     <h2>Settings</h2>
@@ -202,15 +209,15 @@
                                 <input placeholder="Search...">
                             </div>
                         </header>
-                        <div>
-                            <button class="current"><i class="ti ti-palette"></i> <span>Appearance</span></button>
-                            <button><i class="ti ti-server-2"></i> <span>Storage</span></button>
+                        <div id="settingsPageButtons">
+                            <button class="current" onclick="settingsPage('appearance')" id="spb-appearance"><i class="ti ti-palette"></i> <span>Appearance</span></button>
+                            <button onclick="settingsPage('storage')" id="spb-storage"><i class="ti ti-server-2"></i> <span>Storage</span></button>
                         </div>
                     </nav>
-                    <div class="settings-pages">
-                        <div id="sp-appearance">
+                    <div id="settings-pages">
+                        <div id="sp-appearance" class="page-current">
                             <section>
-                                <h2>Theme</h2>
+                                <h2 id="sps-ap-theme">Theme</h2>
                                 <label>
                                     Current theme:
                                     <select id="themeselect">
@@ -221,10 +228,10 @@
                                     </select>
                                 </label>
                                 
-                                <label>System Theme <input type="checkbox" role="switch"></label>
+                                <label>System Theme <input type="checkbox" role="switch" id="systemThemeToggle"></label>
                             </section>
                             <section>
-                                <h2>Layout</h2>
+                                <h2 id="sps-ap-layout">Layout</h2>
                                 <div>
                                     <div class="layoutoption selected" onclick="changeLayout('nl')">
                                         <div>
@@ -273,7 +280,7 @@
                     </div>
                     <div class="cinput">
                         <input placeholder="Name...">
-                        <button class="tt-t-m" data-tooltip="Create New"><i class="ti ti-chevron-right"></i></button>
+                        <button class="tt-t-m" data-tooltip="Create New" onclick="createObject(document.getElementById('noop1').checked?'note':'folder', this.parentElement.querySelector('input').value.trim())"><i class="ti ti-chevron-right"></i></button>
                     </div>
                 </main>
             </div>
@@ -320,5 +327,6 @@
         <script src="/js/nav.js"></script>
         <script src="/js/ctxmenu.js"></script>
         <script src="/js/settings.js"></script>
+        <script src="/js/editor.js"></script>
     </body>
 </html>

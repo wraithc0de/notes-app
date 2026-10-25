@@ -38,25 +38,69 @@ window.addEventListener("mouseup", () => {
 });
 // end resizing
 
-document.querySelectorAll("nav>section:not(#navsearch) header").forEach((h) => {
-    h.addEventListener("click", () => {
-        h.parentElement.classList.toggle('expanded');
-    });
+// SEARCHING
+const nsearchinput = document.getElementById("navsearchinput");
+const nsearchsect = document.getElementById("navsearch");
+const nresults = document.getElementById("navsearchresults");
+const nsearchbtn = document.getElementById("navsearchbtn");
+
+function activateNavSearch() {
+    nresults.innerHTML = "<span>Enter a search query.</span>";
+    nsearchsect.classList.add("shown");
+    nsearchinput.focus();
+}
+
+function deactivateNavSearch() {
+    nsearchinput.value = "";
+    nsearchinput.blur();
+    nsearchsect.classList.remove("shown");
+}
+
+document.addEventListener("click", (event) => {
+    if (!nsearchsect.contains(event.target) && !nsearchbtn.contains(event.target)) {
+        deactivateNavSearch();
+    }
 });
 
-// RENDERING
-const listAll = document.getElementById("il-allnotes");
-const listRecent = document.getElementById("il-recentitems");
+nsearchinput.addEventListener("input", () => {
+    nresults.innerHTML = "";
+    var numResults = 0;
+    for (var note of notesRef) {
+        if (note[0].toLowerCase().includes(nsearchinput.value.toLowerCase())) {
+            numResults++;
+            var result = document.createElement("div");
+            result.classList.add("navsearchresult");
+            result.innerHTML = `<span>${note[0]}</span>`;
+            nresults.appendChild(result);
+        }
+    }
+    if (numResults < 1) {
+        nresults.innerHTML = "<span>No results.</span>";
+    }
+    if (nsearchinput.value.trim() == "") {
+        nresults.innerHTML = "<span>Enter a search query.</span>";
+    }
+});
 
-var notesRef = [
-    ["File Name", "i8wa7tgf", "Folder 1"],
-    ["New File 2", "ap90q2n8", ""]
-];
+// end searching
+
+// special little snowflake
+document.querySelector("#recentnotessection header").addEventListener("click", () => {
+    document.getElementById("recentnotessection").classList.toggle('expanded');
+});
+
+//////
+// RENDERING
+const listRecent = document.getElementById("il-recentitems");
+const sectionsContainer = document.getElementById("navnoteslistarea");
+
+var notesRef = [];
 var notesRefLocked = [];
-var recentNotes = ["ap90q2n8"];
+var recentNotes = [];
 var folders = ["Folder 1"];
 
 function renderNav() {
+    sectionsContainer.innerHTML = "";
     folders.forEach((f) => {
         var folder = document.createElement("section");
         folder.innerHTML = `
@@ -70,7 +114,7 @@ function renderNav() {
         `;
         folder.querySelector("header").addEventListener("click", () => {folder.classList.toggle('expanded');});
 
-        nav.appendChild(folder);
+        sectionsContainer.appendChild(folder);
     });
 
     notesRef.forEach((n) => {
@@ -79,13 +123,15 @@ function renderNav() {
         item.innerHTML = `
             <span>${n[0]}</span>
             <div class="spacer"></div>
+            <b class="itemidreference" style="display: none !important;">${n[1]}</b>
         `;
-        item.onclick = openNote(n[1]);
+        item.onclick = () => openNote(n[1]);
 
         if (n[2] != "") document.getElementById("il-"+n[2].replaceAll(' ', '')).appendChild(item);
-        else nav.appendChild(item);
+        else sectionsContainer.appendChild(item);
     });
 
+    document.getElementById("il-recentitems").innerHTML = "";
     recentNotes.forEach((n) => {
         ref = notesRef.findIndex(x => x[1] === n);
         var item = document.createElement("div");
@@ -94,17 +140,64 @@ function renderNav() {
             <span>${notesRef[ref][0]}</span>
             <div class="spacer"></div>
         `;
-        item.onclick = openNote(notesRef[ref][1]);
+        item.onclick = () => openNote(notesRef[ref][1]);
 
         listRecent.appendChild(item);
     });
 }
 
-renderNav();
-
-
 // end rendering
+//////
 
-function openNote(id) {
+var noteContents = {};
+
+const textArea = document.getElementById("text-area");
+var currentNote = null;
+
+function openNote(id) {console.log(id);
+    if (currentNote != id) {
+        currentNote = id;
+        textArea.innerHTML = noteContents[id];
+        textArea.focus();
+    }
+    localStorage.setItem("LAST_OPEN", id);
     
 }
+
+function createObject(type, name) {
+    if (type == "folder") {
+        folders.push(name);
+        localStorage.setItem("folders", JSON.stringify(folders));
+    } else if (type == "note") {
+        const id = generateId(8);
+        // if blank name, set name as the id
+        notesRef.push([name.trim()!=""?name:id, id, ""]);
+        localStorage.setItem("notes_reference", JSON.stringify(notesRef));
+    }
+
+    renderNav();
+}
+
+//////
+// loading and saving shi, move to another file thats name more appropriately later
+window.addEventListener("load", () => {
+    notesRef = JSON.parse(localStorage.getItem("notes_reference")) || [];
+    folders = JSON.parse(localStorage.getItem("folders")) || [];
+
+    notesRef.forEach((i) => {
+        noteContents[i[1]] = localStorage.getItem("note_"+i[1]) || "";
+    });
+
+    renderNav();
+    openNote(localStorage.getItem("LAST_OPEN"));
+});
+
+
+
+
+setInterval(() => {
+    if (currentNote) {
+        noteContents[currentNote] = textArea.innerHTML;
+        localStorage.setItem("note_"+currentNote, noteContents[currentNote]);
+    }
+}, 500);
