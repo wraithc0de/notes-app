@@ -14,7 +14,8 @@ function closeDialogByPointer(pointer) {
 
 dialogs.forEach(dialog => {
     // x button
-    dialog.querySelector(".dialog-close").addEventListener("click", () => { closeDialogByPointer(dialog); });
+    const closeButton = dialog.querySelector(".dialog-close");
+    if (closeButton) closeButton.addEventListener("click", () => { closeDialogByPointer(dialog); });
     // click outside dialog window
     dialog.addEventListener("click", (event) => {
         if (event.target === event.currentTarget) { closeDialogByPointer(dialog); }
@@ -70,23 +71,53 @@ document.querySelectorAll(".cinput:not(:has(button ~ button)) input").forEach(i 
 //////
 // loading and saving stuff
 
-window.addEventListener("load", () => {
-    notesRef = JSON.parse(localStorage.getItem("notes_reference")) || {};
-    folders = JSON.parse(localStorage.getItem("folders")) || {};
+function cleanupLocalStorage() {
+    const validRecentNotes = recentNotes.filter(id => id in notesRef);
+    if (validRecentNotes.length !== recentNotes.length) {
+        recentNotes = validRecentNotes;
+        localStorage.setItem("recent_notes", JSON.stringify(recentNotes));
+    }
+    // clean up ghost notes
+    const keys = Object.keys(localStorage).filter(key => key.includes("note_"));
+    keys.forEach(key => {
+        const tk = key.replace("note_", "");
+        if (!notesRef[tk]) localStorage.removeItem(key);
+    });
+}
 
-    recentNotes = JSON.parse(localStorage.getItem("recent_notes")) || [];
+function getStorageItem(key, fallback) {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error(`Error parsing localStorage key "${key}":`, e);
+        return fallback;
+    }
+}
+
+window.addEventListener("load", () => {
+    notesRef = getStorageItem("notes_reference", {});
+    folders = getStorageItem("folders", {});
+    recentNotes = getStorageItem("recent_notes", []);
 
     Object.keys(notesRef).forEach((id) => {
-        noteContents[id] = localStorage.getItem("note_"+id) || "";
+        // ops thing is empty quill delta structure
+        noteContents[id] = JSON.parse(localStorage.getItem("note_"+id)) || {ops:[]};
     });
-    cleanupRecentNotes();
+    cleanupLocalStorage();
     renderNav();
-    openNote(localStorage.getItem("LAST_OPEN"), true);
+    const gotLastOpen = localStorage.getItem("LAST_OPEN");
+    if (gotLastOpen) {openNote(gotLastOpen, true);} 
+
+    // show overlay if no note to display
+    handleNoNoteOpen();
 });
 
 setInterval(() => {
     if (currentNote) {
-        noteContents[currentNote] = textArea.innerHTML;
-        localStorage.setItem("note_"+currentNote, noteContents[currentNote]);
+        noteContents[currentNote] = quill.getContents();
+        localStorage.setItem("note_"+currentNote, JSON.stringify(noteContents[currentNote]));
     }
 }, 500);

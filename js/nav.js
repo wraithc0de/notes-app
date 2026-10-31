@@ -87,6 +87,13 @@ nsearchinput.addEventListener("input", () => {
 // special little snowflake
 document.querySelector("#recentnotessection header").addEventListener("click", () => {
     document.getElementById("recentnotessection").classList.toggle('expanded');
+    if (!openFolders.includes("recent") && document.getElementById("recentnotessection").classList.contains('expanded')) {
+        openFolders.push("recent");
+    } else {
+        const index = openFolders.indexOf("recent")
+        if (index > -1) openFolders.splice(index, 1);
+    }
+    localStorage.setItem("open_folders", JSON.stringify(openFolders));
 });
 
 //////
@@ -98,23 +105,33 @@ var notesRef = {};
 var recentNotes = [];
 var folders = {};
 
-var openFolders = [];
+var openFolders = JSON.parse(localStorage.getItem("open_folders")) || [];
 
 function renderNav() {
     sectionsContainer.innerHTML = "";
     Object.values(folders).forEach((f) => {
         var folder = document.createElement("section");
+        folder.draggable = true;
         folder.innerHTML = `
             <header>
                 <i class="ti ti-chevron-right expanded-indic"></i>
-                <span>${f.name}</span>
+                <span id="objectName-${f.id}" class="object-name">${f.name}</span>
                 <b class="idreference" style="display: none !important;">${f.id}</b>
             </header>
             <div id="il-${f.id}" class="itemlist">
                 <span class="no-notes">This folder is empty!</span>
             </div>
         `;
-        folder.querySelector("header").addEventListener("click", () => {folder.classList.toggle('expanded');});
+        folder.querySelector("header").addEventListener("click", () => {
+            folder.classList.toggle('expanded');
+            if (!openFolders.includes(f.id) && folder.classList.contains('expanded')) {
+                openFolders.push(f.id);
+            } else {
+                const index = openFolders.indexOf(f.id)
+                if (index > -1) openFolders.splice(index, 1);
+            }
+            localStorage.setItem("open_folders", JSON.stringify(openFolders));
+        });
 
         sectionsContainer.appendChild(folder);
     });
@@ -122,9 +139,9 @@ function renderNav() {
     Object.values(notesRef).forEach((n) => {
         var item = document.createElement("div");
         item.classList.add("item");
+        item.draggable = true;
         item.innerHTML = `
-            <span>${n.name}</span>
-            <div class="spacer"></div>
+            <span id="objectName-${n.id}" class="object-name">${n.name}</span>
             <b class="idreference" style="display: none !important;">${n.id}</b>
         `;
         item.onclick = () => openNote(n.id);
@@ -132,8 +149,20 @@ function renderNav() {
         if (n.location != "") document.getElementById("il-"+n.location).appendChild(item);
         else sectionsContainer.appendChild(item);
     });
+    if (!sectionsContainer.querySelector(".item") && !sectionsContainer.querySelector("section")) sectionsContainer.insertAdjacentHTML("beforeend", `<span class="no-notes">Nothing to display.</span>`);
 
     renderRecent();
+
+    // open folders that were open before reload
+    document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
+        const folderId = folder.querySelector(".idreference").innerText;
+        if (openFolders.includes(folderId)) {
+            folder.classList.add("expanded");
+        }
+    });
+    if (openFolders.includes("recent")) {
+        document.getElementById("recentnotessection").classList.add('expanded');
+    }
 }
 
 function renderRecent() {
@@ -146,8 +175,7 @@ function renderRecent() {
                 var item = document.createElement("div");
                 item.classList.add("item");
                 item.innerHTML = `
-                    <span>${ref.name}</span>
-                    <div class="spacer"></div>
+                    <span class="object-name">${ref.name}</span>
                 `;
                 item.onclick = () => openNote(ref.id);
 
@@ -162,15 +190,37 @@ function renderRecent() {
 
 var noteContents = {};
 
-const textArea = document.getElementById("text-area");
 var currentNote = null;
 
+var historyCache = {};
+
 function openNote(id, isInitializing = false) {
+    if (!id) return;
     if (currentNote != id) {
+        const history = quill.getModule('history');
+
+        // save previous note's history before switching
+        if (currentNote) {
+            historyCache[currentNote] = {
+                undo: [...history.stack.undo],
+                redo: [...history.stack.redo]
+            };
+        }
+
         currentNote = id;
-        textArea.innerHTML = noteContents[id] || "";
-        textArea.focus();
+        handleNoNoteOpen();
+        // 'silent' so quill doesn't think switching is a user action
+        quill.setContents(noteContents[id], 'silent');
+        quill.focus();
+
+        // remove previous note's history stack from memory and set to the current one's
+        history.clear();
+        if (historyCache[id]) {
+            history.stack.undo = historyCache[id].undo;
+            history.stack.redo = historyCache[id].redo;
+        }
     }
+
     localStorage.setItem("LAST_OPEN", id);
     if (!isInitializing) {
         recentNotes.reverse();
@@ -213,15 +263,25 @@ function deleteNote(id) {
 
     if (!notesRef[id]) return;
 
-    const index = recentNotes.indexOf(id);
-    if (index !== -1) {
-        recentNotes.splice(index, 1);
+    const rIndex = recentNotes.indexOf(id);
+    if (rIndex !== -1) {
+        recentNotes.splice(rIndex, 1);
+        localStorage.setItem("recent_notes", recentNotes);
     }
 
     const noteName = notesRef[id].name;
     delete notesRef[id];
     localStorage.setItem("notes_reference", JSON.stringify(notesRef));
     localStorage.removeItem("note_"+id);
+    if (currentNote == id) {
+        currentNote = null;
+        localStorage.setItem("LAST_OPEN", "");
+        if (recentNotes[0]) {
+            openNote(recentNotes[0]);
+        } else {
+            handleNoNoteOpen();
+        }
+    }
     renderNav();
     notification('success', `Successfully deleted "${noteName}".`);
 }
@@ -232,6 +292,8 @@ function deleteFolder(id) {
     const folderName = folders[id].name;
     delete folders[id];
     localStorage.setItem("folders", JSON.stringify(folders));
+    if (openFolders.includes(id)) openFolders.splice(openFolders.indexOf(id), 1);
+    localStorage.setItem("open_folders", openFolders);
     renderNav();
     notification('success', `Successfully deleted "${folderName}" and all its contents.`);
 }
@@ -250,10 +312,65 @@ function deleteConfirmation(type, id) {
 }
 
 
-function cleanupRecentNotes() {
-    const validRecentNotes = recentNotes.filter(id => id in notesRef);
-    if (validRecentNotes.length !== recentNotes.length) {
-        recentNotes = validRecentNotes;
-        localStorage.setItem("recent_notes", JSON.stringify(recentNotes));
+function expandAllFolders() {
+    document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
+        folder.classList.add("expanded");
+    });
+}
+
+function collapseAllFolders() {
+    document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
+        folder.classList.remove("expanded");
+    });
+}
+
+function handleNoNoteOpen() {
+    if (!currentNote) {
+        document.getElementById("workspace").classList.remove("noteopen");
+    } else {
+        document.getElementById("workspace").classList.add("noteopen");
     }
 }
+
+
+function renameObject(type, id) {
+    const nameSpan = document.getElementById("objectName-"+id);
+    const tempIfCancel = nameSpan.innerText;
+    nameSpan.contentEditable = true;
+    nameSpan.focus();
+    nameSpan.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            nameSpan.contentEditable = false;
+            nameSpan.innerText = tempIfCancel;
+            document.removeEventListener("click", handleOutsideClick);
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            nameSpan.contentEditable = false;
+            if (type == 'note') {
+                notesRef[id].name = nameSpan.innerText;
+                localStorage.setItem("notes_reference", JSON.stringify(notesRef));
+            } else if (type == 'folder') {
+                folders[id].name = nameSpan.innerText;
+                localStorage.setItem("folders", JSON.stringify(folders));
+            }
+            document.removeEventListener("click", handleOutsideClick);
+            renderNav();
+        }
+    });
+    // click outside text box, cancel. handleOutsideClick predefined so accessible by keypress listeners
+    var handleOutsideClick;
+    setTimeout(() => {
+        handleOutsideClick = (e) => {
+            if (!e.target.closest("#objectName-" + id)) {
+                nameSpan.contentEditable = false;
+                nameSpan.innerText = tempIfCancel;
+                document.removeEventListener("click", handleOutsideClick);
+            }
+        };
+        document.addEventListener("click", handleOutsideClick);
+    }, 0);
+}
+
+//////
+// ORDERING
+sectionsContainer.addEventListener

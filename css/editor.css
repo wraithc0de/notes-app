@@ -1,0 +1,148 @@
+/* nested inside #workspace so my styles take priority without having to spam !important */
+#workspace {
+
+    .ql-container, .ql-toolbar {
+        border: 1px solid var(--border-sep);
+        width: 100%;
+    }
+    .ql-toolbar {
+        background: var(--bg-3);
+        height: calc(2rem + 2px);
+        display: flex;
+        align-items: center;
+        padding: 0;
+
+        .ql-formats {
+            margin: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+
+            &:not(:last-child) {
+                margin-right: 0.5rem;
+            }
+
+            button {
+                height: 100%;
+                aspect-ratio: 1/1;
+
+                &:hover {
+                    background: var(--btn-highlight);
+                    color: var(--accent);
+                }
+
+                &.ql-active {
+                    color: var(--accent);
+                }
+            }
+        }
+
+        .ql-picker {
+            height: 100%;
+            border-radius: 2px;
+
+            .ql-picker-label {
+                color: var(--textm);
+                display: flex;
+                transition: background 0.15s ease;
+
+                &:hover {
+                    background: var(--btn-highlight);
+                }
+
+
+            }
+
+            .ql-picker-options {
+                background: var(--bg-3);
+                border: 1px solid var(--border-sep);
+                border-radius: 2px;
+                padding: 0;
+                flex-direction: column;
+
+                .ql-picker-item {
+                    color: var(--textm);
+                    display: flex;
+                    aspect-ratio: 1/1;
+                    width: 100%;
+
+                    &:hover {
+                        background: var(--btn-highlight);
+                    }
+                }
+            }
+
+            &.ql-expanded {
+                .ql-picker-label {
+                    background: var(--btn-highlight);
+                    border: 1px solid var(--border-sep);
+                }
+
+                .ql-picker-options {
+                    display: flex;
+                }
+            }
+        }
+    }
+
+    .ql-blank:before {
+        color: var(--textm);
+    }
+
+    /*****
+    /* past here is probably just inline styles for formats
+    ******/
+    .ql-editor {
+
+        .ql-ui {
+            height: 100%;
+        }
+
+        li[data-list="unchecked"], li[data-list="checked"] {
+            .ql-ui:before {
+                content: "";
+                display: block;
+                border: 1px solid var(--border-sep);
+                height: 0.8em;
+                width: auto;
+                aspect-ratio: 1/1;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+            }
+        }
+
+        li[data-list="checked"] {
+            .ql-ui:before {border-color: var(--textm);}
+            .ql-ui:after {
+                font-family: 'tabler-icons';
+                content: "\ea5e";
+                font-size: 1.2em;
+                color: var(--textm);
+                display: block;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: -1.3em;
+                margin-right: 0.3em;
+            }
+        }
+
+        li[data-list="bullet"] {
+            .ql-ui:before {
+                content: "";
+                background: currentColor;
+                height: 0.5em;
+                width: auto;
+                aspect-ratio: 1/1;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50%;
+                margin-left: -1.2em
+            }
+        }
+    }
+}

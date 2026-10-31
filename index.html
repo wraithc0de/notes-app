@@ -12,11 +12,15 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&display=swap" rel="stylesheet">
 
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
         <link rel="stylesheet" href="/css/main.css">
         <link rel="stylesheet" href="/css/themes.css">
         <link rel="stylesheet" href="/css/mobile.css">
         <link rel="stylesheet" href="/css/tooltips.css">
         <link rel="stylesheet" href="/css/layouts.css">
+        <link rel="stylesheet" href="/css/editor.css">
     </head>
     <body>
         <div id="ctxmenu">
@@ -41,8 +45,6 @@
             <div class="header-dropdown">
                 <button>Tools</button>
                 <div>
-                    <button>Placeholder</button>
-                    <button>Placeholder</button>
                     <button>Placeholder</button>
                 </div>
             </div>
@@ -92,31 +94,70 @@
                     </div>
                 </section>
                 <div id="navnoteslistarea">
-                    
+                    <!-- js -->
+                     <span class="no-notes">Nothing to display.</span>
                 </div>
             </nav>
 
             <div id="navresize"></div>
 
             <main class="editor">
-                <section id="formatting">
-                    <button class="tt-b-m" data-tooltip="Undo"><i class="ti ti-arrow-back-up"></i></button>
-                    <button class="tt-b-m" data-tooltip="Redo"><i class="ti ti-arrow-forward-up"></i></button>
-                    <button class="tt-b-m" data-tooltip="Print"><i class="ti ti-printer"></i></button>
-                    <button class="tt-b-m" data-tooltip="Bold"><i class="ti ti-bold"></i></button>
-                    <button class="tt-b-m" data-tooltip="Italic"><i class="ti ti-italic"></i></button>
-                    <button class="tt-b-m" data-tooltip="Underline"><i class="ti ti-underline"></i></button>
-                    <button class="tt-b-m" data-tooltip="Strikethrough"><i class="ti ti-strikethrough"></i></button>
-                    <button class="tt-b-m" data-tooltip="Highlight"><i class="ti ti-highlight"></i></button>
-                    <button class="tt-b-m" data-tooltip="Heading 1"><i class="ti ti-h-1"></i></button>
-                    <button class="tt-b-m" data-tooltip="Heading 2"><i class="ti ti-h-2"></i></button>
-                    <button class="tt-b-m" data-tooltip="Heading 3"><i class="ti ti-h-3"></i></button>
-                    <button class="tt-b-m" data-tooltip="Link"><i class="ti ti-link"></i></button>
-                    <button class="tt-b-m" data-tooltip="List"><i class="ti ti-list"></i></button>
-                </section>
 
-                <section id="workspace">
-                    <div contenteditable="true" id="text-area" data-placeholder="Write here..."></div>
+                <section id="workspace" class="noteopen">
+                    <section id="formatting">
+                        <!-- some are missing icons bc they're defined in editor.js -->
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-print" data-tooltip="Print"><i class="ti ti-printer"></i></button>
+                            <button class="tt-b-m ql-undo" data-tooltip="Undo"><i class="ti ti-arrow-back-up"></i></button>
+                            <button class="tt-b-m ql-redo" data-tooltip="Redo"><i class="ti ti-arrow-forward-up"></i></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-bold" data-tooltip="Bold"></button>
+                            <button class="tt-b-m ql-italic" data-tooltip="Italic"></button>
+                            <button class="tt-b-m ql-underline" data-tooltip="Underline"></button>
+                            <button class="tt-b-m ql-strike" data-tooltip="Strikethrough"></i></button>
+                            <button class="tt-b-m ql-highlight" data-tooltip="Highlight"><i class="ti ti-highlight"></i></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-blockquote" data-tooltip=""></button>
+                            <button class="tt-b-m ql-code-block" data-tooltip=""></button>
+                            <button class="tt-b-m ql-link" data-tooltip="Link"></button>    
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1"></button>
+                            <button class="tt-b-m ql-header" value="2" data-tooltip="Heading 2"></button>
+                            <button class="tt-b-m ql-header" value="3" data-tooltip="Heading 3"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-list" value="bullet" data-tooltip="Bulleted list"></button>
+                            <button class="tt-b-m ql-list" value="ordered" data-tooltip="Ordered list"></button>
+                            <button class="tt-b-m ql-list" value="check" data-tooltip="Checkbox list"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-script" value="sub" data-tooltip="Subscript"></button>
+                            <button class="tt-b-m ql-script" value="super" data-tooltip="Superscript"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-indent" value="-1" data-tooltip="Decrease indent"></button>
+                            <button class="tt-b-m ql-indent" value="+1" data-tooltip="Increase indent"></button>
+                            <select class="ql-align">
+                                <option value=""></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="tt-b-m ql-clean" data-tooltip="Clear formatting"></button>
+                        </span>
+                    </section>
+                    <div id="editorWrapper">
+                        <div id="text-area"></div>
+                    </div>
+                    <div id="noNoteOpenOverlay">
+                        <div class="logo-icon"></div>
+                        <span>No note is currently open. Select one from the sidebar to get started.</span>
+                    </div>
                 </section>
 
                 <section id="findandreplace">
@@ -156,13 +197,6 @@
                 </section>
             </main>
         </div>
-
-        <footer class="display-autosaving">
-            <span>Currently Editing: &nbsp; "<span id="ft-currentediting">File Name</span>"</span>
-            <span id="saving-text"><i class="ti ti-device-floppy"></i> &nbsp; Saving...</span>
-            <span id="autosaving-text"><i class="ti ti-robot"></i> &nbsp; Autosaving...</span>
-            <span id="saved-timestamp-text"><i class="ti ti-check"></i> &nbsp; Saved at 00:00:00</span>
-        </footer>
 
         <!-- POPUP WINDOWS -->
         <div class="dialog-container" id="dialog-about">
@@ -231,7 +265,7 @@
                                     <div class="layoutoption" onclick="changeLayout('nr')">
                                         <div>
                                             <div></div>
-                                            <div style="flex-direction: row-reverse"  class="w">
+                                            <div style="flex-direction: row-reverse" class="w">
                                                 <div></div>
                                                 <div></div>
                                             </div>
@@ -316,6 +350,7 @@
                 </main>
             </div>
         </div>
+
 
         <!-- END POPUP WINDOWS -->
 
