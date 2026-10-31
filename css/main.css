@@ -539,6 +539,13 @@ body {
         nav {
             width: var(--nav-w);
             background: var(--bg-2);
+            display: flex;
+            flex-direction: column;
+
+            #navnoteslistarea {
+                overflow-y: scroll;
+                height: 100%;
+            }
 
             .no-notes {
                 color: var(--textm);
@@ -673,6 +680,13 @@ body {
                         &.unsaved:hover:after {
                             border-color: var(--btn-highlight);
                         }
+                    }
+
+                    .navsearchresult span {
+                        width: 100%;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
                     }
                 }
 
@@ -1090,22 +1104,44 @@ body {
     }
 }
 
-#dialog-welcomescreen {
-    aspect-ratio: 4/3;
+/* NAV DRAGGIN STUFF, cant be bothered to scope it atp */
+.treespacer {
+    height: 4rem;
+    width: 100%;
+}
 
-    header {
-        background: var(--accentm);
-        border-radius: 2px;
-        padding: 2rem 4rem;
-        display: flex;
-        align-items: center;
-        position: relative;
+.node {
+    &.item {
+        border: solid transparent;
+        border-width: 1px 0;
+    }
 
-        .dialog-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: var(--textb);
+    &:active {
+        cursor: grabbing;
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        outline: 1px dashed var(--border-sep);
+    }
+
+    &.drag-sort-below {
+        border-bottom: 1px dashed var(--accent);
+    }
+
+    &.drag-sort-above {
+        border-top: 1px dashed var(--accent);
+    }
+
+    &.drag-nest-inside {
+        
+        header {
+            outline: 1px dashed var(--accent);
+            outline-offset: -1px;
         }
     }
+}
+
+.drag-root-active {
+    outline: 1px dashed var(--accent);
 }

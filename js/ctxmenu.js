@@ -17,7 +17,7 @@ document.addEventListener("contextmenu", (e) => {
             <button onclick="moveNote(${idTarget})"><i class="ti ti-file-arrow-right"></i> Move <span></span></button>
             <button class="danger" onclick="deleteConfirmation('note', '${idTarget}')"><i class="ti ti-trash"></i> Delete <span></span></button>
         `;
-    } else if (e.target.closest("nav section:not(#navsearch):not(#recentnotessection) header")) {
+    } else if (e.target.closest(".folder header")) {
         const idTarget = handleTargeting(e, 'folder');
         ctxmenu.innerHTML = `
             <button onclick="renameObject('folder', '${idTarget}')"><i class="ti ti-pencil"></i> Rename <span>F2</span></button>

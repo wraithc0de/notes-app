@@ -112,6 +112,7 @@ function renderNav() {
     Object.values(folders).forEach((f) => {
         var folder = document.createElement("section");
         folder.draggable = true;
+        folder.classList.add("node", "folder");
         folder.innerHTML = `
             <header>
                 <i class="ti ti-chevron-right expanded-indic"></i>
@@ -119,7 +120,7 @@ function renderNav() {
                 <b class="idreference" style="display: none !important;">${f.id}</b>
             </header>
             <div id="il-${f.id}" class="itemlist">
-                <span class="no-notes">This folder is empty!</span>
+                <span class="no-notes" style="margin-left: 1rem;">This folder is empty!</span>
             </div>
         `;
         folder.querySelector("header").addEventListener("click", () => {
@@ -138,7 +139,7 @@ function renderNav() {
 
     Object.values(notesRef).forEach((n) => {
         var item = document.createElement("div");
-        item.classList.add("item");
+        item.classList.add("node", "item");
         item.draggable = true;
         item.innerHTML = `
             <span id="objectName-${n.id}" class="object-name">${n.name}</span>
@@ -151,7 +152,13 @@ function renderNav() {
     });
     if (!sectionsContainer.querySelector(".item") && !sectionsContainer.querySelector("section")) sectionsContainer.insertAdjacentHTML("beforeend", `<span class="no-notes">Nothing to display.</span>`);
 
+    const spacer = document.createElement("div");
+    spacer.classList.add("treespacer");
+
+    sectionsContainer.appendChild(spacer);
+
     renderRecent();
+    
 
     // open folders that were open before reload
     document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
@@ -373,4 +380,94 @@ function renameObject(type, id) {
 
 //////
 // ORDERING
-sectionsContainer.addEventListener
+var draggedElement = null;
+
+function clearDragStyles() {
+    sectionsContainer.classList.remove('drag-root-active');
+    document.querySelectorAll('.node').forEach((node) => {
+        node.classList.remove('drag-sort-above', 'drag-sort-below', 'drag-nest-inside');
+    });
+}
+
+function restoreSpacerPosition() {
+    sectionsContainer.appendChild(sectionsContainer.querySelector('.treespacer'));
+}
+
+sectionsContainer.addEventListener('dragstart', (e) => {
+    draggedElement = e.target.closest('.node');
+    if (!draggedElement) return;
+    // leave time for browser to copy drag image before altering
+    setTimeout(() => {draggedElement.classList.add('dragging')}, 0);
+});
+
+sectionsContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const targetNode = e.target.closest('.node');
+    if (!targetNode) {
+        clearDragStyles();
+        if (draggedElement.classList.contains('item')) {
+            sectionsContainer.classList.add('drag-root-active');
+        }
+        return;
+    }
+
+    if (targetNode === draggedElement) return;
+
+    clearDragStyles();
+
+    const draggedType = draggedElement.classList.contains('item') ? 'item' : 'folder';
+    const targetType = targetNode.classList.contains('item') ? 'item' : 'folder';
+
+    const rect = targetNode.getBoundingClientRect();
+    const relativeY = (e.clientY - rect.top) / rect.height; // 0 to 1, from top
+
+    if (draggedType == 'folder' && targetType == 'item') return; // folders can't be put into items obviously
+    if (draggedType == 'item' && targetType == 'folder') { // item dragged over probably header of folder
+        targetNode.classList.add('drag-nest-inside');
+    } else if (draggedType == 'item' && targetType == 'item') {
+        if (relativeY < 0.5) {
+            targetNode.classList.add('drag-sort-above');
+        } else {
+            targetNode.classList.add('drag-sort-below');
+        }
+    }
+});
+
+sectionsContainer.addEventListener('dragleave', (e) => {
+    // only clear if cursor is leaving element affected
+    if (e.target.classList.contains('node') || e.target == sectionsContainer) {
+        clearDragStyles();
+    }
+});
+
+sectionsContainer.addEventListener('dragend', () => {
+    if (draggedElement) draggedElement.classList.remove('dragging');
+    clearDragStyles();
+    draggedElement = null;
+});
+
+sectionsContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const targetNode = e.target.closest('.node');
+
+    if (!targetNode && sectionsContainer.classList.contains('drag-root-active')) { // root container
+        sectionsContainer.appendChild(draggedElement);
+        restoreSpacerPosition();
+        clearDragStyles();
+        return;
+    }
+
+    if (!targetNode || targetNode == draggedElement) return; // null or self reference
+
+    if (targetNode.classList.contains('drag-nest-inside')) {
+        targetNode.querySelector('.itemlist').appendChild(draggedElement);
+    } else
+    if (targetNode.classList.contains('drag-sort-above')) {
+        targetNode.parentNode.insertBefore(draggedElement, targetNode);
+    } else
+    if (targetNode.classList.contains('drag-sort-below')) {
+        targetNode.parentNode.insertBefore(draggedElement, targetNode.nextSibling);
+    }
+
+    clearDragStyles();
+});

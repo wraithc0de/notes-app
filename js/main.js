@@ -103,8 +103,9 @@ window.addEventListener("load", () => {
     recentNotes = getStorageItem("recent_notes", []);
 
     Object.keys(notesRef).forEach((id) => {
+        console.log(id);
         // ops thing is empty quill delta structure
-        noteContents[id] = JSON.parse(localStorage.getItem("note_"+id)) || {ops:[]};
+        noteContents[id] = getStorageItem("note_"+id, {ops:[]});
     });
     cleanupLocalStorage();
     renderNav();
