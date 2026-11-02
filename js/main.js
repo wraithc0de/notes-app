@@ -83,6 +83,13 @@ function cleanupLocalStorage() {
         const tk = key.replace("note_", "");
         if (!notesRef[tk]) localStorage.removeItem(key);
     });
+
+    openFolders.forEach(f => {
+        if (!folders[f]) {
+            delete openFolders[f];
+        }
+        localStorage.setItem("open_folders", JSON.stringify(openFolders));
+    });
 }
 
 function getStorageItem(key, fallback) {
@@ -101,6 +108,7 @@ window.addEventListener("load", () => {
     notesRef = getStorageItem("notes_reference", {});
     folders = getStorageItem("folders", {});
     recentNotes = getStorageItem("recent_notes", []);
+    openFolders = getStorageItem("open_folders", []);
 
     Object.keys(notesRef).forEach((id) => {
         console.log(id);

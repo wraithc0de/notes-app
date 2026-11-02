@@ -1,8 +1,18 @@
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     nav {
-        display: none;
+        display: none !important;
     }
     #navresize {
         display: none;
+    }
+    body>header {
+        display: none;
+    }
+    #workspace {
+        flex-direction: column-reverse;
+
+        .ql-toolbar {
+            display: block;
+        }
     }
 }

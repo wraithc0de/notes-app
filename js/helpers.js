@@ -52,3 +52,44 @@ async function parseThemes(url) {
 
     return themes;
 }
+
+function parseManager() {
+    var returnObj = {
+        notes: [], // root notes only tho
+        folders: {}
+    };
+    returnObj.notes = Array.from(sectionsContainer.querySelectorAll(":scope > .item")).map((i) => {return i.querySelector(".idreference").innerText}) || [];
+    const folders = sectionsContainer.querySelectorAll(":scope > .folder");
+    folders.forEach((folder) => {
+        const fNotes = Array.from(folder.querySelectorAll(".item")).map((i) => {return i.querySelector(".idreference").innerText}) || [];
+        const id = folder.querySelector("header>.idreference").innerText;
+        returnObj.folders[id] = fNotes;
+    });
+    return returnObj;
+}
+
+function insertKeyRelative(obj, sourceKey, targetKey, position) {
+  const keys = Object.keys(obj);
+  const sourceIndex = keys.indexOf(sourceKey);
+  let targetIndex = keys.indexOf(targetKey);
+  // safety check
+  if (sourceIndex === -1 || targetIndex === -1) return obj;
+
+  keys.splice(sourceIndex, 1);
+  targetIndex = keys.indexOf(targetKey);
+
+  const insertIndex = position == 'after' ? targetIndex + 1 : targetIndex;
+
+  keys.splice(insertIndex, 0, sourceKey);
+
+  const tempCopy = {...obj};
+  for (const key in obj) {
+    delete obj[key];
+  }
+  keys.forEach((key) => {
+    obj[key] = tempCopy[key];
+  });
+
+  // for inline whatever just in case
+  return obj;
+}

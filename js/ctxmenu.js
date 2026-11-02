@@ -2,7 +2,7 @@ const ctxmenu = document.getElementById("ctxmenu");
 
 document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    if (e.target === document.querySelector("#midsect>nav")) {
+    if (e.target === document.querySelector("#midsect>nav") || e.target === sectionsContainer) {
         ctxmenu.innerHTML = `
             <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i> New Object <span>Ctrl + N</span></button>
             <button onclick="openSetting('appearance.theme')"><i class="ti ti-color-swatch"></i> Change Theme <span></span></button>
@@ -14,7 +14,6 @@ document.addEventListener("contextmenu", (e) => {
         const idTarget = handleTargeting(e, 'note');
         ctxmenu.innerHTML = `
             <button onclick="renameObject('note', '${idTarget}')"><i class="ti ti-pencil"></i> Rename <span>F2</span></button>
-            <button onclick="moveNote(${idTarget})"><i class="ti ti-file-arrow-right"></i> Move <span></span></button>
             <button class="danger" onclick="deleteConfirmation('note', '${idTarget}')"><i class="ti ti-trash"></i> Delete <span></span></button>
         `;
     } else if (e.target.closest(".folder header")) {

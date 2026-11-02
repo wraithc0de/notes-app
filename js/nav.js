@@ -105,7 +105,7 @@ var notesRef = {};
 var recentNotes = [];
 var folders = {};
 
-var openFolders = JSON.parse(localStorage.getItem("open_folders")) || [];
+var openFolders = [];
 
 function renderNav() {
     sectionsContainer.innerHTML = "";
@@ -299,8 +299,8 @@ function deleteFolder(id) {
     const folderName = folders[id].name;
     delete folders[id];
     localStorage.setItem("folders", JSON.stringify(folders));
-    if (openFolders.includes(id)) openFolders.splice(openFolders.indexOf(id), 1);
-    localStorage.setItem("open_folders", openFolders);
+    if (openFolders.includes(id)) {openFolders.splice(openFolders.indexOf(id), 1)};
+    localStorage.setItem("open_folders", JSON.stringify(openFolders));
     renderNav();
     notification('success', `Successfully deleted "${folderName}" and all its contents.`);
 }
@@ -430,6 +430,12 @@ sectionsContainer.addEventListener('dragover', (e) => {
         } else {
             targetNode.classList.add('drag-sort-below');
         }
+    } else if (draggedType == 'folder' && targetType == 'folder') {
+        if (relativeY < 0.5) {
+            targetNode.classList.add('drag-sort-above');
+        } else {
+            targetNode.classList.add('drag-sort-below');
+        }
     }
 });
 
@@ -449,25 +455,49 @@ sectionsContainer.addEventListener('dragend', () => {
 sectionsContainer.addEventListener('drop', (e) => {
     e.preventDefault();
     const targetNode = e.target.closest('.node');
+    const draggedType = draggedElement.classList.contains("item") ? "item" : "folder";
+    // type-specific selector for safety
+    const draggedId = draggedElement.querySelector(draggedElement.classList.contains("item") ? ".idreference" : "header>.idreference").innerText;
 
     if (!targetNode && sectionsContainer.classList.contains('drag-root-active')) { // root container
         sectionsContainer.appendChild(draggedElement);
         restoreSpacerPosition();
         clearDragStyles();
+        insertKeyRelative(notesRef, draggedId, Object.keys(notesRef).at(-1), "after");
+        notesRef[draggedId].location = "";
+        localStorage.setItem("notes_reference", JSON.stringify(notesRef));
         return;
     }
-
+    // put this here to avoid "idk what that is" errors incase no node
+    const targetId = targetNode.querySelector(targetNode.classList.contains("item") ? ".idreference" : "header>.idreference").innerText;
+    const targetType = targetNode.classList.contains("item") ? "item" : "folder";
+    
     if (!targetNode || targetNode == draggedElement) return; // null or self reference
 
     if (targetNode.classList.contains('drag-nest-inside')) {
         targetNode.querySelector('.itemlist').appendChild(draggedElement);
+        insertKeyRelative(notesRef, draggedId, Object.keys(notesRef).at(-1), "after");
+        notesRef[draggedId].location = targetId;
     } else
     if (targetNode.classList.contains('drag-sort-above')) {
         targetNode.parentNode.insertBefore(draggedElement, targetNode);
+        if (draggedType == 'folder') {insertKeyRelative(folders, draggedId, targetId, 'before');}
+        if (draggedType == 'item') {insertKeyRelative(notesRef, draggedId, targetId, 'before');}
+        if (targetNode.parentElement && targetNode.parentElement.closest(".folder")) { // if targetNode is an item and in a folder
+            notesRef[draggedId].location = targetNode.closest(".folder").querySelector("header>.idreference").textContent; // go back up DOM tree and get the id of folder targetNode is in, and apply
+        }
     } else
     if (targetNode.classList.contains('drag-sort-below')) {
         targetNode.parentNode.insertBefore(draggedElement, targetNode.nextSibling);
+        if (draggedType == 'folder') {insertKeyRelative(folders, draggedId, targetId, 'after');}
+        if (draggedType == 'item') {insertKeyRelative(notesRef, draggedId, targetId, 'after');}
+        if (targetNode.parentElement && targetNode.parentElement.closest(".folder")) { // if targetNode is an item and in a folder
+            notesRef[draggedId].location = targetNode.closest(".folder").querySelector("header>.idreference").textContent; // go back up DOM tree and get the id of folder targetNode is in, and apply
+        }
     }
+
+    localStorage.setItem("notes_reference", JSON.stringify(notesRef));
+    localStorage.setItem("folders", JSON.stringify(folders));
 
     clearDragStyles();
 });

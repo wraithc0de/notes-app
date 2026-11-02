@@ -964,7 +964,7 @@ body {
             display: flex;
             flex-direction: column;
             padding-bottom: 8px;
-            width: 10rem;
+            width: 12rem;
 
             >div {
                 width: 100%;
