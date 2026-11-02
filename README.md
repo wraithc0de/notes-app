@@ -3,6 +3,10 @@
 A work-in-progress project for capturing and managing notes. It aims to be an alternative to other bloated and slow notes apps.
 With both desktop and mobile support in the works, it targets user-friendliness and functionality above all else.
 
+## Why I made this
+
+No other notes app I've found does what I want it to do in a way that makes sense, so I decided to make my own.
+
 ## Project status
 
 The project is at an MVP status, with note contents, folders, and themes persisting across page refreshes.
