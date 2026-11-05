@@ -1,9 +1,13 @@
 // define non-default icons
 const icons = Quill.import('ui/icons');
+icons['print'] = '<i class="ti ti-printer"></i>';
+icons['undo'] = '<i class="ti ti-arrow-back-up"></i>';
+icons['redo'] = '<i class="ti ti-arrow-forward-up"></i>';
 icons['bold'] = '<i class="ti ti-bold"></i>';
 icons['italic'] = '<i class="ti ti-italic"></i>';
 icons['underline'] = '<i class="ti ti-underline"></i>';
 icons['strike'] = '<i class="ti ti-strikethrough"></i>';
+icons['highlight'] = '<i class="ti ti-highlight"></i>';
 icons['blockquote'] = '<i class="ti ti-blockquote"></i>';
 icons['code-block'] = '<i class="ti ti-code"></i>';
 icons['link'] = '<i class="ti ti-link"></i>';
@@ -23,33 +27,36 @@ icons['align']['justify'] = '<i class="ti ti-align-justified"></i>';
 icons['align']['right'] = '<i class="ti ti-align-right"></i>';
 icons['clean'] = '<i class="ti ti-clear-formatting"></i>';
 
-const quill = new Quill('#text-area', {
-    theme: 'snow',
-    placeholder: 'Start writing...',
-    modules: {
-        toolbar: {
-            container: '#formatting',
-            handlers: {
-                'highlight': function(val) {
-                    const range = quill.getSelection();
-                    if (range) {
-                        const isHighlighted = quill.getFormat(range)['background'] === 'var(--text-highlight)';
-                        this.quill.format('background', isHighlighted ? false : 'var(--text-highlight)');
+var quill;
+function initQuill() {
+    quill = new Quill('#text-area', {
+        theme: 'snow',
+        placeholder: t("editor.empty.placeholder"),
+        modules: {
+            toolbar: {
+                container: '#formatting',
+                handlers: {
+                    'highlight': function(val) {
+                        const range = quill.getSelection();
+                        if (range) {
+                            const isHighlighted = quill.getFormat(range)['background'] === 'var(--text-highlight)';
+                            this.quill.format('background', isHighlighted ? false : 'var(--text-highlight)');
+                        }
+                    },
+                    'undo': function(val) {
+                        quill.history.undo();
+                    },
+                    'redo': function(val) {
+                        quill.history.redo();
+                    },
+                    'print': function(val) {
+                        handleQuillPrint(this.quill);
                     }
-                },
-                'undo': function(val) {
-                    quill.history.undo();
-                },
-                'redo': function(val) {
-                    quill.history.redo();
-                },
-                'print': function(val) {
-                    handleQuillPrint(this.quill);
                 }
             }
         }
-    }
-});
+    });
+}
 
 function handleQuillPrint(quillInstance) {
   const quillHtml = quillInstance.root.innerHTML;
@@ -65,7 +72,7 @@ function handleQuillPrint(quillInstance) {
 
   const doc = iframe.contentWindow.document;
 
-  doc.write('<html><head><title>Print Document</title>');
+  doc.write(`<html><head><title>${t("editor.printing.title")}</title>`);
   // inject styles
   doc.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">');
   doc.write(`

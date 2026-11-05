@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="theme-dark lo-nl">
     <head>
-        <title>Notes</title>
+        <title data-i18n="app.title.default">Notes</title>
         <link rel="icon" href="/assets/favicon.ico">
 
         <meta charset="UTF-8">
@@ -14,6 +14,9 @@
 
         <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
+        <script src="/js/ui-kit.js"></script>
+        <link rel="stylesheet" href="/css/ui-kit.css">
 
         <link rel="stylesheet" href="/css/main.css">
         <link rel="stylesheet" href="/css/themes.css">
@@ -29,74 +32,62 @@
         
         <header>
             <div class="header-dropdown">
-                <button>File</button>
+                <button data-i18n="header.button.file">File</button>
                 <div>
-                    <button>Export <span>Ctrl + E</span></button>
-                    <button>Import <span>Ctrl + Y</span></button>
+                    <button><span data-i18n="header.file.export">Export</span> <kbd>Ctrl + E</kbd></button>
+                    <button><span data-i18n="header.file.import">Import</span> <kbd>Ctrl + Y</kbd></button>
+                </div>
+            </div>
+            <div class="header-dropdown">
+                <button data-i18n="header.button.tools">Tools</button>
+                <div>
+                    <button data-i18n="app.global.placeholder">Placeholder</button>
                     <div class="header-dropdown">
-                        <button>Saving</button>
+                        <button data-i18n="app.global.placeholder">Placeholder</button>
                         <div>
-                            <button>Save <span>Ctrl + S</span></button>
-                            <button>Toggle Autosave <span>Ctrl + Alt + S</span></button>
+                            <button><span data-i18n="app.global.placeholder">Placeholder</span></button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="header-dropdown">
-                <button>Tools</button>
-                <div>
-                    <button>Placeholder</button>
-                </div>
-            </div>
-            <button onclick="openDialog('settings')">Settings</button>
+            <button onclick="openDialog('settings')" data-i18n="header.button.settings">Settings</button>
             <div class="spacer"></div>
-            <button onclick="openDialog('about')">About</button>
+            <button onclick="openDialog('about')" data-i18n="header.button.about">About</button>
         </header>
 
         <div id="midsect">
             <nav>
                 <header>
-                    <span>Manager</span>
+                    <span data-i18n="manager.title">Manager</span>
                     <div class="spacer"></div>
-                    <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i></button>
-                    <button onclick="activateNavSearch()" id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes"><i class="ti ti-search"></i></button>
-                    <button onclick="openDialog('unlocknotes');document.getElementById('lockednotesinput').focus()" class="tt-b-m" data-tooltip="Locked Notes"><i class="ti ti-lock"></i></button>
+                    <button onclick="openDialog('newobject')" class="tt-b-m" data-tooltip="New object" data-i18n-tooltip="manager.newObject"><i class="ti ti-plus"></i></button>
+                    <button onclick="activateNavSearch()" id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes" data-i18n-tooltip="manager.searchBtn"><i class="ti ti-search"></i></button>
+                    <button onclick="openDialog('unlocknotes');document.getElementById('lockednotesinput').focus()" class="tt-b-m" data-tooltip="Locked notes" data-i18n-tooltip="manager.lockedNotes"><i class="ti ti-lock"></i></button>
                 </header>
                 <section id="navsearch">
                     <header>
                         <div class="cinput">
-                            <input placeholder="Search notes..." id="navsearchinput">
+                            <input placeholder="Search notes..." id="navsearchinput" data-i18n-placeholder="manager.search.placeholder">
                         </div>
                     </header>
                     <div id="navsearchresults" class="itemlist" style="margin-top: 4px;">
-                        <div class="navsearchresult">
-                            <span>Search Result</span>
-                        </div>
-                        <div class="navsearchresult">
-                            <span>Search Result 2</span>
-                        </div>
-                        <div class="navsearchresult">
-                            <span>Search Result 3</span>
-                        </div>
-                        <div class="navsearchresult">
-                            <span>Search Result 4</span>
-                        </div>
+                        <!-- js -->
                     </div>
                     <hr/>
                 </section>
                 <section id="recentnotessection">
                     <header>
                         <i class="ti ti-chevron-right expanded-indic"></i>
-                        <span>Recent</span>
+                        <span data-i18n="manager.recent">Recent</span>
                     </header>
                     <div id="il-recentitems" class="itemlist">
-                        <span class="no-notes">Recently opened notes will appear here.</span>
+                        <span class="no-notes" data-i18n="manager.placeholder.recentEmpty">Recently opened notes will appear here.</span>
                     </div>
                 </section>
                 <hr>
                 <div id="navnoteslistarea">
                     <!-- js -->
-                     <span class="no-notes">Nothing to display.</span>
+                     <span class="no-notes" data-i18n="manager.placeholder.rootEmpty">Nothing to display.</span>
                 </div>
             </nav>
 
@@ -108,48 +99,48 @@
                     <section id="formatting">
                         <!-- some are missing icons bc they're defined in editor.js -->
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-print" data-tooltip="Print"><i class="ti ti-printer"></i></button>
-                            <button class="tt-b-m ql-undo" data-tooltip="Undo"><i class="ti ti-arrow-back-up"></i></button>
-                            <button class="tt-b-m ql-redo" data-tooltip="Redo"><i class="ti ti-arrow-forward-up"></i></button>
+                            <button class="tt-b-m ql-print" data-tooltip="Print" data-i18n-tooltip="editor.toolbar.print"></button>
+                            <button class="tt-b-m ql-undo" data-tooltip="Undo" data-i18n-tooltip="editor.toolbar.undo"></button>
+                            <button class="tt-b-m ql-redo" data-tooltip="Redo" data-i18n-tooltip="editor.toolbar.redo"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-bold" data-tooltip="Bold"></button>
-                            <button class="tt-b-m ql-italic" data-tooltip="Italic"></button>
-                            <button class="tt-b-m ql-underline" data-tooltip="Underline"></button>
-                            <button class="tt-b-m ql-strike" data-tooltip="Strikethrough"></i></button>
-                            <button class="tt-b-m ql-highlight" data-tooltip="Highlight"><i class="ti ti-highlight"></i></button>
+                            <button class="tt-b-m ql-bold" data-tooltip="Bold" data-i18n-tooltip="editor.toolbar.bold"></button>
+                            <button class="tt-b-m ql-italic" data-tooltip="Italic" data-i18n-tooltip="editor.toolbar.italic"></button>
+                            <button class="tt-b-m ql-underline" data-tooltip="Underline" data-i18n-tooltip="editor.toolbar.underline"></button>
+                            <button class="tt-b-m ql-strike" data-tooltip="Strikethrough" data-i18n-tooltip="editor.toolbar.strikethrough"></button>
+                            <button class="tt-b-m ql-highlight" data-tooltip="Highlight" data-i18n-tooltip="editor.toolbar.highlight"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-blockquote" data-tooltip=""></button>
-                            <button class="tt-b-m ql-code-block" data-tooltip=""></button>
-                            <button class="tt-b-m ql-link" data-tooltip="Link"></button>    
+                            <button class="tt-b-m ql-blockquote" data-tooltip="Blockquote" data-i18n-tooltip="editor.toolbar.blockquote"></button>
+                            <button class="tt-b-m ql-code-block" data-tooltip="Code block" data-i18n-tooltip="editor.toolbar.codeBlock"></button>
+                            <button class="tt-b-m ql-link" data-tooltip="Link" data-i18n-tooltip="editor.toolbar.link"></button>    
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1"></button>
-                            <button class="tt-b-m ql-header" value="2" data-tooltip="Heading 2"></button>
-                            <button class="tt-b-m ql-header" value="3" data-tooltip="Heading 3"></button>
+                            <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1" data-i18n-tooltip="editor.toolbar.heading1"></button>
+                            <button class="tt-b-m ql-header" value="2" data-tooltip="Heading 2" data-i18n-tooltip="editor.toolbar.heading2"></button>
+                            <button class="tt-b-m ql-header" value="3" data-tooltip="Heading 3" data-i18n-tooltip="editor.toolbar.heading3"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-list" value="bullet" data-tooltip="Bulleted list"></button>
-                            <button class="tt-b-m ql-list" value="ordered" data-tooltip="Ordered list"></button>
-                            <button class="tt-b-m ql-list" value="check" data-tooltip="Checkbox list"></button>
+                            <button class="tt-b-m ql-list" value="bullet" data-tooltip="Bulleted list" data-i18n-tooltip="editor.toolbar.list.bullet"></button>
+                            <button class="tt-b-m ql-list" value="ordered" data-tooltip="Ordered list" data-i18n-tooltip="editor.toolbar.list.ordered"></button>
+                            <button class="tt-b-m ql-list" value="check" data-tooltip="Checkbox list" data-i18n-tooltip="editor.toolbar.list.checkbox"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-script" value="sub" data-tooltip="Subscript"></button>
-                            <button class="tt-b-m ql-script" value="super" data-tooltip="Superscript"></button>
+                            <button class="tt-b-m ql-script" value="sub" data-tooltip="Subscript" data-i18n-tooltip="editor.toolbar.subscript"></button>
+                            <button class="tt-b-m ql-script" value="super" data-tooltip="Superscript" data-i18n-tooltip="editor.toolbar.superscript"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-indent" value="-1" data-tooltip="Decrease indent"></button>
-                            <button class="tt-b-m ql-indent" value="+1" data-tooltip="Increase indent"></button>
-                            <select class="ql-align">
-                                <option value=""></option>
-                                <option value="center"></option>
-                                <option value="right"></option>
-                                <option value="justify"></option>
+                            <button class="tt-b-m ql-indent" value="-1" data-tooltip="Decrease indent" data-i18n-tooltip="editor.toolbar.indent.decrease"></button>
+                            <button class="tt-b-m ql-indent" value="+1" data-tooltip="Increase indent" data-i18n-tooltip="editor.toolbar.indent.increase"></button>
+                            <select class="ql-align tt-b-m" data-tooltip="Alignment" data-i18n-tooltip="editor.toolbar.alignment">
+                                <option value="" class="tt-b-m" data-tooltip="Align to left" data-i18n-tooltip="editor.toolbar.align.left"></option>
+                                <option value="center" class="tt-b-m" data-tooltip="Align center" data-i18n-tooltip="editor.toolbar.align.center"></option>
+                                <option value="right" class="tt-b-m" data-tooltip="Align to right" data-i18n-tooltip="editor.toolbar.align.right"></option>
+                                <option value="justify" class="tt-b-m" data-tooltip="Align justified" data-i18n-tooltip="editor.toolbar.align.justified"></option>
                             </select>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-clean" data-tooltip="Clear formatting"></button>
+                            <button class="tt-b-m ql-clean" data-tooltip="Clear formatting" data-i18n-tooltip="editor.toolbar.clearFormat"></button>
                         </span>
                     </section>
                     <div id="editorWrapper">
@@ -157,7 +148,7 @@
                     </div>
                     <div id="noNoteOpenOverlay">
                         <div class="logo-icon"></div>
-                        <span>No note is currently open. Select one from the sidebar to get started.</span>
+                        <span data-i18n="editor.inactiveOverlay.text">No note is currently open. Select one from the sidebar to get started.</span>
                     </div>
                 </section>
 
@@ -165,31 +156,31 @@
                     <div>
                         <div>
                             <div class="cinput">
-                                <input placeholder="Find...">
-                                <button class="tt-t-m" data-tooltip="Case-sensitive toggle"><i class="ti ti-letter-case"></i></button>
+                                <input placeholder="Find..." data-i18n-placeholder="findandreplace.placeholder.find">
+                                <button class="tt-t-m" data-tooltip="Case-sensitive" data-i18n-tooltip="findandreplace.caseSensitive"><i class="ti ti-letter-case"></i></button>
                             </div>
                         </div>
                         <div>
                             <div class="cinput">
-                                <input placeholder="Replace...">
-                                <button class="tt-t-m" data-tooltip="Preserve case"><i class="ti ti-arrow-big-up-line"></i></button>
+                                <input placeholder="Replace..." data-i18n-placeholder="findandreplace.placeholder.replace">
+                                <button class="tt-t-m" data-tooltip="Preserve case" data-i18n-tooltip="findandreplace.preserveCase"><i class="ti ti-arrow-big-up-line"></i></button>
                             </div>
                         </div>
                     </div>
                     <div>
                         <div>
-                            <span>No results</span>
+                            <span data-i18n="findandreplace.results.none">No results</span>
                         </div>
                         <div>
-                            <button class="tt-t-m" data-tooltip="Replace current"><i class="ti ti-a-b-2"></i></button>
-                            <button class="tt-t-m" data-tooltip="Replace all instances"><i class="ti ti-replace"></i></button>
+                            <button class="tt-t-m" data-tooltip="Replace current" data-i18n-tooltip="findandreplace.replace.current"><i class="ti ti-a-b-2"></i></button>
+                            <button class="tt-t-m" data-tooltip="Replace all instances" data-i18n-tooltip="findandreplace.replace.all"><i class="ti ti-replace"></i></button>
                         </div>
                     </div>
                     <div>
                         <div>
-                            <button class="tt-t-m" data-tooltip="Previous"><i class="ti ti-chevron-up"></i></button>
-                            <button class="tt-t-m" data-tooltip="Next"><i class="ti ti-chevron-down"></i></button>
-                            <button class="tt-t-r" data-tooltip="Exit find and replace"><i class="ti ti-x"></i></button>
+                            <button class="tt-t-m" data-tooltip="Previous" data-i18n-tooltip="findandreplace.move.prev"><i class="ti ti-chevron-up"></i></button>
+                            <button class="tt-t-m" data-tooltip="Next" data-i18n-tooltip="findandreplace.move.next"><i class="ti ti-chevron-down"></i></button>
+                            <button class="tt-t-r" data-tooltip="Exit" data-i18n-tooltip="findandreplace.exit"><i class="ti ti-x"></i></button>
                         </div>
                         <div>
                             <!-- empty cell for easier styling -->
@@ -203,54 +194,54 @@
         <div class="dialog-container" id="dialog-about">
             <div class="dialog-window">
                 <header>
-                    <h2>About</h2>
+                    <h2 data-i18n="modal.about.header">About</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <p>wNotes, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting both desktop and mobile devices, wNotes targets user-friendliness and functionality above all else.</p>
-                    <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. All rights reserved.</p>
+                    <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. <span data-i18n="modal.about.reserved">All rights reserved.</span></p>
                 </main>
             </div>
         </div>
 
-        <div class="dialog-container" id="dialog-settings">
+        <div class="dialog-container dialog-open" id="dialog-settings">
             <div class="dialog-window">
                 <header>
-                    <h2>Settings</h2>
+                    <h2 data-i18n="modal.settings.header">Settings</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <nav>
                         <header>
                             <div class="cinput">
-                                <input placeholder="Search...">
+                                <input placeholder="Search..." data-i18n-placeholder="modal.settings.search.placeholder">
                             </div>
                         </header>
                         <div id="settingsPageButtons">
-                            <button class="current" onclick="settingsPage('appearance')" id="spb-appearance"><i class="ti ti-palette"></i> <span>Appearance</span></button>
-                            <button onclick="settingsPage('storage')" id="spb-storage"><i class="ti ti-server-2"></i> <span>Storage</span></button>
+                            <!-- js -->
                         </div>
                     </nav>
                     <div id="settings-pages">
+                        <!--
                         <div id="sp-appearance" class="page-current">
                             <section>
-                                <h2 id="sps-ap-theme">Theme</h2>
+                                <h2 id="sph-appearance-theme" data-i18n="modal.settings.section.appearance.theme">Theme</h2>
                                 <label>
-                                    Current theme:
+                                    <span data-i18n="modal.settings.appearance.theme.current.label">Current theme:</span>
                                     <select id="themeselect">
                                         <button>
                                             <selectedcontent></selectedcontent>
                                         </button>
-                                        <!-- js -->
                                     </select>
                                 </label>
                                 
-                                <label>System Theme <input type="checkbox" role="switch" id="systemThemeToggle"></label>
+                                <label><span data-i18n="modal.settings.appearance.theme.system.label">System Theme</span> <input type="checkbox" role="switch" id="systemThemeToggle"></label>
+
                             </section>
                             <section>
-                                <h2 id="sps-ap-layout">Layout</h2>
+                                <h2 id="sph-appearance-layout" data-i18n="modal.settings.section.appearance.layout">Layout</h2>
                                 <div>
                                     <div class="layoutoption selected" onclick="changeLayout('nl')">
                                         <div>
@@ -261,7 +252,7 @@
                                             </div>
                                             <div></div>
                                         </div>
-                                        <span>Sidebar Left</span>
+                                        <span data-i18n="modal.settings.appearance.layout.option.sidebarLeft">Sidebar Left</span>
                                     </div>
                                     <div class="layoutoption" onclick="changeLayout('nr')">
                                         <div>
@@ -272,14 +263,53 @@
                                             </div>
                                             <div></div>
                                         </div>
-                                        <span>Sidebar Right</span>
+                                        <span data-i18n="modal.settings.appearance.layout.option.sidebarRight">Sidebar Right</span>
                                     </div>
                                 </div>
                             </section>
+                            <section>
+                                <h2 id="sph-appearance-panels" data-i18n="modal.settings.section.appearance.panels">Panels</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-appearance-background" data-i18n="modal.settings.section.appearance.background">Background</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-appearance-typography" data-i18n="modal.settings.section.appearance.typography">Typography</h2>
+                            </section>
+                        </div>
+                        <div id="sp-editor">
+                            <section>
+                                <h2 id="sph-editor-behavior" data-i18n="modal.settings.section.editor.behavior">Behavior</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-editor-smartTypography" data-i18n="modal.settings.section.editor.smartTypography">Smart Typography</h2>
+                            </section>
                         </div>
                         <div id="sp-storage">
-                            <span>Placeholder, gonna work on more settings next week.</span>
+                            <section>
+                                <h2 id="sph-storage-storageMethod" data-i18n="modal.settings.section.storage.storageMethod">Storage Method</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-storage-exporting" data-i18n="modal.settings.section.storage.exporting">Exporting</h2>
+                            </section>
                         </div>
+                        <div id="sp-system">
+                            <section>
+                                <h2 id="sph-system-language" data-i18n="modal.settings.section.system.language">Language</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-system-shortcuts" data-i18n="modal.settings.section.system.shortcuts">Keyboard Shortcuts</h2>
+                            </section>
+                            <section>
+                                <h2 id="sph-system-behavior" data-i18n="modal.settings.section.system.behavior">Behavior</h2>
+                            </section>
+                        </div>
+                        <div id="sp-security">
+                            <section>
+                                <h2 id="sph-security-lockedNotes" data-i18n="modal.settings.section.security.lockedNotes">Locked Notes</h2>
+                            </section>
+                        </div>
+                        -->
                     </div>
                 </main>
             </div>
@@ -288,18 +318,18 @@
         <div class="dialog-container" id="dialog-newobject">
             <div class="dialog-window">
                 <header>
-                    <h2>New Object</h2>
+                    <h2 data-i18n="modal.newObject.header">New Object</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <div>
-                        <label for="noop1"><input type="radio" id="noop1" name="nos" checked> Note</label><br>
-                        <label for="noop2"><input type="radio" id="noop2" name="nos"> Folder</label>
+                        <label for="noop1"><input type="radio" id="noop1" name="nos" checked> <span data-i18n="modal.newObject.option.note">Note</span></label><br>
+                        <label for="noop2"><input type="radio" id="noop2" name="nos"> <span data-i18n="modal.newObject.option.folder">Folder</span></label>
                     </div>
                     <div class="cinput">
-                        <input placeholder="Name...">
-                        <button class="tt-t-m" data-tooltip="Create New" onclick="createObject(document.getElementById('noop1').checked?'note':'folder', this.parentElement.querySelector('input').value.trim())"><i class="ti ti-chevron-right"></i></button>
+                        <input placeholder="Name..." data-i18n-placeholder="modal.newObject.nameInput.placeholder">
+                        <button class="tt-t-m" data-tooltip="Create" data-i18n-tooltip="modal.newObject.confirmCreation" onclick="createObject(document.getElementById('noop1').checked?'note':'folder', this.parentElement.querySelector('input').value.trim())"><i class="ti ti-chevron-right"></i></button>
                     </div>
                 </main>
             </div>
@@ -308,29 +338,16 @@
         <div class="dialog-container" id="dialog-unlocknotes">
             <div class="dialog-window">
                 <header>
-                    <h2>Enter Passcode</h2>
+                    <h2 data-i18n="modal.unlockNotes.header">Enter Passcode</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <div class="cinput">
-                        <input type="password" placeholder="..." id="lockednotesinput">
-                        <button onclick="alert('gonna do this next ship')" class="tt-t-m" data-tooltip="Unlock"><i class="ti ti-chevron-right"></i></button>
+                        <input type="password" placeholder="Enter passcode..." data-i18n-placeholder="modal.unlockNotes.passwordInput.placeholder" id="lockednotesinput">
+                        <button onclick="alert('gonna do this next ship')" class="tt-t-m" data-tooltip="Unlock" data-i18n-tooltip="modal.unlockNotes.submit"><i class="ti ti-chevron-right"></i></button>
                     </div>
-                    <button onclick="this.parentElement.parentElement.querySelector('.dialog-close').click();openDialog('changepass')">Change</button>
-                </main>
-            </div>
-        </div>
-
-        <div class="dialog-container" id="dialog-changepass">
-            <div class="dialog-window">
-                <header>
-                    <h2>Change Passcode</h2>
-                    <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
-                </header>
-                <main>
-                    yea idk bro yo might be fried (gonna do this next week)
+                    <button onclick="closeDialog('unlocknotes');openSetting('security.lockedNotes')" data-i18n="modal.unlockNotes.changePassword">Change</button>
                 </main>
             </div>
         </div>
@@ -338,15 +355,15 @@
         <div class="dialog-container" id="dialog-deleteconfirmation">
             <div class="dialog-window">
                 <header>
-                    <h2>Confirm Deletion</h2>
+                    <h2 data-i18n="modal.deleteConfirmation.header">Confirm Deletion</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close"><i class="ti ti-x"></i></button>
+                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <span>Are you sure you want to delete <b id="deleteconfirmationName"></b>?</span>
+                    <span><span data-i18n="modal.deleteConfirmation.prompt.segment1">Are you sure you want to delete</span> <b id="deleteconfirmationName"></b><span data-i18n="modal.deleteConfirmation.prompt.segment2">?</span></span>
                     <div>
-                        <button onclick="closeDialog('deleteconfirmation')">Cancel</button>
-                        <button id="deleteconfirmationBtn">Confirm</button>
+                        <button onclick="closeDialog('deleteconfirmation')" data-i18n="modal.deleteConfirmation.cancel">Cancel</button>
+                        <button id="deleteconfirmationBtn" data-i18n="modal.deleteConfirmation.confirm">Confirm</button>
                     </div>
                 </main>
             </div>
@@ -359,6 +376,7 @@
             <!-- js -->
         </div>
 
+        <script src="/js/i18n.js"></script>
         <script src="/js/helpers.js"></script>
         <script src="/js/main.js"></script>
         <script src="/js/nav.js"></script>

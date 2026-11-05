@@ -26,14 +26,14 @@ dialogs.forEach(dialog => {
     });
 });
 
-function notification(type = '', content, from = 'wNotes', length = 3) {
+function notification(type = '', content, from = t("notificationSource.default"), length = 3) {
     const notif = document.createElement("div");
     notif.classList.add("notification");
     notif.classList.add("n-"+type);
     notif.innerHTML = `
         <header>
             <span>${from}</span>
-            <button onclick="removeNotif(this.parentElement.parentElement)"><i class="ti ti-x"></i></button>
+            <button onclick="removeNotif(this.parentElement.parentElement)" class="tt-l-m" data-tooltip="${t("notification.dismiss")}"><i class="ti ti-x"></i></button>
         </header>
         <div>
             <span>${content}</span>
@@ -81,52 +81,50 @@ function cleanupLocalStorage() {
     const keys = Object.keys(localStorage).filter(key => key.includes("note_"));
     keys.forEach(key => {
         const tk = key.replace("note_", "");
-        if (!notesRef[tk]) localStorage.removeItem(key);
+        if (!notesRef[tk]) storeR(key);
     });
 
     openFolders.forEach(f => {
         if (!folders[f]) {
             delete openFolders[f];
         }
-        localStorage.setItem("open_folders", JSON.stringify(openFolders));
+        storeS("open_folders", openFolders);
     });
-}
-
-function getStorageItem(key, fallback) {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-
-    try {
-        return JSON.parse(raw);
-    } catch (e) {
-        console.error(`Error parsing localStorage key "${key}":`, e);
-        return fallback;
-    }
 }
 
 window.addEventListener("load", () => {
-    notesRef = getStorageItem("notes_reference", {});
-    folders = getStorageItem("folders", {});
-    recentNotes = getStorageItem("recent_notes", []);
-    openFolders = getStorageItem("open_folders", []);
+    boot();
+});
+
+async function boot() {
+    notesRef = storeL("notes_reference", {});
+    folders = storeL("folders", {});
+    recentNotes = storeL("recent_notes", []);
+    openFolders = storeL("open_folders", []);
 
     Object.keys(notesRef).forEach((id) => {
-        console.log(id);
         // ops thing is empty quill delta structure
-        noteContents[id] = getStorageItem("note_"+id, {ops:[]});
+        noteContents[id] = storeL("note_"+id, {ops:[]});
     });
     cleanupLocalStorage();
-    renderNav();
-    const gotLastOpen = localStorage.getItem("LAST_OPEN");
+
+    await setLocale(userSettings.system.language.lang, true);
+    initQuill();
+    initSettings();
+
+    const gotLastOpen = storeL("LAST_OPEN", false);
     if (gotLastOpen) {openNote(gotLastOpen, true);} 
+    // make sure note is open before rendering so it highlights the open note's button ^-^
+    renderNav();
 
     // show overlay if no note to display
     handleNoNoteOpen();
-});
+    translateDOM();
+}
 
 setInterval(() => {
     if (currentNote) {
         noteContents[currentNote] = quill.getContents();
-        localStorage.setItem("note_"+currentNote, JSON.stringify(noteContents[currentNote]));
+        storeS("note_"+currentNote, noteContents[currentNote]);
     }
 }, 500);

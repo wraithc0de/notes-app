@@ -1,0 +1,151 @@
+/* simply making radio fit with ui, nothing special */
+label:has(input[type="radio"]) {
+    width: 100%;
+    padding-left: 12px;
+    position: relative;
+    display: flex;
+    gap: 0;
+
+    &:not(&:first-child) {
+        margin-top: -8px;
+    }
+
+    input[type="radio"] {
+        appearance: none;
+    }
+
+    &:before {
+        display: block;
+        content: "";
+        position: absolute;
+        background: var(--border-m);
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        top: 50%;
+        left: 4px;
+        transform: translateY(-50%);
+        outline: 1px solid var(--border-m);
+        outline-offset: 2px;
+    }
+
+    &:has(input[type="radio"]:checked):before {
+        background: var(--accent);
+        outline-color: var(--accent);
+    }
+}
+
+/* custom toggle switch */
+input[type="checkbox"][role="switch"] {
+    appearance: none;
+    height: 1em;
+    width: 2em;
+    vertical-align: text-bottom;
+    outline: 1px solid var(--border-m);
+    outline-offset: 0.125em;
+    border-radius: 1em;
+    transition: all 0.15s ease;
+
+    &:before {
+        content: "";
+        display: block;
+        height: 1em;
+        width: 1em;
+        background: var(--border-sep);
+        border-radius: 1em;
+        transform: translateX(0);
+        transition: all 0.15s ease;
+    }
+
+    &:hover {
+        cursor: pointer;
+        outline-color: var(--textm);
+    }
+
+    &:checked {
+        outline-color: var(--accent);
+        background: var(--accentm);
+
+        &:before {
+            transform: translateX(1em);
+            background: var(--accent);
+        }
+    }
+}
+
+/* custom dropdown... */
+select, ::picker(select) {
+    appearance: base-select;
+}
+select {
+    background: none;
+    color: var(--textb);
+    height: calc(2rem - 8px);
+    border: 1px solid var(--border-m);
+    border-radius: 2px;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: var(--btn-highlight);
+        cursor: pointer;
+    }
+
+    &::picker-icon {
+        font-family: "tabler-icons";
+        content: "\ea61";
+        margin-top: 0.15em;
+        transition: transform 0.15s ease;
+    }
+    &:open::picker-icon {
+        transform: rotate(90deg);
+    }
+
+    button {
+        color: var(--textb);
+        
+        selectedcontent {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+    
+    option {
+        color: var(--textb);
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-left: 1.5rem;
+
+        &:hover {
+            cursor: pointer;
+            background: var(--btn-highlight);
+        }
+
+        &::checkmark {
+            color: var(--textm);
+            font-family: 'tabler-icons';
+            content: "\ea5e";
+            margin-top: 0.15em;
+            position: absolute;
+            left: 0.25rem;
+        }
+
+    }
+    /* color wheel */
+    button selectedcontent >div, option >div {
+        height: 1em;
+        width: 1em;
+        border-radius: 50%;
+        border: 1px solid var(--border-m);
+    }
+    
+}
+::picker(select) {
+    background: var(--bg-2);
+    border: 1px solid var(--border-m);
+}

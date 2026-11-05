@@ -1,5 +1,5 @@
 @media (max-width: 600px) {
-    nav {
+    #midsect>nav {
         display: none !important;
     }
     #navresize {

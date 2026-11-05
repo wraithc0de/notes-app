@@ -3,8 +3,10 @@
 
     .ql-container, .ql-toolbar {
         border: 1px solid var(--border-sep);
+        border-radius: 2px;
         width: 100%;
     }
+    .ql-container {background: var(--bg)}
     .ql-toolbar {
         background: var(--bg-3);
         height: calc(2rem + 2px);

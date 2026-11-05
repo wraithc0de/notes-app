@@ -93,3 +93,28 @@ function insertKeyRelative(obj, sourceKey, targetKey, position) {
   // for inline whatever just in case
   return obj;
 }
+
+function storeS(key, obj, method = 'localStorage') {
+  if (method == 'localStorage') {
+    localStorage.setItem(key, JSON.stringify(obj));
+  }
+}
+
+function storeL(key, fallback, method = 'localStorage') {
+  if (method == 'localStorage') {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error(`Error parsing localStorage key "${key}":`, e);
+        return fallback;
+    }
+  }
+}
+
+function storeR(key, method = 'localStorage') {
+  if (method == 'localStorage') {
+    localStorage.removeItem(key);
+  }
+}
