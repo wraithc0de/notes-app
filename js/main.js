@@ -108,7 +108,7 @@ async function boot() {
     });
     cleanupLocalStorage();
 
-    await setLocale(userSettings.system.language.lang, true);
+    await setLocale(getValue("system.language.lang"), true);
     initQuill();
     initSettings();
 

@@ -113,6 +113,7 @@
     "setting.appearance.panels.opacity.searchTerms": ["panel opacity", "transparency", "translucent", "glass"],
     "setting.appearance.background.enabled": "Background Image",
     "setting.appearance.background.enabled.searchTerms": ["background image", "wallpaper", "background", "enable"],
+    "setting.appearance.background.imageUrl.placeholder": "Enter a URL...",
     "setting.appearance.background.image.source": "Background Source",
     "setting.appearance.background.image.source.searchTerms": ["background source", "wallpaper", "url", "upload", "image"],
     "setting.appearance.background.image.blur": "Background Blur",

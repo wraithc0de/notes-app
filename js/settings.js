@@ -39,87 +39,10 @@ function initSettings() {
     //fillThemeDropdown();
 
     renderSettings();
-    settingsPage(Object.values(settingsSchema.pages)[0].id);
+    settingsPage('appearance');
 }
 const userSettings = {
-    appearance: {
-        theme: {
-            theme: "dark",
-            system: false,
-            accentMode: "follow",
-            accentCustom: "fab73d"
-        },
-        layout: {
-            sidebar: "left",
-            toolbar: "top"
-        },
-        panels: {
-            radius: 2,
-            opacity: 1
-        },
-        background: {
-            image: "",
-            imageUrl: "",
-            blur: 0,
-            opacity: 1,
-            brightness: 0,
-            fitMode: "cover"
-        },
-        typography: {
-            font: "Inter",
-            dyslexic: false
-        }
-    },
-    editor: {
-        behavior: {
-            wrap: true,
-            spellCheck: true,
-            closePairs: false
-        },
-        smartTypography: {
-            enabled: false,
-            shorthands: [
-                ["-->", "→"],
-                ["1/3", "⅓"]
-            ]
-        }
-    },
-    storage: {
-        management: {
-            preferredMethod: "localStorage"
-        },
-        exporting: {
-            exportAs: "pdf"
-        }
-    },
-    system: {
-        language: {
-            lang: "en"
-        },
-        behavior: {
-            notifications: true,
-            rememberOpenFolders: true
-        },
-        shortcuts: {
-            newObject: {
-                name: t("system.shortcut.newObject"),
-                keys: ["Control", "N"]
-            },
-            exportCurrent: {
-                name: t("system.shortcut.exportCurrent"),
-                keys: ["Control", "E"]
-            },
-            importNote: {
-                name: t("system.shortcut.importNote"),
-                keys: ["Control", "I"]
-            }
-        }
-    },
-    security: {
-        lockedNotes: {
-            passHash: ""
-        }
-    }
+    "appearance.theme.theme": "antique"
 }
 
 const settingsSchema = {
@@ -136,11 +59,7 @@ const settingsSchema = {
                             id: "appearance.theme.theme",
                             label: "Theme",
                             type: "dropdown",
-                            options: [
-                                {value: "dark", content: "Dark <div></div>"},
-                                {value: "light", content: "Light <div></div>"},
-                                {value: "antique", content: "Antique <div></div>"}
-                            ],
+                            options: generateThemeDropdownSchema(),
                             default: "dark",
                             conditions: [
                                 {field: "appearance.theme.system", equals: false}
@@ -252,6 +171,7 @@ const settingsSchema = {
                             id: "appearance.background.imageUrl",
                             label: "Image From URL",
                             type: "text",
+                            placeholder: "setting.appearance.background.imageUrl.placeholder",
                             default: "",
                             conditions: [
                                 {field: "appearance.background.image", equals: ""}
@@ -291,7 +211,7 @@ const settingsSchema = {
                                 ]}
                             ]
                         },
-                        birghtness: {
+                        brightness: {
                             id: "appearance.background.brightness",
                             label: "Brightness",
                             type: "slider",
@@ -333,10 +253,11 @@ const settingsSchema = {
                             label: "Font",
                             type: "dropdown",
                             options: [
+                                {value: "Commissioner", content: "Commissioner"},
                                 {value: "Inter", content: "Inter"},
                                 {value: "sans-serif", content: "Sans Serif"}
                             ],
-                            default: "Inter",
+                            default: "Commissioner",
                             conditions: [
                                 {field: "appearance.typography.dyslexic", equals: false}
                             ]
@@ -395,7 +316,10 @@ const settingsSchema = {
                         },
                         shorthands: {
                             id: "editor.smartTypography.shorthands",
-                            type: "dualEditTable"
+                            type: "dualEditTable",
+                            conditions: [
+                                {value: "editor.smartTypography.enabled", equals: "true"}
+                            ]
                         }
                     }
                 }
@@ -418,7 +342,7 @@ const settingsSchema = {
                             label: "Preferred Storage Method",
                             type: "dropdown",
                             options: [
-                                {value: "localStorage", display: "localStorage"}
+                                {value: "localStorage", content: "localStorage"}
                             ],
                             default: "localStorage",
                             description: "Some storage methods may require additional setup."
@@ -508,6 +432,49 @@ const settingsSchema = {
     }
 }
 
+function check(cond) {
+    if (Array.isArray(cond)) return cond.every(check);
+    if (cond.all) return cond.all.every(check);
+    if (cond.any) return cond.any.some(check);
+    if (cond.not) return !check(cond.not);
+
+    const val = getValue(cond.field);
+    if ("equals" in cond) return val === cond.equals;
+    if ("notEquals" in cond) return val !== cond.notEquals;
+    return !!val; // bare { field } = truthy
+}
+
+// make a map with page.section.key structure so crawling the schema isn't necessary
+const fieldIndex = new Map();
+for (const [pKey, page] of Object.entries(settingsSchema.pages))
+    for (const [sKey, section] of Object.entries(page.sections))
+        for (const [key, f] of Object.entries(section.fields))
+            fieldIndex.set(`${pKey}.${sKey}.${key}`, f);
+
+// look in userSettings first, then get default
+const getValue = path => path in userSettings
+    ? userSettings[path]
+    : fieldIndex.get(path)?.default;
+
+const isEnabled = field => !field.conditions || check(field.conditions);
+
+function refreshConditions() {
+    document.querySelectorAll('[data-path]').forEach((wrapper) => {
+        console.log(wrapper);
+        const field = fieldIndex.get(wrapper.dataset.path);
+        if (!field) return;
+        const enabled = isEnabled(field);
+        wrapper.inert = !enabled;
+        wrapper.classList.toggle("disabled", !enabled);
+    });
+}
+
+function onChange(path, value) {
+    userSettings[path] = value;
+    applications[path]?.();
+    refreshConditions();
+}
+
 const sNavBtnsContainer = document.getElementById("settingsPageButtons");
 const sPagesContainer = document.getElementById("settings-pages");
 function renderSettings() {
@@ -549,19 +516,21 @@ function renderSettings() {
             }
 
             Object.values(section.fields).forEach((field) => {
-                console.log(field);
                 var optionContainer;
                 if (field.label) {
                     optionContainer = document.createElement("label");
                     optionContainer.innerHTML = `
                         <span data-i18n="${field.label}">${field.label}</span>
                     `;
-                    optionContainer.insertAdjacentElement(generateInput(field));
+                    optionContainer.dataset.path = field.id;
+                    optionContainer.appendChild(generateInput(field, onChange, optionContainer));
                 } else if (field.type == "separator") {
                     optionContainer = document.createElement(field.text ? "h3" : "hr");
                     if (field.text) optionContainer.innerText = field.text;
                 } else {
                     optionContainer = document.createElement("div");
+                    optionContainer.dataset.path = field.id;
+                    optionContainer.appendChild(generateInput(field, onChange, optionContainer));
                 }
                 if (field.description) {
                     optionContainer.insertAdjacentHTML('beforeend', `
@@ -573,50 +542,97 @@ function renderSettings() {
             });
         });
     });
+    refreshConditions();
 }
 
-const inputGenerationMap = {
-    toggle: ""
+const applications = {
+    "appearance.theme.theme": () => setTheme(),
+    "appearance.theme.system": () => systemTheme()
 }
 
-function generateInput(field) {
+function generateInput(field, onChange, parent) {
+    let elem;
     switch (field.type) {
         case "toggle":
-            return `
-                <input type="checkbox" role="switch" ${field.default == true ? 'checked' : ''}>
-            `;
+            elem = document.createElement("input");
+            elem.type = "checkbox";
+            elem.setAttribute("role", "switch");
+            elem.checked = getValue(field.id) === true;
+            elem.onchange = () => {
+                onChange(field.id, elem.checked);
+            };
             break;
         case "dropdown":
-            return `
-                <select>
-                    <button>
-                        <selectedcontent></selectedcontent>
-                    </button>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                </select>
-            `;
+            elem = document.createElement("select");
+            elem.innerHTML = `<button><selectedcontent></selectedcontent></button>`;
+            field.options.forEach((opt) => {
+                const o = document.createElement("option");
+                o.value = opt.value;
+                o.innerHTML = opt.content;
+                elem.appendChild(o);
+            });
+            elem.value = getValue(field.id);
+            elem.onchange = () => onChange(field.id, elem.value);
             break;
         case "slider":
-            return `
-                <wn-slider min="${field.range[0]}" max="${field.range[1]}" step="${field.step}" unit="${field.unit}" value="${field.default}"></wn-slider>
-            `;
+            // setAttribute because custom elem can't just use elem.min etc :<
+            elem = document.createElement("wn-slider");
+            elem.setAttribute("min", field.range[0]);
+            elem.setAttribute("max", field.range[1]);
+            elem.setAttribute("step", field.step);
+            elem.setAttribute("unit", field.unit);
+
+            elem.setAttribute("value", getValue(field.id));
+            elem.onchange = () => onChange(field.id, elem.getAttribute("value"));
             break;
         case "color":
-            return `
-                <wn-color-picker value="${field.default}"></wn-color-picker>
-            `;
+            elem = document.createElement("wn-color-picker");
+
+            elem.value = getValue(field.id);
+            elem.onchange = () => onChange(field.id, elem.value);
             break;
         case "text":
-            return `
-                
-            `;
+            elem = document.createElement("div")
+            elem.classList.add("cinput");
+            elem.innerHTML = `<input type="text" placeholder="${field.placeholder ? t(field.placeholder) : ''}" data-i18n-placeholder="${field.placeholder ? field.placeholder : ''}">`;
+
+            elem.value = getValue(field.id);
+            elem.onchange = () => onChange(field.id, elem.value);
             break;
-        
+        case "file":
+            elem = document.createElement("wn-file-picker");
+            elem.setAttribute("accept", field.accept);
+
+            elem.value = getValue(field.id);
+            elem.onchange = () => onChange(field.id, elem.value);
+            break;
+        case "dualEditTable":
+            elem = document.createElement("table");
+            elem.innerHTML = `<tr><th>Shorthand</th><th>Result Character</th></tr><tr><td>-></td><td>--></td></tr>`;
+            const newEntryRow = document.createElement("tr");
+            newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span>New Entry</span></button></td>`;
+            elem.appendChild(newEntryRow);
+            break;
+        case "singleEditTable":
+            elem = document.createElement("b");
+            elem.textContent = "[Single-Column Editing Table does not yet have functionality.]";
+            break;
+        case "storageDisplay":
+            elem = document.createElement("b");
+            elem.textContent = "[Settings Management Display does not yet have functionality.]";
+            break;
+        case "keysEntry":
+            elem = document.createElement("kbd");
+            elem.textContent = "[no funct.]";
+            break;
         default:
-            return "<b>Invalid type.</b>"
+            elem = document.createElement("b");
+            elem.textContent = "[Element could not be rendered.]";
     }
+    console.log(isEnabled(field), field.id);
+    parent.classList.toggle("disabled", !isEnabled(field));
+    if (!isEnabled(field)) parent.inert = true;
+    return elem;
 }
 
 
@@ -637,29 +653,22 @@ function openSetting(location) {
     settingsPage(page);
     document.getElementById(`sph-${page}-${header}`).scrollIntoView();
 }
+
+
+function generateThemeDropdownSchema() {
+    var optionsArray = [];
+    parseThemes("/css/themes.css").then((data) => {
+        Object.entries(data).forEach(([name, colors]) => {
+            const themeOpt = {value: name, content: `<span data-i18n="theme.${name}">${t("theme."+name)}</span> <div style="background: conic-gradient(${colors['accent']} 0deg 90deg, ${colors['textb']} 90deg 180deg, ${colors['bg-3']} 180deg 270deg, ${colors['textm']} 270deg)"></div>`};
+            optionsArray.push(themeOpt);
+        });
+    });
+    return optionsArray;
+}
 /*
 window.addEventListener("load", () => {
     handleTheme();
 });
-
-
-const themeDropdown = document.getElementById("themeselect");
-
-function fillThemeDropdown() {
-    parseThemes("/css/themes.css").then((data) => {
-        Object.entries(data).forEach(([name, colors]) => {
-            const themeOpt = document.createElement("option");
-            themeOpt.value = name;
-            themeOpt.innerHTML = `
-                ${t("theme."+name)}
-                <div style="background: conic-gradient(${colors['accent']} 0deg 90deg, ${colors['textb']} 90deg 180deg, ${colors['bg-3']} 180deg 270deg, ${colors['textm']} 270deg)"></div>
-            `;
-            themeDropdown.appendChild(themeOpt);
-        });
-
-        handleTheme();
-    });
-}
 
 function changeTheme(name, systemThemeCase = false) {
     for (const name of document.documentElement.classList) {

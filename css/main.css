@@ -5,6 +5,7 @@
 :root {
     --nav-w: 200px;
     --font: "Commissioner";
+    --corners: 2px;
 }
 
 *::-webkit-scrollbar {
@@ -13,13 +14,13 @@
 }
 *::-webkit-scrollbar-track {
     background: none;
-    border-radius: 2px;
+    border-radius: var(--corners);
     border-right: 1px solid transparent;
     background-clip: padding-box;
 }
 *::-webkit-scrollbar-thumb {
     background-color: var(--accent);
-    border-radius: 2px;
+    border-radius: var(--corners);
     border-right: 1px solid transparent;
     background-clip: padding-box;
 }
@@ -44,7 +45,7 @@ i.ti {font-size: 1.2em;}
 }
 
 body {
-    background: var(--bg);
+    background: var(--bg-2);
     transition: background 0.15s ease;
     color: var(--textb);
     display: flex;
@@ -64,7 +65,7 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 2px;
+        border-radius: var(--corners);
         transition: background 0.15s ease;
 
         &:hover {
@@ -106,7 +107,7 @@ body {
     .cinput {
         display: flex;
         border: 1px solid var(--border-m);
-        border-radius: 2px;
+        border-radius: var(--corners);
         transition: border 0.15s ease;
         height: calc(2rem - 8px);
 
@@ -155,7 +156,7 @@ body {
             background: var(--bg);
             padding: 0.5rem;
             border: 1px solid var(--border-sep);
-            border-radius: 2px;
+            border-radius: var(--corners);
             position: relative;
             min-width: 100px;
             min-height: 50px;
@@ -215,7 +216,7 @@ body {
     .notification {
         background: var(--bg);
         border: 1px solid var(--border-m);
-        border-radius: 2px;
+        border-radius: var(--corners);
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -318,7 +319,7 @@ body {
         button {
             border: none;
             background: none;
-            border-radius: 2px;
+            border-radius: var(--corners);
             color: var(--textb);
             font-size: 0.8rem;
             display: flex;
@@ -352,7 +353,7 @@ body {
                 top: 100%;
                 background: var(--bg);
                 border: 1px solid var(--border-sep);
-                border-radius: 2px;
+                border-radius: var(--corners);
                 opacity: 0;
                 pointer-events: none;
                 transition: all 0.15s ease;
@@ -387,14 +388,14 @@ body {
 
     #midsect {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 2rem);
         display: flex;
         padding: 0.25rem;
         padding-top: 0;
 
         >nav, #findandreplace {
             border: 1px solid var(--border-sep);
-            border-radius: 2px;
+            border-radius: var(--corners);
         }
 
         nav {
@@ -402,6 +403,7 @@ body {
             background: var(--bg-2);
             display: flex;
             flex-direction: column;
+            flex-shrink: 0;
 
             #navnoteslistarea {
                 overflow-y: scroll;
@@ -461,7 +463,7 @@ body {
                 font-weight: 300;
                 position: relative;
                 width: 100%;
-                border-radius: 2px;
+                border-radius: var(--corners);
 
                 &:hover {
                     cursor: pointer;
@@ -560,7 +562,7 @@ body {
                 }
 
                 header, .itemlist .item, .navsearchresult {
-                    border-radius: 2px;
+                    border-radius: var(--corners);
                     transition: background 0.15s ease;
 
                     &:hover {
@@ -622,7 +624,7 @@ body {
         #navresize {
             border: 1px solid transparent;
             width: 4px;
-            border-radius: 2px;
+            border-radius: var(--corners);
             transition: background 0.1s, filter 0.2s;
             position: relative;
             flex-shrink: 0;
@@ -635,7 +637,7 @@ body {
                 opacity: 0;
                 color: var(--bg);
                 background: var(--accent);
-                border-radius: 2px;
+                border-radius: var(--corners);
                 aspect-ratio: 1/1;
                 z-index: 99;
                 position: absolute;
@@ -663,10 +665,11 @@ body {
 
         main {
             display: flex;
-            flex-grow: 1;
             flex-direction: column;
             gap: 0.25rem;
             background: var(--bg-2);
+            max-width: 90vw;
+            overflow: hidden;
 
             #workspace {
                 display: flex;
@@ -674,6 +677,7 @@ body {
                 flex-grow: 1;
                 background: var(--bg);
                 gap: 0.25rem;
+                overflow: hidden;
 
                 #editorWrapper {
                     height: 100%;
@@ -681,9 +685,9 @@ body {
                     background: none;
                     border: none;
                     color: var(--textb);
-                    resize: none;
                     font-family: inherit;
                     display: none;
+                    overflow: hidden;
 
                     &:focus {
                         outline: none;
@@ -712,7 +716,7 @@ body {
                     background-size: 100% 100%, 1rem 1rem;
                     background-repeat: round;
                     border: 1px solid var(--border-sep);
-                    border-radius: 2px;
+                    border-radius: var(--corners);
 
                     .logo-icon {
                         color: var(--btn-highlight);
@@ -774,7 +778,7 @@ body {
     z-index: 999;
     background: var(--bg);
     border: 1px solid var(--border-sep);
-    border-radius: 2px;
+    border-radius: var(--corners);
     display: none;
     flex-direction: column;
 
@@ -785,7 +789,7 @@ body {
         height: 1.6rem;
         background: none;
         border: none;
-        border-radius: 2px;
+        border-radius: var(--corners);
         color: var(--textm);
         display: flex;
         align-items: center;
@@ -886,6 +890,10 @@ body {
 
                 &:not(:first-child) {
                     margin-top: 1rem;
+                }
+
+                &:last-child {
+                    padding-bottom: 1rem;
                 }
 
                 h2 {

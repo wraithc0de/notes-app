@@ -1,12 +1,22 @@
 /* nested inside #workspace so my styles take priority without having to spam !important */
+.editor {
+    max-width: 100%;
+    background:red;
+}
+
 #workspace {
+    max-width: auto;
+    min-width: 0;
+    flex-basis: 100%;
 
     .ql-container, .ql-toolbar {
         border: 1px solid var(--border-sep);
         border-radius: 2px;
         width: 100%;
     }
-    .ql-container {background: var(--bg)}
+    .ql-container {
+        background: var(--bg);
+    }
     .ql-toolbar {
         background: var(--bg-3);
         height: calc(2rem + 2px);
@@ -96,6 +106,12 @@
     /* past here is probably just inline styles for formats
     ******/
     .ql-editor {
+        overflow: scroll;
+        max-width: 100%;
+
+        &.nowrap {
+            white-space: pre;
+        }
 
         .ql-ui {
             height: 100%;
@@ -147,4 +163,29 @@
             }
         }
     }
+    
+    .ql-tooltip {
+        border: 1px solid var(--border-sep);
+        background: var(--bg-3);
+        border-radius: 1px;
+        box-shadow: none;
+        color: var(--textb);
+
+        input {
+            color: var(--textb);
+            background: none;
+            border: 1px solid var(--border-m);
+            border-radius: 2px;
+
+            &:focus {
+                outline: none;
+                border-color: var(--accent);
+            }
+        }
+
+        .ql-action {
+            color: var(--accent);
+        }
+    }
 }
+
