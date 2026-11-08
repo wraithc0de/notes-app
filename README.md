@@ -9,9 +9,8 @@ No other notes app I've found does what I want it to do in a way that makes sens
 
 ## Project status
 
-The project is at an MVP status, with note contents, folders, and themes persisting across page refreshes.
-
-The header, formatting toolbar, find and replace, and some missing context menu actions will be completed next ship, along with other additional features.
+The project is almost at a production state, with just a few pages of settings needing application programming and some small styling tweaks.
+Any other features that have not been finished yet are not accessible by the user, but will be done in a later ship. These include find and replace and word counter.
 
 ## Demo Link
 https://wcnotesapp.surge.sh/
