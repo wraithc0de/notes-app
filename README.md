@@ -27,6 +27,6 @@ https://wcnotesapp.surge.sh/
 
 ![](/assets/Screenshot%202026-10-25%20173037.png)
 
-5. Edit theme and layout by clicking the Settings option in the header.
+5. Edit appearance by clicking the Settings option in the header.
 
 ![](/assets/Screenshot%202026-10-25%20173144.png);

@@ -1,49 +1,46 @@
-var settingsReference;
+var settingsSearch;
+const refreshSearchObj = () => settingsSearch = {
+    "appearance.theme.theme": {name: t("setting.appearance.theme.theme"), icon: "color-swatch", id: "appearance.theme.theme", terms: t("setting.appearance.theme.theme.searchTerms"), location: "appearance.theme"},
+    "appearance.theme.system": {name: t("setting.appearance.theme.system"), icon: "brightness-half", id: "appearance.theme.system", terms: t("setting.appearance.theme.system.searchTerms"), location: "appearance.theme"},
+    "appearance.theme.accent.mode": {name: t("setting.appearance.theme.accent.mode"), icon: "brush", id: "appearance.theme.accent.mode", terms: t("setting.appearance.theme.accent.mode.searchTerms"), location: "appearance.theme"},
+    "appearance.theme.accent.custom": {name: t("setting.appearance.theme.accent.custom"), icon: "color-picker", id: "appearance.theme.accent.custom", terms: t("setting.appearance.theme.accent.custom.searchTerms"), location: "appearance.theme"},
+    "appearance.layout.sidebar": {name: t("setting.appearance.layout.sidebar"), icon: "layout-sidebar", id: "appearance.layout.sidebar", terms: t("setting.appearance.layout.sidebar.searchTerms"), location: "appearance.layout"},
+    "appearance.layout.toolbar": {name: t("setting.appearance.layout.toolbar"), icon: "layout-navbar", id: "appearance.layout.toolbar", terms: t("setting.appearance.layout.toolbar.searchTerms"), location: "appearance.layout"},
+    "appearance.panels.radius": {name: t("setting.appearance.panels.radius"), icon: "border-radius", id: "appearance.panels.radius", terms: t("setting.appearance.panels.radius.searchTerms"), location: "appearance.panels"},
+    "appearance.panels.opacity": {name: t("setting.appearance.panels.opacity"), icon: "opacity", id: "appearance.panels.opacity", terms: t("setting.appearance.panels.opacity.searchTerms"), location: "appearance.panels"},
+    "appearance.background.enabled": {name: t("setting.appearance.background.enabled"), icon: "background", id: "appearance.background.enabled", terms: t("setting.appearance.background.enabled.searchTerms"), location: "appearance.background"},
+    "appearance.background.image.source": {name: t("setting.appearance.background.image.source"), icon: "photo", id: "appearance.background.image.source", terms: t("setting.appearance.background.image.source.searchTerms"), location: "appearance.background"},
+    "appearance.background.image.blur": {name: t("setting.appearance.background.image.blur"), icon: "blur", id: "appearance.background.image.blur", terms: t("setting.appearance.background.image.blur.searchTerms"), location: "appearance.background"},
+    "appearance.background.image.dim": {name: t("setting.appearance.background.image.dim"), icon: "brightness-down", id: "appearance.background.image.dim", terms: t("setting.appearance.background.image.dim.searchTerms"), location: "appearance.background"},
+    "appearance.background.image.opacity": {name: t("setting.appearance.background.image.opacity"), icon: "opacity", id: "appearance.background.image.opacity", terms: t("setting.appearance.background.image.opacity.searchTerms"), location: "appearance.background"},
+    "appearance.background.image.fit": {name: t("setting.appearance.background.image.fit"), icon: "aspect-ratio", id: "appearance.background.image.fit", terms: t("setting.appearance.background.image.fit.searchTerms"), location: "appearance.background"},
+    "appearance.typography.font": {name: t("setting.appearance.typography.font"), icon: "typography", id: "appearance.typography.font", terms: t("setting.appearance.typography.font.searchTerms"), location: "appearance.typography"},
+    "appearance.typography.dyslexic": {name: t("setting.appearance.typography.dyslexic"), icon: "accessible", id: "appearance.typography.dyslexic", terms: t("setting.appearance.typography.dyslexic.searchTerms"), location: "appearance.typography"},
+
+    "editor.behavior.wrap": {name: t("setting.editor.behavior.wrap"), icon: "text-wrap", id: "editor.behavior.wrap", terms: t("setting.editor.behavior.wrap.searchTerms"), location: "editor.behavior"},
+    "editor.behavior.spellCheck": {name: t("setting.editor.behavior.spellCheck"), icon: "text-spellcheck", id: "editor.behavior.spellCheck", terms: t("setting.editor.behavior.spellCheck.searchTerms"), location: "editor.behavior"},
+    "editor.behavior.closePairs": {name: t("setting.editor.behavior.closePairs"), icon: "brackets", id: "editor.behavior.closePairs", terms: t("setting.editor.behavior.closePairs.searchTerms"), location: "editor.behavior"},
+    "editor.smartTypography.shorthands": {name: t("setting.editor.smartTypography.shorthands"), icon: "replace", id: "editor.smartTypography.shorthands", terms: t("setting.editor.smartTypography.shorthands.searchTerms"), location: "editor.smartTypography"},
+
+    "storage.storageMethod.preferredMethod": {name: t("setting.storage.storageMethod.preferredMethod"), icon: "database", id: "storage.storageMethod.preferredMethod", terms: t("setting.storage.storageMethod.preferredMethod.searchTerms"), location: "storage.storageMethod"},
+    "storage.exporting.exportAs": {name: t("setting.storage.exporting.exportAs"), icon: "file-export", id: "storage.exporting.exportAs", terms: t("setting.storage.exporting.exportAs.searchTerms"), location: "storage.exporting"},
+
+    "system.language.lang": {name: t("setting.system.language.lang"), icon: "language", id: "system.language.lang", terms: t("setting.system.language.lang.searchTerms"), location: "system.language"},
+    "system.shortcuts": {name: t("setting.system.shortcuts"), icon: "keyboard", id: "system.shortcuts", terms: t("setting.system.shortcuts.searchTerms"), location: "system.shortcuts"},
+    "system.behavior.notifications": {name: t("setting.system.behavior.notifications"), icon: "bell", id: "system.behavior.notifications", terms: t("setting.system.behavior.notifications.searchTerms"), location: "system.behavior"},
+    "system.behavior.rememberOpenFolders": {name: t("setting.system.behavior.rememberOpenFolders"), icon: "folder-open", id: "system.behavior.rememberOpenFolders", terms: t("setting.system.behavior.rememberOpenFolders.searchTerms"), location: "system.behavior"},
+
+    "security.lockedNotes.passHash": {name: t("setting.security.lockedNotes.passHash"), icon: "key", id: "security.lockedNotes.passHash", terms: t("setting.security.lockedNotes.passHash.searchTerms"), location: "security.lockedNotes"}
+};
 function initSettings() {
-    settingsReference = {
-        searchable: {
-            "appearance.theme.theme": {name: t("setting.appearance.theme.theme"), icon: "color-swatch", id: "appearance.theme.theme", terms: t("setting.appearance.theme.theme.searchTerms"), location: "appearance.theme"},
-            "appearance.theme.system": {name: t("setting.appearance.theme.system"), icon: "brightness-half", id: "appearance.theme.system", terms: t("setting.appearance.theme.system.searchTerms"), location: "appearance.theme"},
-            "appearance.theme.accent.mode": {name: t("setting.appearance.theme.accent.mode"), icon: "brush", id: "appearance.theme.accent.mode", terms: t("setting.appearance.theme.accent.mode.searchTerms"), location: "appearance.theme"},
-            "appearance.theme.accent.custom": {name: t("setting.appearance.theme.accent.custom"), icon: "color-picker", id: "appearance.theme.accent.custom", terms: t("setting.appearance.theme.accent.custom.searchTerms"), location: "appearance.theme"},
-            "appearance.layout.sidebar": {name: t("setting.appearance.layout.sidebar"), icon: "layout-sidebar", id: "appearance.layout.sidebar", terms: t("setting.appearance.layout.sidebar.searchTerms"), location: "appearance.layout"},
-            "appearance.layout.toolbar": {name: t("setting.appearance.layout.toolbar"), icon: "layout-navbar", id: "appearance.layout.toolbar", terms: t("setting.appearance.layout.toolbar.searchTerms"), location: "appearance.layout"},
-            "appearance.panels.radius": {name: t("setting.appearance.panels.radius"), icon: "border-radius", id: "appearance.panels.radius", terms: t("setting.appearance.panels.radius.searchTerms"), location: "appearance.panels"},
-            "appearance.panels.opacity": {name: t("setting.appearance.panels.opacity"), icon: "opacity", id: "appearance.panels.opacity", terms: t("setting.appearance.panels.opacity.searchTerms"), location: "appearance.panels"},
-            "appearance.background.enabled": {name: t("setting.appearance.background.enabled"), icon: "background", id: "appearance.background.enabled", terms: t("setting.appearance.background.enabled.searchTerms"), location: "appearance.background"},
-            "appearance.background.image.source": {name: t("setting.appearance.background.image.source"), icon: "photo", id: "appearance.background.image.source", terms: t("setting.appearance.background.image.source.searchTerms"), location: "appearance.background"},
-            "appearance.background.image.blur": {name: t("setting.appearance.background.image.blur"), icon: "blur", id: "appearance.background.image.blur", terms: t("setting.appearance.background.image.blur.searchTerms"), location: "appearance.background"},
-            "appearance.background.image.dim": {name: t("setting.appearance.background.image.dim"), icon: "brightness-down", id: "appearance.background.image.dim", terms: t("setting.appearance.background.image.dim.searchTerms"), location: "appearance.background"},
-            "appearance.background.image.opacity": {name: t("setting.appearance.background.image.opacity"), icon: "opacity", id: "appearance.background.image.opacity", terms: t("setting.appearance.background.image.opacity.searchTerms"), location: "appearance.background"},
-            "appearance.background.image.fit": {name: t("setting.appearance.background.image.fit"), icon: "aspect-ratio", id: "appearance.background.image.fit", terms: t("setting.appearance.background.image.fit.searchTerms"), location: "appearance.background"},
-            "appearance.typography.font": {name: t("setting.appearance.typography.font"), icon: "typography", id: "appearance.typography.font", terms: t("setting.appearance.typography.font.searchTerms"), location: "appearance.typography"},
-            "appearance.typography.dyslexic": {name: t("setting.appearance.typography.dyslexic"), icon: "accessible", id: "appearance.typography.dyslexic", terms: t("setting.appearance.typography.dyslexic.searchTerms"), location: "appearance.typography"},
-
-            "editor.behavior.wrap": {name: t("setting.editor.behavior.wrap"), icon: "text-wrap", id: "editor.behavior.wrap", terms: t("setting.editor.behavior.wrap.searchTerms"), location: "editor.behavior"},
-            "editor.behavior.spellCheck": {name: t("setting.editor.behavior.spellCheck"), icon: "spell-check", id: "editor.behavior.spellCheck", terms: t("setting.editor.behavior.spellCheck.searchTerms"), location: "editor.behavior"},
-            "editor.behavior.closePairs": {name: t("setting.editor.behavior.closePairs"), icon: "brackets", id: "editor.behavior.closePairs", terms: t("setting.editor.behavior.closePairs.searchTerms"), location: "editor.behavior"},
-            "editor.smartTypography.shorthands": {name: t("setting.editor.smartTypography.shorthands"), icon: "replace", id: "editor.smartTypography.shorthands", terms: t("setting.editor.smartTypography.shorthands.searchTerms"), location: "editor.smartTypography"},
-
-            "storage.storageMethod.preferredMethod": {name: t("setting.storage.storageMethod.preferredMethod"), icon: "database", id: "storage.storageMethod.preferredMethod", terms: t("setting.storage.storageMethod.preferredMethod.searchTerms"), location: "storage.storageMethod"},
-            "storage.exporting.exportAs": {name: t("setting.storage.exporting.exportAs"), icon: "file-export", id: "storage.exporting.exportAs", terms: t("setting.storage.exporting.exportAs.searchTerms"), location: "storage.exporting"},
-
-            "system.language.lang": {name: t("setting.system.language.lang"), icon: "language", id: "system.language.lang", terms: t("setting.system.language.lang.searchTerms"), location: "system.language"},
-            "system.shortcuts": {name: t("setting.system.shortcuts"), icon: "keyboard", id: "system.shortcuts", terms: t("setting.system.shortcuts.searchTerms"), location: "system.shortcuts"},
-            "system.behavior.notifications": {name: t("setting.system.behavior.notifications"), icon: "bell", id: "system.behavior.notifications", terms: t("setting.system.behavior.notifications.searchTerms"), location: "system.behavior"},
-            "system.behavior.rememberOpenFolders": {name: t("setting.system.behavior.rememberOpenFolders"), icon: "folder-open", id: "system.behavior.rememberOpenFolders", terms: t("setting.system.behavior.rememberOpenFolders.searchTerms"), location: "system.behavior"},
-
-            "security.lockedNotes.passHash": {name: t("setting.security.lockedNotes.passHash"), icon: "key", id: "security.lockedNotes.passHash", terms: t("setting.security.lockedNotes.passHash.searchTerms"), location: "security.lockedNotes"}
-        }
-    };
+    refreshSearchObj();
 
     //fillThemeDropdown();
 
     renderSettings();
     settingsPage('appearance');
 }
-const userSettings = {
-    "appearance.theme.theme": "antique"
-}
+const userSettings = storeL("settings", {});
 
 const settingsSchema = {
     pages: {
@@ -53,6 +50,7 @@ const settingsSchema = {
             icon: "palette",
             sections: {
                 theme: {
+                    id: "theme",
                     name: "modal.settings.section.appearance.theme",
                     fields: {
                         theme: {
@@ -98,6 +96,7 @@ const settingsSchema = {
                     }
                 },
                 layout: {
+                    id: "layout",
                     name: "modal.settings.section.appearance.layout",
                     fields: {
                         sidebar: {
@@ -105,24 +104,25 @@ const settingsSchema = {
                             label: "Sidebar",
                             type: "dropdown",
                             options: [
-                                {value: "left", content: "Left"},
-                                {value: "right", content: "Right"}
+                                {value: "nl", content: "Left"},
+                                {value: "nr", content: "Right"}
                             ],
-                            default: "left"
+                            default: "nl"
                         },
                         toolbar: {
                             id: "appearance.layout.toolbar",
                             label: "Toolbar",
                             type: "dropdown",
                             options: [
-                                {value: "above", content: "Above"},
-                                {value: "below", content: "Below"}
+                                {value: "ta", content: "Above"},
+                                {value: "tb", content: "Below"}
                             ],
-                            default: "above"
+                            default: "ta"
                         }
                     }
                 },
                 panels: {
+                    id: "panels",
                     name: "modal.settings.section.appearance.panels",
                     fields: {
                         corners:{
@@ -155,6 +155,7 @@ const settingsSchema = {
                     }
                 },
                 background: {
+                    id: "background",
                     name: "modal.settings.section.appearance.background",
                     fields: {
                         image: {
@@ -233,7 +234,7 @@ const settingsSchema = {
                             options: [
                                 {value: "cover", content: "Cover"},
                                 {value: "contain", content: "Contain"},
-                                {value: "repeat", content: "Repeat"}
+                                {value: "auto", content: "Repeat"}
                             ],
                             default: "cover",
                             conditions: [
@@ -246,6 +247,7 @@ const settingsSchema = {
                     }
                 },
                 typography: {
+                    id: "typography",
                     name: "modal.settings.section.appearance.typography",
                     fields: {
                         font: {
@@ -278,6 +280,7 @@ const settingsSchema = {
             icon: "edit",
             sections: {
                 behavior: {
+                    id: "behavior",
                     name: "modal.settings.section.editor.behavior",
                     fields: {
                         wrap: {
@@ -302,6 +305,7 @@ const settingsSchema = {
                     }
                 },
                 smartTypography: {
+                    id: "smartTypography",
                     name: "modal.settings.section.editor.smartTypography",
                     headerButtons: [
                         {text: "Fill Exemplar", action: "fillSmartTypographyTemplate()"}
@@ -318,7 +322,7 @@ const settingsSchema = {
                             id: "editor.smartTypography.shorthands",
                             type: "dualEditTable",
                             conditions: [
-                                {value: "editor.smartTypography.enabled", equals: "true"}
+                                {field: "editor.smartTypography.enabled", equals: true}
                             ]
                         }
                     }
@@ -331,6 +335,7 @@ const settingsSchema = {
             icon: "archive",
             sections: {
                 management: {
+                    id: "management",
                     name: "modal.settings.section.storage.management",
                     fields: {
                         display: {
@@ -350,6 +355,7 @@ const settingsSchema = {
                     }
                 },
                 exporting: {
+                    id: "exporting",
                     name: "modal.settings.section.storage.exporting",
                     fields: {
                         exportAs: {
@@ -372,6 +378,7 @@ const settingsSchema = {
             icon: "settings-cog",
             sections: {
                 language: {
+                    id: "language",
                     name: "modal.settings.section.system.language",
                     fields: {
                         lang: {
@@ -390,6 +397,7 @@ const settingsSchema = {
                     }
                 },
                 behavior: {
+                    id: "behavior",
                     name: "modal.settings.section.system.behavior",
                     fields: {
                         notifications: {
@@ -408,6 +416,7 @@ const settingsSchema = {
                     }
                 },
                 shortcuts: {
+                    id: "shortcuts",
                     name: "modal.settings.section.system.shortcuts",
                     fields: {
                         entries: {
@@ -424,6 +433,7 @@ const settingsSchema = {
             icon: "lock",
             sections: {
                 lockedNotes: {
+                    id: "lockedNotes",
                     name: "modal.settings.section.security.lockedNotes",
                     fields: {}
                 }
@@ -460,7 +470,6 @@ const isEnabled = field => !field.conditions || check(field.conditions);
 
 function refreshConditions() {
     document.querySelectorAll('[data-path]').forEach((wrapper) => {
-        console.log(wrapper);
         const field = fieldIndex.get(wrapper.dataset.path);
         if (!field) return;
         const enabled = isEnabled(field);
@@ -469,26 +478,36 @@ function refreshConditions() {
     });
 }
 
-function onChange(path, value) {
-    userSettings[path] = value;
-    applications[path]?.();
+function onChange(field, value) {
+    userSettings[field.id] = value;
+    if (userSettings[field.id] == fieldIndex.get(field.id)?.default) delete userSettings[field.id];
+    if (isEnabled(field)) applications[field.id]?.(value);
+    refreshConditions();
+    storeS("settings", userSettings);
+}
+
+function applyInitialSetting(field) {
+    if (isEnabled(field)) applications[field.id]?.(getValue(field.id), true);
     refreshConditions();
 }
 
-const sNavBtnsContainer = document.getElementById("settingsPageButtons");
-const sPagesContainer = document.getElementById("settings-pages");
-function renderSettings() {
-    // render nav buttons * * * * * * * * * *
+function renderNavButtons() {
     Object.values(settingsSchema.pages).forEach((page) => {
         const button = document.createElement("button");
         button.id = "spb-"+page.id;
         button.onclick = () => settingsPage(page.id);
         button.innerHTML = `
             <i class="ti ti-${page.icon}"></i>
-            <span>${t(page.name)}</span>
+            <span data-i18n="settings.page.${page.id}">${t(page.name)}</span>
         `;
         sNavBtnsContainer.appendChild(button);
     });
+}
+
+const sNavBtnsContainer = document.getElementById("settingsPageButtons");
+const sPagesContainer = document.getElementById("settings-pages");
+function renderSettings() {
+    renderNavButtons();
 
     // build ui * * * * * * * * * *
     // yes it's looping through the same base "array" but this is more organized
@@ -505,6 +524,7 @@ function renderSettings() {
             pageElem.appendChild(sectElem);
             const sectHeader = document.createElement("h2");
             sectHeader.innerHTML = `<span data-i18n="${section.name}">${t(section.name)}</span>`;
+            sectHeader.id = `sph-${page.id}-${section.id}`;
             sectElem.appendChild(sectHeader);
             if (section.headerButtons) {
                 section.headerButtons.forEach((btn) => {
@@ -524,6 +544,7 @@ function renderSettings() {
                     `;
                     optionContainer.dataset.path = field.id;
                     optionContainer.appendChild(generateInput(field, onChange, optionContainer));
+                    applyInitialSetting(field);
                 } else if (field.type == "separator") {
                     optionContainer = document.createElement(field.text ? "h3" : "hr");
                     if (field.text) optionContainer.innerText = field.text;
@@ -545,9 +566,102 @@ function renderSettings() {
     refreshConditions();
 }
 
+function setTheme(theme) {
+    for (const name of document.documentElement.classList) {
+        if (name.includes("theme-")) document.documentElement.classList.remove(name);
+    }
+    document.documentElement.classList.add("theme-"+theme);
+}
+
+function fillSmartTypographyTemplate() {
+    const table = document.querySelector("[data-path='editor.smartTypography.shorthands'] > table");
+    console.log(table);
+}
 const applications = {
-    "appearance.theme.theme": () => setTheme(),
-    "appearance.theme.system": () => systemTheme()
+    "appearance.theme.theme": (theme, loading) => {
+        setTheme(theme);
+        if (!loading) notification('success', t("notification.changedTheme", {name: t("theme."+theme)}), t("notificationSource.settings"), 4);
+    },
+    "appearance.theme.system": (checked, loading) => {
+        const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        if (checked) {setTheme(theme)} else {setTheme(getValue("appearance.theme.theme"))};
+        if (!loading) notification('success', t(("notification.systemTheme." + (checked ? "on":"off"))), t("notificationSource.settings"), 4);
+    },
+    "appearance.theme.accentMode": (val, loading) => {
+        if (val == "custom") {
+            document.documentElement.style.setProperty("--accent", getValue("appearance.theme.accentCustom"));
+            document.documentElement.style.setProperty("--accentm", getValue("appearance.theme.accentCustom")+"66");
+            document.documentElement.style.setProperty("--text-highlight", getValue("appearance.theme.accentCustom")+"88");
+        } else {
+            document.documentElement.style.setProperty("--accent", null);
+            document.documentElement.style.setProperty("--accentm", null);
+            document.documentElement.style.setProperty("--text-highlight", null);
+        }
+    },
+    "appearance.theme.accentCustom": (val, loading) => {
+        if (getValue("appearance.theme.accentMode") == "custom") {
+            document.documentElement.style.setProperty("--accent", val);
+            document.documentElement.style.setProperty("--accentm", val+"66");
+            document.documentElement.style.setProperty("--text-highlight", val+"88");
+        }
+    },
+    "appearance.layout.sidebar": (val, loading) => {
+        document.documentElement.classList.remove("lo-nl", "lo-nr");
+        document.documentElement.classList.add("lo-"+val);
+    },
+    "appearance.layout.toolbar": (val, loading) => {
+        document.documentElement.classList.remove("lo-ta", "lo-tb");
+        document.documentElement.classList.add("lo-"+val);
+    },
+    "appearance.panels.corners": (val, loading) => {
+        document.documentElement.style.setProperty("--corners", val+"px");
+    },
+    "appearance.panels.opacity": (val, loading) => {
+        document.documentElement.style.setProperty("--panel-opacity", val);
+    },
+    "appearance.panels.blur": (val, loading) => {
+        document.documentElement.style.setProperty("--panel-blur", val+"px");
+    },
+    "appearance.background.image": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper", `url("${val}")`);
+    },
+    "appearance.background.imageUrl": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper", `url("${val}")`);
+    },
+    "appearance.background.blur": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper-blur", val+"px");
+    },
+    "appearance.background.opacity": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper-opacity", val/100);
+    },
+    "appearance.background.brightness": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper-brightness", (val+100)/100);
+    },
+    "appearance.background.fitMode": (val, loading) => {
+        document.documentElement.style.setProperty("--wallpaper-fit", val);
+        document.documentElement.style.setProperty("--wallpaper-repeat", val == "auto" ? "repeat" : "no-repeat");
+    },
+    "appearance.typography.font": (val, loading) => {
+        document.documentElement.style.setProperty("--font", val);
+    },
+    "appearance.typography.dyslexic": (val, loading) => {
+        document.documentElement.style.setProperty("--font", val == true ? "OpenDyslexic" : getValue("appearance.typography.font"));
+    },
+    "editor.behavior.wrap": (val, loading) => {},
+    "editor.behavior.spellCheck": (val, loading) => {},
+    "editor.behavior.closePairs": (val, loading) => {},
+    "editor.smartTypography.enabled": (val, loading) => {},
+    "editor.smartTypography.shorthands": (val, loading) => {},
+    "storage.management.display": (val, loading) => {},
+    "storage.management.preferredMethod": (val, loading) => {},
+    "storage.exporting.exportAs": (val, loading) => {},
+    "system.language.lang": (code, loading) => {
+        setLocale(code);
+        if (!loading) notification('success', t("notification.languageChanged", {lang: t("language."+code)}), t("notificationSource.settings"));
+    },
+    "system.behavior.notifications": (val, loading) => {},
+    "system.behavior.rememberOpenFolders": (val, loading) => {},
+    "system.shortcuts.entries": (val, loading) => {}
 }
 
 function generateInput(field, onChange, parent) {
@@ -559,7 +673,7 @@ function generateInput(field, onChange, parent) {
             elem.setAttribute("role", "switch");
             elem.checked = getValue(field.id) === true;
             elem.onchange = () => {
-                onChange(field.id, elem.checked);
+                onChange(field, elem.checked);
             };
             break;
         case "dropdown":
@@ -571,8 +685,8 @@ function generateInput(field, onChange, parent) {
                 o.innerHTML = opt.content;
                 elem.appendChild(o);
             });
+            elem.onchange = () => onChange(field, elem.value);
             elem.value = getValue(field.id);
-            elem.onchange = () => onChange(field.id, elem.value);
             break;
         case "slider":
             // setAttribute because custom elem can't just use elem.min etc :<
@@ -582,36 +696,52 @@ function generateInput(field, onChange, parent) {
             elem.setAttribute("step", field.step);
             elem.setAttribute("unit", field.unit);
 
-            elem.setAttribute("value", getValue(field.id));
-            elem.onchange = () => onChange(field.id, elem.getAttribute("value"));
+            elem.value = getValue(field.id);
+            elem.onchange = () => onChange(field, elem.value);
             break;
         case "color":
             elem = document.createElement("wn-color-picker");
 
             elem.value = getValue(field.id);
-            elem.onchange = () => onChange(field.id, elem.value);
+            elem.onchange = () => onChange(field, elem.value);
             break;
         case "text":
             elem = document.createElement("div")
             elem.classList.add("cinput");
-            elem.innerHTML = `<input type="text" placeholder="${field.placeholder ? t(field.placeholder) : ''}" data-i18n-placeholder="${field.placeholder ? field.placeholder : ''}">`;
+            const input = document.createElement("input");
+            input.type = "text";
+            if (field.placeholder) {
+                input.placeholder = t(field.placeholder);
+                input.dataset.i18nPlaceholder = field.placeholder;
+            }
+            input.value = getValue(field.id);
+            input.oninput = () => onChange(field, input.value);
 
-            elem.value = getValue(field.id);
-            elem.onchange = () => onChange(field.id, elem.value);
+            elem.appendChild(input);
             break;
         case "file":
             elem = document.createElement("wn-file-picker");
             elem.setAttribute("accept", field.accept);
 
             elem.value = getValue(field.id);
-            elem.onchange = () => onChange(field.id, elem.value);
+            elem.onchange = () => onChange(field, elem.value);
             break;
         case "dualEditTable":
             elem = document.createElement("table");
-            elem.innerHTML = `<tr><th>Shorthand</th><th>Result Character</th></tr><tr><td>-></td><td>--></td></tr>`;
+            // js the header
+            elem.innerHTML = `<tbody><tr><th>Shorthand</th><th>Result Character</th></tr></tbody>`;
             const newEntryRow = document.createElement("tr");
             newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span>New Entry</span></button></td>`;
-            elem.appendChild(newEntryRow);
+            elem.querySelector('tbody').appendChild(newEntryRow);
+            newEntryRow.querySelector('.new-row').addEventListener("click", () => {
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = "<td contenteditable='plaintext-only'></td><td contenteditable='plaintext-only'></td>";
+                newEntryRow.before(newRow);
+            });
+            // prevent newlines in cells
+            elem.addEventListener('keydown', (e) => {
+                if (e.target.isContentEditable && e.key === 'Enter') e.preventDefault();
+            });
             break;
         case "singleEditTable":
             elem = document.createElement("b");
@@ -629,22 +759,20 @@ function generateInput(field, onChange, parent) {
             elem = document.createElement("b");
             elem.textContent = "[Element could not be rendered.]";
     }
-    console.log(isEnabled(field), field.id);
     parent.classList.toggle("disabled", !isEnabled(field));
     if (!isEnabled(field)) parent.inert = true;
     return elem;
 }
 
-
-
-const spbtnscontainer = document.getElementById("settingsPageButtons");
-const pagescontainer = document.getElementById("settings-pages");
+// NAVIGATION AND UTILITY idk
+var currentSettingsPage;
 // wow im so consistent with name formatting fr T-T
 function settingsPage(name) {
     document.querySelectorAll("#settings-pages>div").forEach((p) => {p.classList.remove("page-current")}); // hide all pages and show the right one
     document.querySelector("#settings-pages>div#sp-"+name).classList.add("page-current");
     document.querySelectorAll("#settingsPageButtons>button").forEach((p) => {p.classList.remove("current")}); // remove highlight from all buttons and give it to the right one
     document.querySelector("#settingsPageButtons>button#spb-"+name).classList.add("current");
+    currentSettingsPage = name;
 }
 
 function openSetting(location) {
@@ -665,66 +793,48 @@ function generateThemeDropdownSchema() {
     });
     return optionsArray;
 }
-/*
-window.addEventListener("load", () => {
-    handleTheme();
+
+// SEARCHING ***********************************************
+const searchBar = document.getElementById("settingsSearchInput");
+
+searchBar.addEventListener("focus", () => {
+    renderSearch();
 });
 
-function changeTheme(name, systemThemeCase = false) {
-    for (const name of document.documentElement.classList) {
-        if (name.includes("theme-")) {
-            document.documentElement.classList.remove(name);
-        }
-    }
-    document.documentElement.classList.add("theme-"+name);
-    if (!systemThemeCase) {
-        storeS("theme", name);
-        notification('success', t("notification.changedTheme", {name: name}), t("notificationSource.settings"), 4);
-    }
-}
-
-themeDropdown.addEventListener("change", () => {
-    changeTheme(themeDropdown.value.toLowerCase());
+searchBar.addEventListener("blur", () => {
+    searchBar.value = "";
+    sNavBtnsContainer.innerHTML = "";
+    renderNavButtons();
+    document.querySelectorAll("#settingsPageButtons>button").forEach((p) => {p.classList.remove("current")}); // remove highlight from all buttons and give it to the right one
+    document.querySelector("#settingsPageButtons>button#spb-"+currentSettingsPage).classList.add("current");
 });
 
-const systemThemeToggle = document.getElementById("systemThemeToggle");
-systemThemeToggle.addEventListener("change", () => {
-    if (systemThemeToggle.checked) {
-        themeDropdown.disabled = true;
-        notification('success', t("notification.systemTheme.on"), t("notificationSource.settings"));
-    } else {
-        themeDropdown.disabled = false;
-        notification('success', t("notification.systemTheme.off"), t("notificationSource.settings"));
-    }
-    storeS("system_theme", systemThemeToggle.checked);
-    handleTheme();
+searchBar.addEventListener("keyup", (e) => {
+    renderSearch();
 });
 
-function handleTheme() {
-    var theme;
-    if (storeL("system_theme") || false) {
-        systemThemeToggle.checked = true;
-        themeDropdown.disabled = true;
-        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    } else {
-        theme = storeL("theme", "dark");
-       
-    } themeDropdown.value = theme;
-    changeTheme(theme, true);
+function renderSearch() {
+    const query = searchBar.value.trim();
+    sNavBtnsContainer.innerHTML = "";
+    refreshSearchObj();
+    const rendered = [];
+    Object.values(settingsSearch).forEach((setting) => {
+        setting.terms.forEach((term) => {
+            if ((term.includes(query) || query == "") && !rendered.includes(setting.name)) {
+                const button = document.createElement("button");
+                button.onpointerdown = (e) => {
+                    e.stopPropagation();
+                    sNavBtnsContainer.innerHTML = "";
+                    renderNavButtons();
+                    openSetting(setting.location);
+                };
+                button.innerHTML = `
+                    <i class="ti ti-${setting.icon}"></i>
+                    <span>${setting.name}</span>
+                `;
+                sNavBtnsContainer.appendChild(button);
+                rendered.push(setting.name);
+            }
+        });
+    });
 }
-
-
-function changeLayout(instruction) {
-    if (instruction == "nr") {
-        document.documentElement.classList.remove('lo-nl');
-        document.documentElement.classList.add('lo-nr');
-        document.querySelectorAll(".layoutoption")[0].classList.remove('selected');
-        document.querySelectorAll(".layoutoption")[1].classList.add('selected');
-    } else {
-        document.documentElement.classList.remove('lo-nr');
-        document.documentElement.classList.add('lo-nl');
-        document.querySelectorAll(".layoutoption")[1].classList.remove('selected');
-        document.querySelectorAll(".layoutoption")[0].classList.add('selected');
-    }
-}
-    */

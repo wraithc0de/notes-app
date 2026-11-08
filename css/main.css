@@ -1,11 +1,20 @@
 * {
     box-sizing: border-box;
+    font-family: var(--font);
 }
 
 :root {
     --nav-w: 200px;
     --font: "Commissioner";
     --corners: 2px;
+    --panel-opacity: 100;
+    --panel-blur: 0px;
+    --wallpaper: url("");
+    --wallpaper-fit: auto;
+    --wallpaper-repeat: no-repeat;
+    --wallpaper-blur: 0px;
+    --wallpaper-opacity: 1.0;
+    --wallpaper-brightness: 1.0;
 }
 
 *::-webkit-scrollbar {
@@ -30,6 +39,9 @@
 *::-webkit-scrollbar-thumb:active {
     cursor: grabbing;
 }
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
 
 .spacer {height: 100%; width: 100%;}
 .flex-break {flex-basis: 100%;}
@@ -45,7 +57,8 @@ i.ti {font-size: 1.2em;}
 }
 
 body {
-    background: var(--bg-2);
+    background-color: var(--bg-2);
+    background-position: center;
     transition: background 0.15s ease;
     color: var(--textb);
     display: flex;
@@ -56,6 +69,23 @@ body {
     font-family: var(--font);
     font-size: 0.8rem;
     overflow: hidden;
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background-image: var(--wallpaper);
+        background-size: var(--wallpaper-fit);
+        background-repeat: var(--wallpaper-repeat);
+        background-position: center;
+        filter: blur(var(--wallpaper-blur)) brightness(var(--wallpaper-brightness));
+        opacity: var(--wallpaper-opacity);
+        transform: scale(1.1);
+        z-index: -1;
+    }
 
     /* GENERAL/STANDARDIZED ELEM STYLES */
     button {
@@ -153,7 +183,8 @@ body {
         z-index: 100;
 
         .dialog-window {
-            background: var(--bg);
+            background: color-mix(in srgb, var(--bg) calc(var(--panel-opacity) * 1%), transparent);
+            backdrop-filter: blur(var(--panel-blur));
             padding: 0.5rem;
             border: 1px solid var(--border-sep);
             border-radius: var(--corners);
@@ -212,6 +243,7 @@ body {
         right: 0;
         padding: 1rem;
         pointer-events: none;
+        z-index: 200;
     }
     .notification {
         background: var(--bg);
@@ -400,7 +432,8 @@ body {
 
         nav {
             width: var(--nav-w);
-            background: var(--bg-2);
+            background: color-mix(in srgb, var(--bg-2) calc(var(--panel-opacity) * 1%), transparent); /* for panel opacity */
+            backdrop-filter: blur(var(--panel-blur));
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
@@ -643,7 +676,7 @@ body {
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg);;
+                transform: translate(-50%, -50%) rotate(90deg);
                 font-size: 1.2rem;
                 box-shadow: 0 0 10px var(--accent);
                 transition: opacity 0.1s ease;
@@ -667,7 +700,7 @@ body {
             display: flex;
             flex-direction: column;
             gap: 0.25rem;
-            background: var(--bg-2);
+            width: 100%;
             max-width: 90vw;
             overflow: hidden;
 
@@ -675,7 +708,6 @@ body {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                background: var(--bg);
                 gap: 0.25rem;
                 overflow: hidden;
 
@@ -824,115 +856,133 @@ body {
         padding-right: 0;
         height: 50vh;
         width: 80vw;
-        max-width: 40rem;
+        max-width: 50rem;
         display: flex;
 
-        header {
-            padding-right: 0.5rem;
+        >header {
+            padding-right: 0.5em;
         }
-    }
 
-    main {
-        display: flex;
-        flex-direction: row;
-        height: calc(100% - 2.5rem); /* fts */
-        width: 100%;
-
-        nav {
-            border-right: 1px solid var(--border-sep);
-            padding-right: 8px;
+        main {
             display: flex;
-            flex-direction: column;
-            padding-bottom: 8px;
-            width: 12rem;
-
-            >div {
-                width: 100%;
-                margin-top: 8px;
-
-                button {
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: 8px;
-                    height: 1.5rem;
-
-                    &.current {
-                        color: var(--textb);
-                        background: var(--accentm);
-                    }
-                }
-            }
-        }
-
-        #settings-pages {
-            padding: 0.5rem 0;
+            flex-direction: row;
+            height: calc(100% - 2.5rem); /* fts */
             width: 100%;
-            padding-right: 0.5rem;
-            overflow-y: scroll;
 
-            /* individual page */
-            >div {
-                display: none;
-                height: 100%;
-                width: 100%;
-
-                &.page-current {
-                    display: block;
-                }
-            }
-
-            section {
+            nav {
+                border-right: 1px solid var(--border-sep);
+                padding-right: 8px;
                 display: flex;
                 flex-direction: column;
-                gap: 0.5rem;
+                padding-bottom: 8px;
+                width: 16rem;
+                max-width: 12rem;
+                flex-grow: 0;
+                flex-shrink: 0;
 
-                &:not(:first-child) {
-                    margin-top: 1rem;
+                #settingsPageButtons {
+                    overflow-y: scroll;
                 }
 
-                &:last-child {
-                    padding-bottom: 1rem;
-                }
-
-                h2 {
+                .cinput {
                     width: 100%;
-                    height: 2em;
-                    border-bottom: 1px solid var(--border-sep);
-                    margin: 0;
-                    margin-bottom: 0.5rem;
-                    display: flex;
-                    gap: 0.25rem;
+                }
 
-                    span {
-                        width: 100%;
-                    }
+                >div {
+                    width: 100%;
+                    margin-top: 8px;
 
                     button {
-                        flex-grow: 0;
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 8px;
+                        height: 1.5rem;
                         white-space: nowrap;
-                        height: 2rem;
-                        background: var(--bg-3);
 
-                        &:hover {
-                            background: var(--btn-highlight);
+                        span {
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
+
+                        &.current {
+                            color: var(--textb);
+                            background: var(--accentm);
                         }
                     }
                 }
-                
-                h3 {
-                    border-bottom: 1px solid var(--border-sep);
-                    height: 1.5rem;
-                    margin: 0;
-                    margin-top: 0.25rem;
+            }
+
+            #settings-pages {
+                padding: 0.5rem 0;
+                width: 100%;
+                padding-right: 0.5rem;
+                overflow-y: scroll;
+
+                /* individual page */
+                >div {
+                    display: none;
+                    height: 100%;
                     width: 100%;
+
+                    &.page-current {
+                        display: block;
+                    }
                 }
 
-                .label-description {
-                    margin-top: 0.25rem;
-                    color: var(--textm);
-                    font-size: 0.8em;
+                section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+
+                    &:not(:first-child) {
+                        margin-top: 1rem;
+                    }
+
+                    &:last-child {
+                        padding-bottom: 1rem;
+                    }
+
+                    h2 {
+                        width: 100%;
+                        height: 2em;
+                        border-bottom: 1px solid var(--border-sep);
+                        margin: 0;
+                        margin-bottom: 0.5rem;
+                        display: flex;
+                        gap: 0.25rem;
+
+                        span {
+                            width: 100%;
+                        }
+
+                        button {
+                            flex-grow: 0;
+                            white-space: nowrap;
+                            height: 2rem;
+                            background: var(--bg-3);
+
+                            &:hover {
+                                background: var(--btn-highlight);
+                            }
+                        }
+                    }
+                    
+                    h3 {
+                        border-bottom: 1px solid var(--border-sep);
+                        height: 1.5rem;
+                        margin: 0;
+                        margin-top: 0.25rem;
+                        width: 100%;
+                    }
+
+                    .label-description {
+                        margin-top: 0.25rem;
+                        color: var(--textm);
+                        font-size: 0.8em;
+                    }
                 }
             }
         }

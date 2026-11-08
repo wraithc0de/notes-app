@@ -1,7 +1,6 @@
 /* nested inside #workspace so my styles take priority without having to spam !important */
 .editor {
     max-width: 100%;
-    background:red;
 }
 
 #workspace {
@@ -11,14 +10,16 @@
 
     .ql-container, .ql-toolbar {
         border: 1px solid var(--border-sep);
-        border-radius: 2px;
+        border-radius: var(--corners);
         width: 100%;
     }
     .ql-container {
-        background: var(--bg);
+        background: color-mix(in srgb, var(--bg) calc(var(--panel-opacity) * 1%), transparent);
+        backdrop-filter: blur(var(--panel-blur));
     }
     .ql-toolbar {
-        background: var(--bg-3);
+        background: color-mix(in srgb, var(--bg-3) calc(var(--panel-opacity) * 1%), transparent);
+        backdrop-filter: blur(var(--panel-blur));
         height: calc(2rem + 2px);
         display: flex;
         align-items: center;
@@ -52,7 +53,7 @@
 
         .ql-picker {
             height: 100%;
-            border-radius: 2px;
+            border-radius: var(--corners);
 
             .ql-picker-label {
                 color: var(--textm);
@@ -62,14 +63,12 @@
                 &:hover {
                     background: var(--btn-highlight);
                 }
-
-
             }
 
             .ql-picker-options {
                 background: var(--bg-3);
                 border: 1px solid var(--border-sep);
-                border-radius: 2px;
+                border-radius: var(--corners);
                 padding: 0;
                 flex-direction: column;
 
@@ -175,7 +174,7 @@
             color: var(--textb);
             background: none;
             border: 1px solid var(--border-m);
-            border-radius: 2px;
+            border-radius: var(--corners);
 
             &:focus {
                 outline: none;

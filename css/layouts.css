@@ -8,3 +8,14 @@
         flex-direction: row-reverse;
     }
 }
+
+.lo-ta {
+    #workspace {
+        flex-direction: column !important;
+    }
+}
+.lo-tb {
+    #workspace {
+        flex-direction: column-reverse !important;
+    }
+}

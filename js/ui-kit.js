@@ -80,11 +80,11 @@ class CustomColorPicker extends HTMLElement {
         this.shadowRoot.innerHTML = `
         <style>
             :host { display: inline-block; font-family: system-ui, -apple-system, sans-serif; }
-            .trigger-btn { display: inline-flex; align-items: center; gap: 0.25rem; background: transparent; border: 1px solid var(--border-m); border-radius: 2px; cursor: pointer; color: var(--textm); user-select: none; padding: 0.25rem 0.5rem; transition: background 0.15s ease; }
+            .trigger-btn { display: inline-flex; align-items: center; gap: 0.25rem; background: transparent; border: 1px solid var(--border-m); border-radius: var(--corners); cursor: pointer; color: var(--textm); user-select: none; padding: 0.25rem 0.5rem; transition: background 0.15s ease; }
             .trigger-btn:hover { background-color: var(--btn-highlight); }
-            .swatch-preview { width: 1em; height: 1em; border-radius: 2px; border: 1px solid var(--border-m); }
+            .swatch-preview { width: 1em; height: 1em; border-radius: var(--corners); border: 1px solid var(--border-m); }
             .hex-string { font-family: monospace; color: var(--textm); }
-            .dropdown-panel { border: 1px solid var(--border-m); border-radius: 2px; padding: 12px; background: var(--bg-2); width: 220px; flex-direction: column; gap: 0.75rem; margin-top: 4px; user-select: none; position-anchor: --trigger; top: anchor(bottom); left: anchor(left); }
+            .dropdown-panel { border: 1px solid var(--border-m); border-radius: var(--corners); padding: 12px; background: var(--bg-2); width: 220px; flex-direction: column; gap: 0.75rem; margin-top: 4px; user-select: none; position-anchor: --trigger; top: anchor(bottom); left: anchor(left); }
             .dropdown-panel:popover-open { display: flex; }
             .sat-area { position: relative; width: 100%; height: 150px; border-radius: 6px; cursor: crosshair; overflow: hidden; touch-action: none; }
             .sat-area::before, .sat-area::after { content: ''; position: absolute; inset: 0; }
@@ -92,7 +92,7 @@ class CustomColorPicker extends HTMLElement {
             .sat-area::after { background: linear-gradient(to top, #000, transparent); }
             .sat-pointer { position: absolute; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 50%; transform: translate(-6px, -6px); pointer-events: none; z-index: 2; box-shadow: 0 0 2px rgba(0,0,0,0.5); }
             .hue-slider { position: relative; width: 100%; height: 12px; border-radius: 6px; cursor: pointer; touch-action: none; background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%); }
-            .hue-pointer { position: absolute; top: -2px; width: 8px; height: 16px; background: var(--textb); border: 1px solid var(--textm); border-radius: 2px; transform: translateX(-4px); pointer-events: none; }
+            .hue-pointer { position: absolute; top: -2px; width: 8px; height: 16px; background: var(--textb); border: 1px solid var(--textm); border-radius: var(--corners); transform: translateX(-4px); pointer-events: none; }
         </style>
         <button type="button" class="trigger-btn" popovertarget="${popoverId}" style="anchor-name: --trigger">
             <div class="swatch-preview"></div>
@@ -194,18 +194,25 @@ class CustomFileInput extends HTMLElement {
 
         this.shadowRoot.innerHTML = `
             <style>
-                :host {display: inline-flex; align-items: center; font-family: inherit; border: 1px solid var(--border-m); border-radius: 2px; height: 100%;}
-                input {border-right: 1px solid var(--border-m); border-radius: 2px;}
+                :host {display: flex; align-items: center; font-family: inherit; border: 1px solid var(--border-m); border-radius: var(--corners); box-sizing: border-box; overflow: hidden;}
+                input {border-right: 1px solid var(--border-m);}
                 input::file-selector-button {background: none; border: none; border-right: 1px solid var(--border-m); color: var(--text); transition: background 0.15s ease; padding: 0.25rem; height: 100%;}
                 input:hover::file-selector-button {background: var(--btn-highlight); cursor: pointer;}
-                .status {display: none; padding: 0 0.5rem; color: var(--text); border-right: 1px solid var(--border-m);}
+                
+                /* Preview Styling */
+                .preview-container {display: none; padding: 0 0.5rem; align-items: center; justify-content: center; border-right: 1px solid var(--border-m); width: 10rem; padding: 0.5rem; height: 100%;}
+                .preview-image {max-height: calc(100% - 0.5rem); width: 100%; object-fit: contain; border-radius: var(--corners);}
+                
                 :host([has-value]) input {display: none;}
-                :host([has-value]) .status {display: inline;}
-                button {background: none; border: none; min-height: 100%; width: 2em; color: var(--text); margin: 0;}
+                :host([has-value]) .preview-container {display: inline-flex;}
+                
+                button {background: none; border: none; width: 2em; color: var(--text); display: inline-flex; align-items: center; justify-content: center; align-self: stretch;}
                 button:hover {cursor: pointer; background: var(--btn-highlight);}
             </style>
             <input type="file">
-            <span class="status">Image set</span>
+            <div class="preview-container">
+                <img class="preview-image" alt="Preview">
+            </div>
             <button type="button" class="tt-b-m" data-tooltip="Clear">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M18 6l-12 12" />
@@ -215,6 +222,7 @@ class CustomFileInput extends HTMLElement {
         `;
 
         this.input = this.shadowRoot.querySelector("input");
+        this.preview = this.shadowRoot.querySelector(".preview-image");
         this.input.accept = "*";
 
         this.input.addEventListener("change", () => this.#readFile());
@@ -229,12 +237,19 @@ class CustomFileInput extends HTMLElement {
         return this.#value;
     }
 
-    // programmatic set: updates display, does NOT fire "change"
+    // Updates display and underlying values
     set value(newValue) {
         this.#value = newValue || "";
         this.internals.setFormValue(this.#value);
         this.toggleAttribute("has-value", !!this.#value);
-        if (!this.#value) this.input.value = "";
+        
+        // Dynamically update the image source or clear it
+        if (this.#value) {
+            this.preview.src = this.#value;
+        } else {
+            this.input.value = "";
+            this.preview.src = "";
+        }
     }
 
     #readFile() {

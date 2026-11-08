@@ -97,6 +97,7 @@ window.addEventListener("load", () => {
 });
 
 async function boot() {
+    alert("Some parts of the app are not polished yet because I ran out of time this week - only appearance section of settings works and some search results may not exist. Most of the language keys for the settings are also missing. Will be finished next week.");
     notesRef = storeL("notes_reference", {});
     folders = storeL("folders", {});
     recentNotes = storeL("recent_notes", []);
