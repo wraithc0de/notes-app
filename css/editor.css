@@ -3,6 +3,7 @@
     max-width: 100%;
 }
 
+
 #workspace {
     max-width: auto;
     min-width: 0;
@@ -20,6 +21,8 @@
     .ql-toolbar {
         background: color-mix(in srgb, var(--bg-3) calc(var(--panel-opacity) * 1%), transparent);
         backdrop-filter: blur(var(--panel-blur));
+        position: relative;
+        z-index: 1;
         height: calc(2rem + 2px);
         display: flex;
         align-items: center;
@@ -107,6 +110,7 @@
     .ql-editor {
         overflow: scroll;
         max-width: 100%;
+        z-index: -1;
 
         &.nowrap {
             white-space: pre;
@@ -187,4 +191,3 @@
         }
     }
 }
-

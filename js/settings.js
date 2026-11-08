@@ -779,7 +779,14 @@ function openSetting(location) {
     const [page, header] = location.split(".");
     openDialog("settings");
     settingsPage(page);
-    document.getElementById(`sph-${page}-${header}`).scrollIntoView();
+    const targetElement = document.getElementById(`sph-${page}-${header}`);
+
+    if (targetElement) {
+    sPagesContainer.scrollTo({
+        top: targetElement.offsetTop,
+        behavior: "smooth"
+    });
+    }
 }
 
 
