@@ -44,6 +44,8 @@ const refreshSearchObj = () => settingsSearch = {
 function initSettings() {
     refreshSearchObj();
     refreshShortcuts();
+    SHORTHANDS = getValue("editor.smartTypography.shorthands")
+        .map(({find, replace, id}) => ({find, replace, id: id ?? generateId(16)}));
     renderSettings();
     settingsPage('editor');
 }
@@ -357,9 +359,9 @@ const settingsSchema = {
                             id: "editor.smartTypography.shorthands",
                             type: "dualEditTable",
                             default: [
-                                { find: '--', replace: '—' },
-                                { find: '...', replace: '…' },
-                                { find: '->', replace: '→' }
+                                { find: '--', replace: '—', id: 'jei2878b3rja7eg5' },
+                                { find: '...', replace: '…', id: 'jei2878b3rja7eg6' },
+                                { find: '->', replace: '→', id: 'jei2878b3rja7eg7' }
                             ],
                             conditions: [
                                 {field: "editor.smartTypography.enabled", equals: true}
@@ -682,8 +684,120 @@ function setTheme(theme) {
 }
 
 function fillSmartTypographyTemplate() {
-    const table = document.querySelector("[data-path='editor.smartTypography.shorthands'] > table");
-    console.log(table);
+    const template = [
+        { find: "--", replace: "—", id: "a1a1a1a1a1a1a1a1" },
+        { find: "...", replace: "…", id: "a2a2a2a2a2a2a2a2" },
+        { find: "->", replace: "→", id: "a4a4a4a4a4a4a4a4" },
+        { find: "<-", replace: "←", id: "a5a5a5a5a5a5a5a5" },
+        { find: "<->", replace: "↔", id: "a6a6a6a6a6a6a6a6" },
+        { find: "=>", replace: "⇒", id: "a7a7a7a7a7a7a7a7" },
+        { find: "!=", replace: "≠", id: "a8a8a8a8a8a8a8a8" },
+        { find: "<=", replace: "≤", id: "a9a9a9a9a9a9a9a9" },
+        { find: ">=", replace: "≥", id: "a0a0a0a0a0a0a0a0" },
+        { find: "+-", replace: "±", id: "b1b1b1b1b1b1b1b1" },
+        { find: "(c)", replace: "©", id: "b2b2b2b2b2b2b2b2" },
+        { find: "(r)", replace: "®", id: "b3b3b3b3b3b3b3b3" },
+        { find: "(tm)", replace: "™", id: "b4b4b4b4b4b4b4b4" },
+        { find: "1/2", replace: "½", id: "b5b5b5b5b5b5b5b5" },
+        { find: "1/4", replace: "¼", id: "b6b6b6b6b6b6b6b6" },
+        { find: "3/4", replace: "¾", id: "b7b7b7b7b7b7b7b7" },
+        { find: "deg", replace: "°", id: "b8b8b8b8b8b8b8b8" },
+        { find: " x ", replace: " × ", id: "b9b9b9b9b9b9b9b9" },
+        { find: "?!", replace: "‽", id: "b0b0b0b0b0b0b0b0" },
+
+        { find: "1/3", replace: "⅓", id: "c1c1c1c1c1c1c1c1" },
+        { find: "2/3", replace: "⅔", id: "c2c2c2c2c2c2c2c2" },
+        { find: "1/5", replace: "⅕", id: "c3c3c3c3c3c3c3c3" },
+        { find: "2/5", replace: "⅖", id: "c4c4c4c4c4c4c4c4" },
+        { find: "3/5", replace: "⅗", id: "c5c5c5c5c5c5c5c5" },
+        { find: "4/5", replace: "⅘", id: "c6c6c6c6c6c6c6c6" },
+        { find: "1/6", replace: "⅙", id: "c7c7c7c7c7c7c7c7" },
+        { find: "5/6", replace: "⅚", id: "c8c8c8c8c8c8c8c8" },
+        { find: "1/8", replace: "⅛", id: "c9c9c9c9c9c9c9c9" },
+        { find: "3/8", replace: "⅜", id: "c0c0c0c0c0c0c0c0" },
+        { find: "5/8", replace: "⅝", id: "d1d1d1d1d1d1d1d1" },
+        { find: "7/8", replace: "⅞", id: "d2d2d2d2d2d2d2d2" },
+        { find: "~=", replace: "≈", id: "d3d3d3d3d3d3d3d3" },
+        { find: "===", replace: "≡", id: "d4d4d4d4d4d4d4d4" },
+        { find: " / ", replace: " ÷ ", id: "d5d5d5d5d5d5d5d5" },
+        { find: "sqrt", replace: "√", id: "d6d6d6d6d6d6d6d6" },
+        { find: "inf", replace: "∞", id: "d7d7d7d7d7d7d7d7" },
+        { find: "pi", replace: "π", id: "d8d8d8d8d8d8d8d8" },
+        { find: "^2", replace: "²", id: "d9d9d9d9d9d9d9d9" },
+        { find: "^3", replace: "³", id: "d0d0d0d0d0d0d0d0" },
+
+        { find: "<<", replace: "«", id: "e1e1e1e1e1e1e1e1" },
+        { find: ">>", replace: "»", id: "e2e2e2e2e2e2e2e2" },
+        { find: "(p)", replace: "℗", id: "e3e3e3e3e3e3e3e3" },
+        { find: "(sm)", replace: "℠", id: "e4e4e4e4e4e4e4e4" },
+        { find: "sec*", replace: "§", id: "e5e5e5e5e5e5e5e5" },
+        { find: "para*", replace: "¶", id: "e6e6e6e6e6e6e6e6" },
+        { find: "dag*", replace: "†", id: "e7e7e7e7e7e7e7e7" },
+        { find: "ddag*", replace: "‡", id: "e8e8e8e8e8e8e8e8" },
+        { find: "bull*", replace: "•", id: "e9e9e9e9e9e9e9e9" },
+        { find: "permil", replace: "‰", id: "e0e0e0e0e0e0e0e0" },
+        { find: ",,", replace: "„", id: "f1f1f1f1f1f1f1f1" },
+        { find: "''", replace: "”", id: "f2f2f2f2f2f2f2f2" },
+        { find: "``", replace: "“", id: "f3f3f3f3f3f3f3f3" },
+        { find: " !", replace: "!", id: "f4f4f4f4f4f4f4f4" },
+        { find: " ?", replace: "?", id: "f5f5f5f5f5f5f5f5" },
+        { find: " ,", replace: ",", id: "f6f6f6f6f6f6f6f6" },
+        { find: " .", replace: ".", id: "f7f7f7f7f7f7f7f7" },
+        { find: " ;", replace: ";", id: "f8f8f8f8f8f8f8f8" },
+        { find: " :", replace: ":", id: "f9f9f9f9f9f9f9f9" },
+        { find: " - ", replace: " – ", id: "f0f0f0f0f0f0f0f0" },
+
+        { find: "<=", replace: "⇐", id: "g1g1g1g1g1g1g1g1" },
+        { find: "<=>", replace: "⇔", id: "g2g2g2g2g2g2g2g2" },
+        { find: "^|", replace: "↑", id: "g3g3g3g3g3g3g3g3" },
+        { find: "v|", replace: "↓", id: "g4g4g4g4g4g4g4g4" },
+        { find: "[]", replace: "☐", id: "g5g5g5g5g5g5g5g5" },
+        { find: "[x]", replace: "☑", id: "g6g6g6g6g6g6g6g6" },
+        { find: "[/]", replace: "✓", id: "g7g7g7g7g7g7g7g7" },
+        { find: "[!]", replace: "⚠", id: "g8g8g8g8g8g8g8g8" },
+        { find: "(*)", replace: "★", id: "g9g9g9g9g9g9g9g9" },
+        { find: "( )", replace: "☆", id: "g0g0g0g0g0g0g0g0" },
+        { find: "EUR", replace: "€", id: "h1h1h1h1h1h1h1h1" },
+        { find: "GBP", replace: "£", id: "h2h2h2h2h2h2h2h2" },
+        { find: "JPY", replace: "¥", id: "h3h3h3h3h3h3h3h3" },
+        { find: "cent*", replace: "¢", id: "h4h4h4h4h4h4h4h4" },
+        { find: "INR", replace: "₹", id: "h5h5h5h5h5h5h5h5" },
+        { find: "KRW", replace: "₩", id: "h6h6h6h6h6h6h6h6" },
+        { find: "BTC", replace: "₿", id: "h7h7h7h7h7h7h7h7" },
+        { find: "cmd*", replace: "⌘", id: "h8h8h8h8h8h8h8h8" },
+        { find: "opt*", replace: "⌥", id: "h9h9h9h9h9h9h9h9" },
+        { find: "shft*", replace: "⇧", id: "h0h0h0h0h0h0h0h0" },
+
+        { find: "dont", replace: "don't", id: "i1i1i1i1i1i1i1i1" },
+        { find: "cant", replace: "can't", id: "i2i2i2i2i2i2i2i2" },
+        { find: "wont", replace: "won't", id: "i3i3i3i3i3i3i3i3" },
+        { find: "didnt", replace: "didn't", id: "i4i4i4i4i4i4i4i4" },
+        { find: "isnt", replace: "isn't", id: "i5i5i5i5i5i5i5i5" },
+        { find: "arent", replace: "arent", id: "i6i6i6i6i6i6i6i6" },
+        { find: "wasnt", replace: "wasn't", id: "i7i7i7i7i7i7i7i7" },
+        { find: "werent", replace: "weren't", id: "i8i8i8i8i8i8i8i8" },
+        { find: "havent", replace: "haven't", id: "i9i9i9i9i9i9i9i9" },
+        { find: "hasnt", replace: "hasn't", id: "i0i0i0i0i0i0i0i0" },
+        { find: "shouldnt", replace: "shouldn't", id: "j1j1j1j1j1j1j1j1" },
+        { find: "wouldnt", replace: "wouldn't", id: "j2j2j2j2j2j2j2j2" },
+        { find: "couldnt", replace: "couldn't", id: "j3j3j3j3j3j3j3j3" },
+        { find: "im ", replace: "I'm ", id: "j4j4j4j4j4j4j4j4" },
+        { find: "ive ", replace: "I've ", id: "j5j5j5j5j5j5j5j5" },
+        { find: "id ", replace: "I'd ", id: "j6j6j6j6j6j6j6j6" },
+        { find: "ill ", replace: "I'll ", id: "j7j7j7j7j7j7j7j7" },
+        { find: "youre", replace: "you're", id: "j8j8j8j8j8j8j8j8" },
+        { find: "theyre", replace: "they're", id: "j9j9j9j9j9j9j9j9" },
+        { find: "thats", replace: "that's", id: "j0j0j0j0j0j0j0j0" }
+    ];
+    const newEntryRow = document.querySelector(
+        "[data-path='editor.smartTypography.shorthands'] .new-row"
+    ).closest("tr");
+    const tableBody = newEntryRow.parentElement;
+
+    tableBody.querySelectorAll("tr[data-id]").forEach((row) => row.remove());
+    SHORTHANDS = template;
+    template.forEach((pair) => newEntryRow.before(createShorthandRow(pair)));
+    onChange(fieldIndex.get("editor.smartTypography.shorthands"), SHORTHANDS);
 }
 const applications = {
     "appearance.theme.theme": (theme, loading) => {
@@ -780,10 +894,10 @@ const applications = {
         CLOSEPAIRS_ENABLED = val;
     },
     "editor.smartTypography.enabled": (val, loading) => {
-
+        SMARTTYPOGRAPHY_ENABLED = val;
     },
     "editor.smartTypography.shorthands": (val, loading) => {
-
+        quill.getModule("smartTypography").setRules(val);
     },
     "storage.management.display": (val, loading) => {
 
@@ -822,7 +936,8 @@ const applications = {
         if (!loading) console.log("User notes have been cleared.")
     }
 }
-
+var createShorthandRow;
+var SHORTHANDS = [];
 function generateInput(field, onChange, parent) {
     let elem;
     switch (field.type) {
@@ -896,13 +1011,53 @@ function generateInput(field, onChange, parent) {
             // js the header
             elem.innerHTML = `<tbody><tr><th data-i18n="settingInput.dualTable.header.shorthand">${t("settingInput.dualTable.header.shorthand")}</th><th data-i18n="settingInput.dualTable.header.result">${t("settingInput.dualTable.header.result")}</th></tr></tbody>`;
             const newEntryRow = document.createElement("tr");
+            newEntryRow.id = "newEntryRow";
             newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span data-i18n="settingInput.dualTable.button.newEntry">${t("settingInput.dualTable.button.newEntry")}</span></button></td>`;
             elem.querySelector('tbody').appendChild(newEntryRow);
-            newEntryRow.querySelector('.new-row').addEventListener("click", () => {
-                const newRow = document.createElement("tr");
-                newRow.innerHTML = "<td contenteditable='plaintext-only'></td><td contenteditable='plaintext-only'></td>";
-                newEntryRow.before(newRow);
+            createShorthandRow = (pair) => {
+                const row = document.createElement("tr");
+                row.dataset.id = pair.id;
+                row.innerHTML = `
+                    <td contenteditable="plaintext-only" data-rule-property="find"></td>
+                    <td contenteditable="plaintext-only" data-rule-property="replace"></td>
+                `;
+                const cells = row.querySelectorAll("td");
+                cells.forEach((cell) => {
+                    cell.textContent = pair[cell.dataset.ruleProperty];
+                    cell.addEventListener("input", () => {
+                        const rule = SHORTHANDS.find(({id}) => id === row.dataset.id);
+                        rule[cell.dataset.ruleProperty] = cell.textContent;
+                        onChange(field, SHORTHANDS);
+                    });
+                });
+                row.addEventListener("focusout", (e) => {
+                    if (row.contains(e.relatedTarget)) return;
+                    const isEmpty = Array.from(cells).every(cell => !cell.textContent.trim());
+                    if (isEmpty) {
+                        SHORTHANDS = SHORTHANDS.filter(({id}) => id !== row.dataset.id);
+                        row.remove();
+                        onChange(field, SHORTHANDS);
+                    }
+                });
+                return row;
+            };
+
+            SHORTHANDS.forEach((pair) => {
+                newEntryRow.before(createShorthandRow(pair));
             });
+
+            newEntryRow.querySelector(".new-row").addEventListener("click", () => {
+                const pair = {find: "", replace: "", id: generateId(16)};
+                SHORTHANDS.push(pair);
+                const row = createShorthandRow(pair);
+                newEntryRow.before(row);
+                onChange(field, SHORTHANDS);
+                row.querySelector("[data-rule-property='find']").focus();
+                row.querySelector("[data-rule-property='find']").addEventListener("beforeinput", (e) => {
+                    if (!e.inputType.startsWith("delete") && e.currentTarget.textContent.length >= 6) e.preventDefault();
+                });
+            });
+
             // prevent newlines in cells
             elem.addEventListener('keydown', (e) => {
                 if (e.target.isContentEditable && e.key === 'Enter') e.preventDefault();

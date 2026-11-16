@@ -60,7 +60,7 @@ class SmartTypography {
         });
         // check typed text against user rules when a space is typed
         this.quill.on('text-change', (delta, oldDelta, source) => {
-            if (source !== 'user') return;
+            if (source !== 'user' || SMARTTYPOGRAPHY_ENABLED == false) return;
             let cursorIndex = 0;
             let insertedSpace = false;
 
@@ -85,9 +85,14 @@ class SmartTypography {
                     const replaceIndex = textEndIndex - rule.find.length;
 
                     this.quill.history.cutoff();
-                    this.quill.deleteText(replaceIndex, rule.find.length, 'user');
-                    this.quill.insertText(replaceIndex, rule.replace, 'user');
-                    this.quill.setSelection(replaceIndex + rule.replace.length + 1, 0, 'silent');
+                    this.quill.deleteText(replaceIndex, rule.find.length, 'api');
+                    this.quill.insertText(replaceIndex, rule.replace, 'api');
+
+                    const targetCursor = replaceIndex + rule.replace.length + 1;
+                    queueMicrotask(() => {
+                        this.quill.setSelection(targetCursor, 0, 'silent');
+                    });
+
                     this.flashText(replaceIndex, rule.replace.length);
                     this.lastReplacement = {
                         index: replaceIndex,

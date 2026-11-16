@@ -32,8 +32,8 @@
         </div>
         
         <header>
-            <div class="header-dropdown">
-                <button data-i18n="header.button.file">File</button>
+            <div class="header-dropdown" inert>
+                <button data-i18n="header.button.file" style="color: var(--textm)">File</button>
                 <div>
                     <button><span data-i18n="header.file.export">Export</span> <kbd>Ctrl + E</kbd></button>
                     <button><span data-i18n="header.file.import">Import</span> <kbd>Ctrl + Y</kbd></button>
@@ -44,9 +44,9 @@
                 <div>
                     <button data-i18n="header.tools.wordcounter" onclick="document.getElementById('wordCounter').classList.toggle('open')">Word Counter</button>
                     <div class="header-dropdown">
-                        <button data-i18n="app.global.placeholder">Placeholder</button>
+                        <button>Nested Folder</button>
                         <div>
-                            <button><span data-i18n="app.global.placeholder">Placeholder</span></button>
+                            <button><span>Demo</span></button>
                         </div>
                     </div>
                 </div>
