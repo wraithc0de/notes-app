@@ -957,37 +957,49 @@ function generateInput(field, onChange, parent) {
 
             function generate(section) {
                 const max = 5242880;
-                const total = Object.entries(localStorage).flat().join("").length * 2; // 2 bytes / UTF-16 char
-                const inflation = Math.pow(Math.min(1, total/max), 0.35);
-                const totalNotes = Object.entries(localStorage).filter(([key]) => key.includes("note_")).flat().join("").length * 2;
-                const totalSettings = localStorage.settings.length * 2;
-                const totalOther = total - (totalSettings + totalNotes);
-                const percentUsed = (total/max*100).toFixed(2);
+                const entries = Object.entries(localStorage);
+                const total = entries.flat().join("").length * 2; // 2 bytes / UTF-16 char
+                const totalNotes = entries
+                    .filter(([key]) => key.includes("note_"))
+                    .flat()
+                    .join("").length * 2;
+                const totalSettings = (localStorage.settings ?? "").length * 2;
+                const totalOther = Math.max(0, total - (totalSettings + totalNotes));
+
+                const inflation = Math.pow(Math.min(1, total / max), 0.35);
+                const percentUsed = ((total / max) * 100).toFixed(2);
                 const totalDeg = inflation * 360;
-                const notesDeg = (totalNotes / total) * totalDeg;
-                const settingsDeg = notesDeg + (totalSettings / total) * totalDeg;
-                const otherDeg = settingsDeg + (totalOther / total) * totalDeg;
+
+                // 2. Prevent division by zero (NaN) when localStorage is completely empty
+                const notesDeg = total > 0 ? (totalNotes / total) * totalDeg : 0;
+                const settingsDeg = total > 0 ? notesDeg + (totalSettings / total) * totalDeg : 0;
+                const otherDeg = total > 0 ? settingsDeg + (totalOther / total) * totalDeg : 0;
+
                 const gradient = `
                     color-mix(in oklch, var(--accent) 100%, var(--textb)) 0deg ${notesDeg}deg, 
                     color-mix(in oklch, var(--accent) 65%, var(--textb)) ${notesDeg}deg ${settingsDeg}deg, 
                     color-mix(in oklch, var(--accent) 35%, var(--textb)) ${settingsDeg}deg ${otherDeg}deg,
                     var(--bg-3) ${totalDeg}deg 360deg`;
-                if (section == "gradient") return gradient;
+                if (section === "gradient") return gradient;
+
                 const list = `
                     <span class="size">${formatBytes(total)} / ${formatBytes(max)} (${percentUsed}%)</span>
                     <li style="--bullet-color: color-mix(in oklch, var(--accent) 100%, var(--textb))"><span data-i18n="settings.storageDisplay.part.notes">${t("settings.storageDisplay.part.notes")}</span><span class="size">${formatBytes(totalNotes)}</span></li>
                     <li style="--bullet-color: color-mix(in oklch, var(--accent) 65%, var(--textb))"><span data-i18n="settings.storageDisplay.part.settings">${t("settings.storageDisplay.part.settings")}</span><span class="size">${formatBytes(totalSettings)}</span></li>
                     <li style="--bullet-color: color-mix(in oklch, var(--accent) 35%, var(--textb))"><span data-i18n="settings.storageDisplay.part.other">${t("settings.storageDisplay.part.other")}</span><span class="size">${formatBytes(totalOther)}</span></li>
                 `;
-                if (section == "list") return list;
+                if (section === "list") return list;
+
                 const thresholds = [95, 80];
-                const statusColor = percentUsed > thresholds[0] ? "var(--danger)" : percentUsed > thresholds[1] ? "var(--warning)" : "var(--success)";
-                const statusText = percentUsed > thresholds[0] ? "Almost Full" : percentUsed > thresholds[1] ? "Getting Low" : "Healthy";
+                const numericPercent = (total / max) * 100;
+                const statusColor = numericPercent > thresholds[0] ? "var(--danger)" : numericPercent > thresholds[1] ? "var(--warning)" : "var(--success)";
+                const statusText = numericPercent > thresholds[0] ? "Almost Full" : numericPercent > thresholds[1] ? "Getting Low" : "Healthy";
                 const status = `
                     <span style="color: ${statusColor};">● ${statusText}</span>
                 `;
-                if (section == "status") return status;
+                if (section === "status") return status;
             }
+
             break;
         case "keysEntry":
             elem = document.createElement("button");
