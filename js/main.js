@@ -1,6 +1,13 @@
 var dialogs = document.querySelectorAll(".dialog-container");
 
+function closeAllDialogs() {
+    document.querySelectorAll(".dialog-container").forEach(dialog => {
+        dialog.classList.remove("dialog-open");
+    });
+}
+
 function openDialog(id) {
+    closeAllDialogs();
     document.getElementById("dialog-"+id).classList.add("dialog-open");
 }
 
@@ -25,8 +32,9 @@ dialogs.forEach(dialog => {
         if (event.key === "Escape") { closeDialogByPointer(dialog); }
     });
 });
-
+var NOTIFS_ENABLED = true;
 function notification(type = '', content, from = t("notificationSource.default"), length = 3) {
+    if (!NOTIFS_ENABLED) return;
     const notif = document.createElement("div");
     notif.classList.add("notification");
     notif.classList.add("n-"+type);
@@ -97,7 +105,6 @@ window.addEventListener("load", () => {
 });
 
 async function boot() {
-    alert("Some parts of the app are not polished yet because I ran out of time this week - only appearance section of settings works and some search results may not exist. Most of the language keys for the settings are also missing. Will be finished next week.");
     notesRef = storeL("notes_reference", {});
     folders = storeL("folders", {});
     recentNotes = storeL("recent_notes", []);
@@ -128,4 +135,5 @@ setInterval(() => {
         noteContents[currentNote] = quill.getContents();
         storeS("note_"+currentNote, noteContents[currentNote]);
     }
+    updateWordCounter();
 }, 500);

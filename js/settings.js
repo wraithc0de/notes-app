@@ -2,44 +2,52 @@ var settingsSearch;
 const refreshSearchObj = () => settingsSearch = {
     "appearance.theme.theme": {name: t("setting.appearance.theme.theme"), icon: "color-swatch", id: "appearance.theme.theme", terms: t("setting.appearance.theme.theme.searchTerms"), location: "appearance.theme"},
     "appearance.theme.system": {name: t("setting.appearance.theme.system"), icon: "brightness-half", id: "appearance.theme.system", terms: t("setting.appearance.theme.system.searchTerms"), location: "appearance.theme"},
-    "appearance.theme.accent.mode": {name: t("setting.appearance.theme.accent.mode"), icon: "brush", id: "appearance.theme.accent.mode", terms: t("setting.appearance.theme.accent.mode.searchTerms"), location: "appearance.theme"},
-    "appearance.theme.accent.custom": {name: t("setting.appearance.theme.accent.custom"), icon: "color-picker", id: "appearance.theme.accent.custom", terms: t("setting.appearance.theme.accent.custom.searchTerms"), location: "appearance.theme"},
+    "appearance.theme.accentMode": {name: t("setting.appearance.theme.accentMode"), icon: "brush", id: "appearance.theme.accentMode", terms: t("setting.appearance.theme.accentMode.searchTerms"), location: "appearance.theme"},
+    "appearance.theme.accentCustom": {name: t("setting.appearance.theme.accentCustom"), icon: "color-picker", id: "appearance.theme.accentCustom", terms: t("setting.appearance.theme.accentCustom.searchTerms"), location: "appearance.theme"},
     "appearance.layout.sidebar": {name: t("setting.appearance.layout.sidebar"), icon: "layout-sidebar", id: "appearance.layout.sidebar", terms: t("setting.appearance.layout.sidebar.searchTerms"), location: "appearance.layout"},
     "appearance.layout.toolbar": {name: t("setting.appearance.layout.toolbar"), icon: "layout-navbar", id: "appearance.layout.toolbar", terms: t("setting.appearance.layout.toolbar.searchTerms"), location: "appearance.layout"},
-    "appearance.panels.radius": {name: t("setting.appearance.panels.radius"), icon: "border-radius", id: "appearance.panels.radius", terms: t("setting.appearance.panels.radius.searchTerms"), location: "appearance.panels"},
+    "appearance.panels.corners": {name: t("setting.appearance.panels.corners"), icon: "border-radius", id: "appearance.panels.corners", terms: t("setting.appearance.panels.corners.searchTerms"), location: "appearance.panels"},
     "appearance.panels.opacity": {name: t("setting.appearance.panels.opacity"), icon: "opacity", id: "appearance.panels.opacity", terms: t("setting.appearance.panels.opacity.searchTerms"), location: "appearance.panels"},
-    "appearance.background.enabled": {name: t("setting.appearance.background.enabled"), icon: "background", id: "appearance.background.enabled", terms: t("setting.appearance.background.enabled.searchTerms"), location: "appearance.background"},
-    "appearance.background.image.source": {name: t("setting.appearance.background.image.source"), icon: "photo", id: "appearance.background.image.source", terms: t("setting.appearance.background.image.source.searchTerms"), location: "appearance.background"},
-    "appearance.background.image.blur": {name: t("setting.appearance.background.image.blur"), icon: "blur", id: "appearance.background.image.blur", terms: t("setting.appearance.background.image.blur.searchTerms"), location: "appearance.background"},
-    "appearance.background.image.dim": {name: t("setting.appearance.background.image.dim"), icon: "brightness-down", id: "appearance.background.image.dim", terms: t("setting.appearance.background.image.dim.searchTerms"), location: "appearance.background"},
-    "appearance.background.image.opacity": {name: t("setting.appearance.background.image.opacity"), icon: "opacity", id: "appearance.background.image.opacity", terms: t("setting.appearance.background.image.opacity.searchTerms"), location: "appearance.background"},
-    "appearance.background.image.fit": {name: t("setting.appearance.background.image.fit"), icon: "aspect-ratio", id: "appearance.background.image.fit", terms: t("setting.appearance.background.image.fit.searchTerms"), location: "appearance.background"},
+    "appearance.panels.blur": {name: t("setting.appearance.panels.blur"), icon: "blur", id: "appearance.panels.blur", terms: t("setting.appearance.panels.blur.searchTerms"), location: "appearance.panels"},
+    "appearance.background.image": {name: t("setting.appearance.background.image"), icon: "photo", id: "appearance.background.image", terms: t("setting.appearance.background.image.searchTerms"), location: "appearance.background"},
+    "appearance.background.imageUrl": {name: t("setting.appearance.background.imageUrl"), icon: "link", id: "appearance.background.imageUrl", terms: t("setting.appearance.background.imageUrl.searchTerms"), location: "appearance.background"},
+    "appearance.background.blur": {name: t("setting.appearance.background.blur"), icon: "blur", id: "appearance.background.blur", terms: t("setting.appearance.background.blur.searchTerms"), location: "appearance.background"},
+    "appearance.background.opacity": {name: t("setting.appearance.background.opacity"), icon: "opacity", id: "appearance.background.opacity", terms: t("setting.appearance.background.opacity.searchTerms"), location: "appearance.background"},
+    "appearance.background.brightness": {name: t("setting.appearance.background.brightness"), icon: "brightness-down", id: "appearance.background.brightness", terms: t("setting.appearance.background.brightness.searchTerms"), location: "appearance.background"},
+    "appearance.background.fitMode": {name: t("setting.appearance.background.fitMode"), icon: "aspect-ratio", id: "appearance.background.fitMode", terms: t("setting.appearance.background.fitMode.searchTerms"), location: "appearance.background"},
     "appearance.typography.font": {name: t("setting.appearance.typography.font"), icon: "typography", id: "appearance.typography.font", terms: t("setting.appearance.typography.font.searchTerms"), location: "appearance.typography"},
     "appearance.typography.dyslexic": {name: t("setting.appearance.typography.dyslexic"), icon: "accessible", id: "appearance.typography.dyslexic", terms: t("setting.appearance.typography.dyslexic.searchTerms"), location: "appearance.typography"},
+    "appearance.tab.name": {name: t("setting.appearance.tab.name"), icon: "browser", id: "appearance.tab.name", terms: t("setting.appearance.tab.name.searchTerms"), location: "appearance.tab"},
+    "appearance.tab.icon": {name: t("setting.appearance.tab.icon"), icon: "photo", id: "appearance.tab.icon", terms: t("setting.appearance.tab.icon.searchTerms"), location: "appearance.tab"},
 
     "editor.behavior.wrap": {name: t("setting.editor.behavior.wrap"), icon: "text-wrap", id: "editor.behavior.wrap", terms: t("setting.editor.behavior.wrap.searchTerms"), location: "editor.behavior"},
+    "editor.behavior.checkedCrossout": {name: t("setting.editor.behavior.checkedCrossout"), icon: "list-check", id: "editor.behavior.checkedCrossout", terms: t("setting.editor.behavior.checkedCrossout.searchTerms"), location: "editor.behavior"},
     "editor.behavior.spellCheck": {name: t("setting.editor.behavior.spellCheck"), icon: "text-spellcheck", id: "editor.behavior.spellCheck", terms: t("setting.editor.behavior.spellCheck.searchTerms"), location: "editor.behavior"},
     "editor.behavior.closePairs": {name: t("setting.editor.behavior.closePairs"), icon: "brackets", id: "editor.behavior.closePairs", terms: t("setting.editor.behavior.closePairs.searchTerms"), location: "editor.behavior"},
+    "editor.smartTypography.enabled": {name: t("setting.editor.smartTypography.enabled"), icon: "replace", id: "editor.smartTypography.enabled", terms: t("setting.editor.smartTypography.enabled.searchTerms"), location: "editor.smartTypography"},
     "editor.smartTypography.shorthands": {name: t("setting.editor.smartTypography.shorthands"), icon: "replace", id: "editor.smartTypography.shorthands", terms: t("setting.editor.smartTypography.shorthands.searchTerms"), location: "editor.smartTypography"},
 
-    "storage.storageMethod.preferredMethod": {name: t("setting.storage.storageMethod.preferredMethod"), icon: "database", id: "storage.storageMethod.preferredMethod", terms: t("setting.storage.storageMethod.preferredMethod.searchTerms"), location: "storage.storageMethod"},
+    "storage.management.preferredMethod": {name: t("setting.storage.management.preferredMethod"), icon: "database", id: "storage.management.preferredMethod", terms: t("setting.storage.management.preferredMethod.searchTerms"), location: "storage.management"},
     "storage.exporting.exportAs": {name: t("setting.storage.exporting.exportAs"), icon: "file-export", id: "storage.exporting.exportAs", terms: t("setting.storage.exporting.exportAs.searchTerms"), location: "storage.exporting"},
 
     "system.language.lang": {name: t("setting.system.language.lang"), icon: "language", id: "system.language.lang", terms: t("setting.system.language.lang.searchTerms"), location: "system.language"},
-    "system.shortcuts": {name: t("setting.system.shortcuts"), icon: "keyboard", id: "system.shortcuts", terms: t("setting.system.shortcuts.searchTerms"), location: "system.shortcuts"},
     "system.behavior.notifications": {name: t("setting.system.behavior.notifications"), icon: "bell", id: "system.behavior.notifications", terms: t("setting.system.behavior.notifications.searchTerms"), location: "system.behavior"},
     "system.behavior.rememberOpenFolders": {name: t("setting.system.behavior.rememberOpenFolders"), icon: "folder-open", id: "system.behavior.rememberOpenFolders", terms: t("setting.system.behavior.rememberOpenFolders.searchTerms"), location: "system.behavior"},
+    "system.behavior.newNoteAction": {name: t("setting.system.behavior.newNoteAction"), icon: "file-plus", id: "system.behavior.newNoteAction", terms: t("setting.system.behavior.newNoteAction.searchTerms"), location: "system.behavior"},
+    "system.behavior.newNoteCustomPlaceholder": {name: t("setting.system.behavior.newNoteCustomPlaceholder"), icon: "text-recognition", id: "system.behavior.newNoteCustomContent", terms: t("setting.system.behavior.newNoteCustomPlaceholder.searchTerms"), location: "system.behavior"},
+    "system.shortcuts.entries": {name: t("setting.system.shortcuts.entries"), icon: "keyboard", id: "system.shortcuts.entries", terms: t("setting.system.shortcuts.entries.searchTerms"), location: "system.shortcuts"},
 
-    "security.lockedNotes.passHash": {name: t("setting.security.lockedNotes.passHash"), icon: "key", id: "security.lockedNotes.passHash", terms: t("setting.security.lockedNotes.passHash.searchTerms"), location: "security.lockedNotes"}
+    "danger.reset.settings": {name: t("setting.danger.reset.settings"), icon: "settings-x", id: "danger.reset.settings", terms: t("setting.danger.reset.settings.searchTerms"), location: "danger.reset"},
+    "danger.reset.notes": {name: t("setting.danger.reset.notes"), icon: "file-shredder", id: "danger.reset.notes", terms: t("setting.danger.reset.notes.searchTerms"), location: "danger.reset"}
 };
+
 function initSettings() {
     refreshSearchObj();
-
-    //fillThemeDropdown();
-
+    refreshShortcuts();
     renderSettings();
-    settingsPage('appearance');
+    settingsPage('editor');
 }
+
 const userSettings = storeL("settings", {});
 
 const settingsSchema = {
@@ -55,7 +63,7 @@ const settingsSchema = {
                     fields: {
                         theme: {
                             id: "appearance.theme.theme",
-                            label: "Theme",
+                            label: "setting.appearance.theme.theme",
                             type: "dropdown",
                             options: generateThemeDropdownSchema(),
                             default: "dark",
@@ -65,10 +73,10 @@ const settingsSchema = {
                         },
                         system: {
                             id: "appearance.theme.system",
-                            label: "System Theme",
+                            label: "setting.appearance.theme.system",
                             type: "toggle",
                             default: false,
-                            description: "Copies the theme set on the operating system level. Light/Dark only."
+                            description: "setting.appearance.theme.system.description"
                         },
                         sep1: {
                             type: "separator",
@@ -76,17 +84,17 @@ const settingsSchema = {
                         },
                         accentMode: {
                             id: "appearance.theme.accentMode",
-                            label: "Accent Mode",
+                            label: "setting.appearance.theme.accentMode",
                             type: "dropdown",
                             options: [
-                                {value: "follow", content: "Follow theme"},
-                                {value: "custom", content: "Custom"}
+                                {value: "follow", content: "<span data-i18n='setting.appearance.theme.accentMode.option.follow'>Follow theme</span>"},
+                                {value: "custom", content: "<span data-i18n='setting.appearance.theme.accentMode.option.custom'>Custom</span>"}
                             ],
                             default: "follow",
                         },
                         accentCustom: {
                             id: "appearance.theme.accentCustom",
-                            label: "Custom Accent",
+                            label: "setting.appearance.theme.accentCustom",
                             type: "color",
                             default: "#000000",
                             conditions: [
@@ -101,21 +109,21 @@ const settingsSchema = {
                     fields: {
                         sidebar: {
                             id: "appearance.layout.sidebar",
-                            label: "Sidebar",
+                            label: "setting.appearance.layout.sidebar",
                             type: "dropdown",
                             options: [
-                                {value: "nl", content: "Left"},
-                                {value: "nr", content: "Right"}
+                                {value: "nl", content: "<span data-i18n='setting.appearance.layout.sidebar.option.nl'>Left</span>"},
+                                {value: "nr", content: "<span data-i18n='setting.appearance.layout.sidebar.option.nr'>Right</span>"}
                             ],
                             default: "nl"
                         },
                         toolbar: {
                             id: "appearance.layout.toolbar",
-                            label: "Toolbar",
+                            label: "setting.appearance.layout.toolbar",
                             type: "dropdown",
                             options: [
-                                {value: "ta", content: "Above"},
-                                {value: "tb", content: "Below"}
+                                {value: "ta", content: "<span data-i18n='setting.appearance.layout.toolbar.option.ta'>Above</span>"},
+                                {value: "tb", content: "<span data-i18n='setting.appearance.layout.toolbar.option.tb'>Below</span>"}
                             ],
                             default: "ta"
                         }
@@ -127,7 +135,7 @@ const settingsSchema = {
                     fields: {
                         corners:{
                             id: "appearance.panels.corners",
-                            label: "Corner Radius",
+                            label: "setting.appearance.panels.corners",
                             type: "slider",
                             range: [0, 8],
                             step: 1,
@@ -136,16 +144,16 @@ const settingsSchema = {
                         },
                         opacity: {
                             id: "appearance.panels.opacity",
-                            label: "Background Opacity",
+                            label: "setting.appearance.panels.opacity",
                             type: "slider",
-                            range: [20, 100],
+                            range: [50, 100],
                             step: 1,
                             unit: "%",
                             default: 100
                         },
                         blur: {
                             id: "appearance.panels.blur",
-                            label: "Backdrop Blur",
+                            label: "setting.appearance.panels.blur",
                             type: "slider",
                             range: [0, 10],
                             step: 0.5,
@@ -160,7 +168,7 @@ const settingsSchema = {
                     fields: {
                         image: {
                             id: "appearance.background.image",
-                            label: "Image By Upload",
+                            label: "setting.appearance.background.image",
                             type: "file",
                             accept: "image/*",
                             default: "",
@@ -170,7 +178,7 @@ const settingsSchema = {
                         },
                         imageUrl: {
                             id: "appearance.background.imageUrl",
-                            label: "Image From URL",
+                            label: "setting.appearance.background.imageUrl",
                             type: "text",
                             placeholder: "setting.appearance.background.imageUrl.placeholder",
                             default: "",
@@ -184,7 +192,7 @@ const settingsSchema = {
                         },
                         blur: {
                             id: "appearance.background.blur",
-                            label: "Blur",
+                            label: "setting.appearance.background.blur",
                             type: "slider",
                             range: [0, 10],
                             step: 0.5,
@@ -199,12 +207,12 @@ const settingsSchema = {
                         },
                         opacity: {
                             id: "appearance.background.opacity",
-                            label: "Opacity",
+                            label: "setting.appearance.background.opacity",
                             type: "slider",
-                            range: [1, 100],
+                            range: [1, 65],
                             step: 1,
                             unit: "%",
-                            default: 100,
+                            default: 65,
                             conditions: [
                                 {any: [
                                     {field: "appearance.background.image", notEquals: ""},
@@ -214,7 +222,7 @@ const settingsSchema = {
                         },
                         brightness: {
                             id: "appearance.background.brightness",
-                            label: "Brightness",
+                            label: "setting.appearance.background.brightness",
                             type: "slider",
                             range: [-100, 100],
                             step: 1,
@@ -229,12 +237,12 @@ const settingsSchema = {
                         },
                         fitMode: {
                             id: "appearance.background.fitMode",
-                            label: "Fit Mode",
+                            label: "setting.appearance.background.fitMode",
                             type: "dropdown",
                             options: [
-                                {value: "cover", content: "Cover"},
-                                {value: "contain", content: "Contain"},
-                                {value: "auto", content: "Repeat"}
+                                {value: "cover", content: "<span data-i18n='setting.appearance.background.fitMode.option.cover'>Cover</span>"},
+                                {value: "contain", content: "<span data-i18n='setting.appearance.background.fitMode.option.contain'>Contain</span>"},
+                                {value: "auto", content: "<span data-i18n='setting.appearance.background.fitMode.option.repeat'>Repeat</span>"}
                             ],
                             default: "cover",
                             conditions: [
@@ -252,7 +260,7 @@ const settingsSchema = {
                     fields: {
                         font: {
                             id: "appearance.typography.font",
-                            label: "Font",
+                            label: "setting.appearance.typography.font",
                             type: "dropdown",
                             options: [
                                 {value: "Commissioner", content: "Commissioner"},
@@ -266,9 +274,30 @@ const settingsSchema = {
                         },
                         dyslexic: {
                             id: "appearance.typography.dyslexic",
-                            label: "Dyslexic Font",
+                            label: "setting.appearance.typography.dyslexic",
                             type: "toggle",
                             default: false
+                        }
+                    }
+                },
+                tab: {
+                    id: "tab",
+                    name: "modal.settings.section.appearance.tab",
+                    fields: {
+                        name: {
+                            id: "appearance.tab.name",
+                            label: "setting.appearance.tab.name",
+                            type: "text",
+                            placeholder: "setting.appearance.tab.name.placeholder",
+                            default: "",
+                            description: "setting.appearance.tab.name.description"
+                        },
+                        icon: {
+                            id: "appearance.tab.icon",
+                            label: "setting.appearance.tab.icon",
+                            type: "file",
+                            accept: "image/*",
+                            default: ""
                         }
                     }
                 }
@@ -285,22 +314,28 @@ const settingsSchema = {
                     fields: {
                         wrap: {
                             id: "editor.behavior.wrap",
-                            label: "Wrap Text",
+                            label: "setting.editor.behavior.wrap",
+                            type: "toggle",
+                            default: true
+                        },
+                        checkedCrossout: {
+                            id: "editor.behavior.checkedCrossout",
+                            label: "setting.editor.behavior.checkedCrossout",
                             type: "toggle",
                             default: true
                         },
                         spellCheck: {
                             id: "editor.behavior.spellCheck",
-                            label: "System Spellcheck",
+                            label: "setting.editor.behavior.spellCheck",
                             type: "toggle",
                             default: true
                         },
                         closePairs: {
                             id: "editor.behavior.closePairs",
-                            label: "Close Pairs",
+                            label: "setting.editor.behavior.closePairs",
                             type: "toggle",
                             default: false,
-                            description: "Automatically inserts a closing pair after typing symbols like brackets or quotation marks."
+                            description: "setting.editor.behavior.closePairs.description"
                         }
                     }
                 },
@@ -308,19 +343,24 @@ const settingsSchema = {
                     id: "smartTypography",
                     name: "modal.settings.section.editor.smartTypography",
                     headerButtons: [
-                        {text: "Fill Exemplar", action: "fillSmartTypographyTemplate()"}
+                        {text: "<span data-i18n='settingHeaderButton.fillSmartTypographyTemplate'>Fill Exemplar</span>", action: "fillSmartTypographyTemplate()"}
                     ],
                     fields: {
                         enabled: {
                             id: "editor.smartTypography.enabled",
-                            label: "Enable Smart Typography",
+                            label: "setting.editor.smartTypography.enabled",
                             type: "toggle",
                             default: false,
-                            description: "Automatically converts specified combinations of characters into symbols not easily typeable with a traditional keyboard."
+                            description: "setting.editor.smartTypography.enabled.description"
                         },
                         shorthands: {
                             id: "editor.smartTypography.shorthands",
                             type: "dualEditTable",
+                            default: [
+                                { find: '--', replace: '—' },
+                                { find: '...', replace: '…' },
+                                { find: '->', replace: '→' }
+                            ],
                             conditions: [
                                 {field: "editor.smartTypography.enabled", equals: true}
                             ]
@@ -344,13 +384,13 @@ const settingsSchema = {
                         },
                         preferredMethod: {
                             id: "storage.management.preferredMethod",
-                            label: "Preferred Storage Method",
+                            label: "setting.storage.management.preferredMethod",
                             type: "dropdown",
                             options: [
                                 {value: "localStorage", content: "localStorage"}
                             ],
                             default: "localStorage",
-                            description: "Some storage methods may require additional setup."
+                            description: "setting.storage.management.preferredMethod.description"
                         }
                     }
                 },
@@ -360,11 +400,11 @@ const settingsSchema = {
                     fields: {
                         exportAs: {
                             id: "storage.exporting.exportAs",
-                            label: "Default Note Export Format",
+                            label: "setting.storage.exporting.exportAs",
                             type: "dropdown",
                             options: [
-                                {value: "pdf", content: "PDF"},
-                                {value: "plaintext", content: "Plain Text"}
+                                {value: "pdf", content: "<span data-i18n='setting.storage.exporting.exportAs.option.pdf'>PDF</span>"},
+                                {value: "plaintext", content: "<span data-i18n='setting.storage.exporting.exportAs.option.plaintext'>Plain Text</span>"}
                             ],
                             default: "pdf"
                         }
@@ -383,7 +423,7 @@ const settingsSchema = {
                     fields: {
                         lang: {
                             id: "system.language.lang",
-                            label: "App Language",
+                            label: "setting.system.language.lang",
                             type: "dropdown",
                             options: [
                                 {value: "en", content: "English"},
@@ -402,16 +442,34 @@ const settingsSchema = {
                     fields: {
                         notifications: {
                             id: "system.behavior.notifications",
-                            label: "Display App Notifications",
+                            label: "setting.system.behavior.notifications",
                             type: "toggle",
                             default: true,
-                            description: "Only applies to notifications contained within wNotes itself."
+                            description: "setting.system.behavior.notifications.description"
                         },
                         rememberOpenFolders: {
                             id: "system.behavior.rememberOpenFolders",
-                            label: "Remember Open Folders",
+                            label: "setting.system.behavior.rememberOpenFolders",
                             type: "toggle",
                             default: true
+                        },
+                        newNoteAction: {
+                            id: "system.behavior.newNoteAction",
+                            label: "setting.system.behavior.newNoteAction",
+                            type: "dropdown",
+                            options: [
+                                {value: "focus", content: "<span data-i18n='setting.system.behavior.newNoteAction.option.focus'>Open Note</span>"},
+                                {value: "ghost", content: "<span data-i18n='setting.system.behavior.newNoteAction.option.ghost'>Stay in Current</span>"}
+                            ],
+                            default: "focus"
+                        },
+                        newNoteCustomPlaceholder: {
+                            id: "system.behavior.newNoteCustomPlaceholder",
+                            label: "setting.system.behavior.newNoteCustomPlaceholder",
+                            type: "text",
+                            placeholder: "setting.system.behavior.newNoteCustomPlaceholder.placeholder",
+                            default: "",
+                            description: "setting.system.behavior.newNoteCustomPlaceholder.description"
                         }
                     }
                 },
@@ -421,12 +479,32 @@ const settingsSchema = {
                     fields: {
                         entries: {
                             id: "system.shortcuts.entries",
-                            type: "singleEditTable"
+                            type: "singleEditTable",
+                            sets: {
+                                newNote: {
+                                    id: "newNote",
+                                    name: "shortcut.newNote",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "Alt", "O"],
+                                },
+                                newFolder: {
+                                    id: "newFolder",
+                                    name: "shortcut.newFolder",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "Alt", "P"]
+                                },
+                                renameCurrentNote: {
+                                    id: "renameCurrentNote",
+                                    name: "shortcut.renameCurrentNote",
+                                    type: "keysEntry",
+                                    keys: ["F2"]
+                                }
+                            }
                         }
                     }
                 }
             }
-        },
+        },/*
         security: {
             id: "security",
             name: "settings.page.security",
@@ -436,6 +514,34 @@ const settingsSchema = {
                     id: "lockedNotes",
                     name: "modal.settings.section.security.lockedNotes",
                     fields: {}
+                }
+            }
+        },*/
+        danger: {
+            id: "danger",
+            name: "settings.page.danger",
+            icon: "alert-triangle",
+            danger: true,
+            sections: {
+                reset: {
+                    id: "reset",
+                    name: "modal.settings.section.danger.reset",
+                    fields: {
+                        settings: {
+                            id: "danger.reset.settings",
+                            label: "setting.danger.reset.settings",
+                            type: "button",
+                            content: "<span data-i18n='setting.danger.reset.settings.content'></span>",
+                            danger: true
+                        },
+                        notes: {
+                            id: "danger.reset.notes",
+                            label: "setting.danger.reset.notes",
+                            type: "button",
+                            content: "<span data-i18n='setting.danger.reset.notes.content'></span>",
+                            danger: true
+                        }
+                    }
                 }
             }
         }
@@ -462,7 +568,7 @@ for (const [pKey, page] of Object.entries(settingsSchema.pages))
             fieldIndex.set(`${pKey}.${sKey}.${key}`, f);
 
 // look in userSettings first, then get default
-const getValue = path => path in userSettings
+const getValue = (path, strictOrigin) => (path in userSettings && strictOrigin !== true)
     ? userSettings[path]
     : fieldIndex.get(path)?.default;
 
@@ -500,6 +606,7 @@ function renderNavButtons() {
             <i class="ti ti-${page.icon}"></i>
             <span data-i18n="settings.page.${page.id}">${t(page.name)}</span>
         `;
+        if (page.danger == true) button.classList.add("danger");
         sNavBtnsContainer.appendChild(button);
     });
 }
@@ -540,14 +647,14 @@ function renderSettings() {
                 if (field.label) {
                     optionContainer = document.createElement("label");
                     optionContainer.innerHTML = `
-                        <span data-i18n="${field.label}">${field.label}</span>
+                        <span data-i18n="${field.label}">${t(field.label)}</span>
                     `;
                     optionContainer.dataset.path = field.id;
                     optionContainer.appendChild(generateInput(field, onChange, optionContainer));
                     applyInitialSetting(field);
                 } else if (field.type == "separator") {
                     optionContainer = document.createElement(field.text ? "h3" : "hr");
-                    if (field.text) optionContainer.innerText = field.text;
+                    if (field.text) optionContainer.innerText = t(field.text);
                 } else {
                     optionContainer = document.createElement("div");
                     optionContainer.dataset.path = field.id;
@@ -556,9 +663,10 @@ function renderSettings() {
                 if (field.description) {
                     optionContainer.insertAdjacentHTML('beforeend', `
                         <div class="flex-break"></div>
-                        <span class="label-description">${field.description}</span>
+                        <span class="label-description" data-i18n="${field.description}">${t(field.description)}</span>
                     `);
                 };
+                if (field.danger == true) optionContainer.classList.add("danger");
                 sectElem.appendChild(optionContainer);
             });
         });
@@ -647,21 +755,72 @@ const applications = {
     "appearance.typography.dyslexic": (val, loading) => {
         document.documentElement.style.setProperty("--font", val == true ? "OpenDyslexic" : getValue("appearance.typography.font"));
     },
-    "editor.behavior.wrap": (val, loading) => {},
-    "editor.behavior.spellCheck": (val, loading) => {},
-    "editor.behavior.closePairs": (val, loading) => {},
-    "editor.smartTypography.enabled": (val, loading) => {},
-    "editor.smartTypography.shorthands": (val, loading) => {},
-    "storage.management.display": (val, loading) => {},
-    "storage.management.preferredMethod": (val, loading) => {},
-    "storage.exporting.exportAs": (val, loading) => {},
+    "appearance.tab.name": (val, loading) => {
+        if (val.trim() == "") {
+            document.title = t("app.title.default");
+            document.querySelector("title").setAttribute('i18n', 'app.title.default');
+        } else {
+            document.title = val;
+            document.querySelector("title").removeAttribute('i18n');
+        }
+    },
+    "appearance.tab.icon": (val, loading) => {
+        document.querySelector('link[rel="icon"').href = val == "" ? t("app.icon.default") : val;
+    },
+    "editor.behavior.wrap": (val, loading) => {
+        document.querySelector(".ql-editor").classList.toggle("nowrap", !val);
+    },
+    "editor.behavior.checkedCrossout": (val, loading) => {
+        document.documentElement.style.setProperty("--checkedDecor", val == true ? "line-through" : "inherit");
+    },
+    "editor.behavior.spellCheck": (val, loading) => {
+        document.querySelector(".ql-editor").spellcheck = val;
+    },
+    "editor.behavior.closePairs": (val, loading) => {
+        CLOSEPAIRS_ENABLED = val;
+    },
+    "editor.smartTypography.enabled": (val, loading) => {
+
+    },
+    "editor.smartTypography.shorthands": (val, loading) => {
+
+    },
+    "storage.management.display": (val, loading) => {
+
+    },
+    "storage.management.preferredMethod": (val, loading) => {
+        
+    },
+    "storage.exporting.exportAs": (val, loading) => {
+
+    },
     "system.language.lang": (code, loading) => {
         setLocale(code);
-        if (!loading) notification('success', t("notification.languageChanged", {lang: t("language."+code)}), t("notificationSource.settings"));
+        setTimeout(() => {
+            if (!loading) notification('success', t("notification.languageChanged", {lang: t("language."+code)}), t("notificationSource.settings"));
+        }, 100);
     },
-    "system.behavior.notifications": (val, loading) => {},
-    "system.behavior.rememberOpenFolders": (val, loading) => {},
-    "system.shortcuts.entries": (val, loading) => {}
+    "system.behavior.notifications": (val, loading) => {
+        NOTIFS_ENABLED = val;
+    },
+    "system.behavior.rememberOpenFolders": (val, loading) => {
+        REMEMBER_FOLDERS = val;
+    },
+    "system.behavior.newNoteAction": (val, loading) => {
+        NEWNOTE_ACTION = val;
+    },
+    "system.behavior.newNoteCustomPlaceholder": (val, loading) => {
+        quill.root.dataset.placeholder = val != "" ? val : t("editor.empty.placeholder");
+    },
+    "system.shortcuts.entries": (val, loading) => {
+
+    },
+    "danger.reset.settings": (val, loading) => {
+        if (!loading) console.log("Settings have been reset to default.")
+    },
+    "danger.reset.notes": (val, loading) => {
+        if (!loading) console.log("User notes have been cleared.")
+    }
 }
 
 function generateInput(field, onChange, parent) {
@@ -726,12 +885,18 @@ function generateInput(field, onChange, parent) {
             elem.value = getValue(field.id);
             elem.onchange = () => onChange(field, elem.value);
             break;
+        case "button":
+            elem = document.createElement("button");
+
+            elem.innerHTML = field.content;
+            elem.onclick = () => {applications[field.id]?.()};
+            break;
         case "dualEditTable":
             elem = document.createElement("table");
             // js the header
-            elem.innerHTML = `<tbody><tr><th>Shorthand</th><th>Result Character</th></tr></tbody>`;
+            elem.innerHTML = `<tbody><tr><th data-i18n="settingInput.dualTable.header.shorthand">${t("settingInput.dualTable.header.shorthand")}</th><th data-i18n="settingInput.dualTable.header.result">${t("settingInput.dualTable.header.result")}</th></tr></tbody>`;
             const newEntryRow = document.createElement("tr");
-            newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span>New Entry</span></button></td>`;
+            newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span data-i18n="settingInput.dualTable.button.newEntry">${t("settingInput.dualTable.button.newEntry")}</span></button></td>`;
             elem.querySelector('tbody').appendChild(newEntryRow);
             newEntryRow.querySelector('.new-row').addEventListener("click", () => {
                 const newRow = document.createElement("tr");
@@ -744,24 +909,194 @@ function generateInput(field, onChange, parent) {
             });
             break;
         case "singleEditTable":
-            elem = document.createElement("b");
-            elem.textContent = "[Single-Column Editing Table does not yet have functionality.]";
+            elem = document.createElement("table");
+            // heder
+            elem.innerHTML = `<tbody><tr><th data-i18n="settingInput.singleTable.header.action">${t("settingInput.singleTable.header.action")}</th><th data-i18n="settingInput.singleTable.header.shortcut">${t("settingInput.singleTable.header.shortcut")}</th></tr></tbody>`;
+            Object.values(field.sets).forEach((set) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <th scope="row" data-i18n="${set.name}">${t(set.name)}</th>
+                    <td></td>
+                `;
+                elem.querySelector('tbody').appendChild(row);
+                const keyInput = generateInput(set);
+                row.querySelector("td").appendChild(keyInput);
+            });
             break;
         case "storageDisplay":
-            elem = document.createElement("b");
-            elem.textContent = "[Settings Management Display does not yet have functionality.]";
+            elem = document.createElement("div");
+            elem.classList.add("storageDisplay");
+            elem.innerHTML = `
+                <div>
+                    <header>
+                        <h3>Storage Info</h3>
+                    </header>
+                    <p>
+                        <span><span data-i18n="settings.storageDisplay.statusLabel">${t("settings.storageDisplay.statusLabel")}</span> &nbsp; ${generate("status")}</span>
+                        <p class="info">
+                            <span><b data-i18n="settings.storageDisplay.itemsCount.label"></b> <span id="itemsCountData">${t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference)).length + Object.entries(JSON.parse(localStorage.folders)).length, notes: Object.entries(JSON.parse(localStorage.notes_reference)).length, folders: Object.entries(JSON.parse(localStorage.folders)).length})}</span></span><br>
+                            <span><b data-i18n="settings.storageDisplay.lastModified.label"></b> <span>Unknown</span></span><br>
+                            <span><b data-i18n="settings.storageDisplay.lastBackup.label"></b> <span>Unknown</span></span><br>
+                            <br>
+                            <span><b data-i18n="settings.storageDisplay.storageLocation.label">Storage Location:</b> <span>Local</span></span>
+                        </p>
+                        <div class="buttons">
+                            <button disabled>Backup</button>
+                            <button disabled>Restore</button>
+                        </div>
+                    </p>
+                </div>
+                <div>
+                    <div class="piChart" style="background-image: conic-gradient(${generate('gradient')})"></div>
+                    <ul>${generate("list")}</ul>
+                </div>
+            `;
+            document.addEventListener("localechange", () => {
+                document.getElementById("itemsCountData").innerText = t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference)).length + Object.entries(JSON.parse(localStorage.folders)).length, notes: Object.entries(JSON.parse(localStorage.notes_reference)).length, folders: Object.entries(JSON.parse(localStorage.folders)).length});
+            });
+
+            function generate(section) {
+                const max = 5242880;
+                const total = Object.entries(localStorage).flat().join("").length * 2; // 2 bytes / UTF-16 char
+                const inflation = Math.pow(Math.min(1, total/max), 0.35);
+                const totalNotes = Object.entries(localStorage).filter(([key]) => key.includes("note_")).flat().join("").length * 2;
+                const totalSettings = localStorage.settings.length * 2;
+                const totalOther = total - (totalSettings + totalNotes);
+                const percentUsed = (total/max*100).toFixed(2);
+                const totalDeg = inflation * 360;
+                const notesDeg = (totalNotes / total) * totalDeg;
+                const settingsDeg = notesDeg + (totalSettings / total) * totalDeg;
+                const otherDeg = settingsDeg + (totalOther / total) * totalDeg;
+                const gradient = `
+                    color-mix(in oklch, var(--accent) 100%, var(--textb)) 0deg ${notesDeg}deg, 
+                    color-mix(in oklch, var(--accent) 65%, var(--textb)) ${notesDeg}deg ${settingsDeg}deg, 
+                    color-mix(in oklch, var(--accent) 35%, var(--textb)) ${settingsDeg}deg ${otherDeg}deg,
+                    var(--bg-3) ${totalDeg}deg 360deg`;
+                if (section == "gradient") return gradient;
+                const list = `
+                    <span class="size">${formatBytes(total)} / ${formatBytes(max)} (${percentUsed}%)</span>
+                    <li style="--bullet-color: color-mix(in oklch, var(--accent) 100%, var(--textb))"><span data-i18n="settings.storageDisplay.part.notes">${t("settings.storageDisplay.part.notes")}</span><span class="size">${formatBytes(totalNotes)}</span></li>
+                    <li style="--bullet-color: color-mix(in oklch, var(--accent) 65%, var(--textb))"><span data-i18n="settings.storageDisplay.part.settings">${t("settings.storageDisplay.part.settings")}</span><span class="size">${formatBytes(totalSettings)}</span></li>
+                    <li style="--bullet-color: color-mix(in oklch, var(--accent) 35%, var(--textb))"><span data-i18n="settings.storageDisplay.part.other">${t("settings.storageDisplay.part.other")}</span><span class="size">${formatBytes(totalOther)}</span></li>
+                `;
+                if (section == "list") return list;
+                const thresholds = [95, 80];
+                const statusColor = percentUsed > thresholds[0] ? "var(--danger)" : percentUsed > thresholds[1] ? "var(--warning)" : "var(--success)";
+                const statusText = percentUsed > thresholds[0] ? "Almost Full" : percentUsed > thresholds[1] ? "Getting Low" : "Healthy";
+                const status = `
+                    <span style="color: ${statusColor};">● ${statusText}</span>
+                `;
+                if (section == "status") return status;
+            }
             break;
         case "keysEntry":
-            elem = document.createElement("kbd");
-            elem.textContent = "[no funct.]";
+            elem = document.createElement("button");
+            elem.classList.add("keysEntry");
+            elem.textContent = userSettings["system.shortcut."+field.id]?.join(" + ") || field.keys.join(" + ");
+            let savedShortcut = null;
+            elem.onclick = () => {
+                if (elem.classList.contains("recording")) return;
+                elem.classList.add("recording");
+                elem.textContent = t("settingInput.keysEntry.prompt.active");
+                elem.classList.add("recording");
+                window.addEventListener("keydown", handleKey, true);
+                window.addEventListener("keyup", handleKey, true);
+                elem.addEventListener("blur", stopRecording);
+            };
+            function handleKey(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const keys = [
+                    e.ctrlKey && "Ctrl",
+                    e.altKey && "Alt",
+                    e.shiftKey && "Shift",
+                    e.metaKey && "Meta"
+                ].filter(Boolean);
+                if (e.type == "keyup" || ["Control", "Shift", "Alt", "Meta"].includes(e.key)) {
+                    elem.textContent = keys.length ? `${keys.join(" + ")} + ...` : t("settingInput.keysEntry.prompt.active");
+                    return;
+                }
+                const mainKey = e.key === " " ? "Space" : e.key.length == 1 ? e.key.toUpperCase() : e.key;
+                savedShortcut = (keys.length === 0 && mainKey == "Escape") ? null : [...keys, mainKey].join(" + ");
+                stopRecording();
+            }
+            function stopRecording() {
+                elem.classList.remove("recording");
+                elem.textContent = savedShortcut || t("settingInput.keysEntry.prompt.inactive");
+                window.removeEventListener("keydown", handleKey, true);
+                window.removeEventListener("keyup", handleKey, true);
+                elem.removeEventListener("blur", stopRecording);
+                elem.blur();
+                if (savedShortcut) {
+                    if (savedShortcut === field.keys.join(" + ") || !savedShortcut) {
+                        // Revert to default (or clear if default is empty)
+                        delete userSettings["system.shortcut." + field.id];
+                    } else {
+                        userSettings["system.shortcut." + field.id] = savedShortcut.split(" + ");
+                    }
+                    storeS("settings", userSettings);
+                    refreshShortcuts();
+                }
+            }
             break;
         default:
             elem = document.createElement("b");
             elem.textContent = "[Element could not be rendered.]";
     }
-    parent.classList.toggle("disabled", !isEnabled(field));
-    if (!isEnabled(field)) parent.inert = true;
+    if (parent) {
+        parent.classList.toggle("disabled", !isEnabled(field));
+        if (!isEnabled(field)) parent.inert = true;
+    }
     return elem;
+}
+
+// KEYBOARD SHORTCUTS RHAHHH
+const shortcutActions = {
+    newNote: () => {
+        closeAllDialogs();
+        const id = createObject("note"); // createObject returns the id of what it created
+        renameObject("note", id);
+    },
+    newFolder: () => {
+        closeAllDialogs();
+        const id = createObject("folder");
+        renameObject("folder", id);
+    },
+    renameCurrentNote: () => {
+        renameObject("note", currentNote);
+    }
+};
+
+var SHORTCUTS = {};
+function refreshShortcuts() {
+    // load defaults from schema
+    SHORTCUTS = {...settingsSchema.pages.system.sections.shortcuts.fields.entries.sets};
+    const modifiedShortcuts = Object.fromEntries(Object.entries(userSettings).filter(([key]) => key.includes("system.shortcut.")));
+    // replace defaults with user-custom if exist
+    Object.entries(modifiedShortcuts).forEach((s) => {
+        SHORTCUTS[s[0].replace("system.shortcut.", "")].keys = s[1];
+    });
+}
+
+function checkShortcut(e) {
+    var keys = [];
+    if (e.ctrlKey) keys.push("Ctrl");
+    if (e.shiftKey) keys.push("Shift");
+    if (e.altKey) keys.push("Alt");
+    if (e.metaKey) keys.push("Meta");
+    // normalize
+    keys.push(e.key == " " ? "Space" : e.key.length == 1 ? e.key.toUpperCase() : ["Control", "Shift", "Alt", "Meta"].includes(e.key) ? "" : e.key);
+    // if the specific combination exists, execute
+    Object.values(SHORTCUTS).forEach((s) => {
+        if (keys.join("") == s.keys.join("")) shortcutActions[s.id]?.();
+    });
+}
+
+window.addEventListener("keydown", checkShortcut);
+
+// get shortcut keys as string, for inline displays like in context menu
+function ks(id) {
+    return SHORTCUTS[id].keys.join(" + ");
 }
 
 // NAVIGATION AND UTILITY idk
@@ -782,13 +1117,13 @@ function openSetting(location) {
     const targetElement = document.getElementById(`sph-${page}-${header}`);
 
     if (targetElement) {
-    sPagesContainer.scrollTo({
-        top: targetElement.offsetTop,
-        behavior: "smooth"
-    });
+        const top = targetElement.getBoundingClientRect().top
+            - sPagesContainer.getBoundingClientRect().top
+            + sPagesContainer.scrollTop;
+
+        sPagesContainer.scrollTo({ top, behavior: "smooth" });
     }
 }
-
 
 function generateThemeDropdownSchema() {
     var optionsArray = [];
@@ -821,7 +1156,7 @@ searchBar.addEventListener("keyup", (e) => {
 });
 
 function renderSearch() {
-    const query = searchBar.value.trim();
+    const query = searchBar.value.trim().toLowerCase();
     sNavBtnsContainer.innerHTML = "";
     refreshSearchObj();
     const rendered = [];

@@ -3,6 +3,9 @@
     max-width: 100%;
 }
 
+:root {
+    --checkedDecor: line-through;
+}
 
 #workspace {
     max-width: auto;
@@ -23,14 +26,16 @@
         backdrop-filter: blur(var(--panel-blur));
         position: relative;
         z-index: 1;
-        height: calc(2rem + 2px);
+        height: auto;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         padding: 0;
+        max-width: 100%;
 
         .ql-formats {
             margin: 0;
-            height: 100%;
+            height: 2rem;
             display: flex;
             align-items: center;
             padding: 2px;
@@ -136,6 +141,8 @@
         }
 
         li[data-list="checked"] {
+            text-decoration: var(--checkedDecor);
+
             .ql-ui:before {border-color: var(--textm);}
             .ql-ui:after {
                 font-family: 'tabler-icons';
@@ -159,11 +166,19 @@
                 width: auto;
                 aspect-ratio: 1/1;
                 position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
+                top: 0.5em;
                 border-radius: 50%;
                 margin-left: -1.2em
             }
+        }
+
+        .smartTypographyFlash {
+            position: absolute;
+            background-color: var(--accentm);
+            border-radius: var(--corners);
+            pointer-events: none;
+            transition: opacity 0.2s ease-out;
+            z-index: 10;
         }
     }
     

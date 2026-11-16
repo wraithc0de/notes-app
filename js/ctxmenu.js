@@ -13,14 +13,14 @@ document.addEventListener("contextmenu", (e) => {
     } else if (e.target.closest(".item:not(#il-recentitems .item)")) {
         const idTarget = handleTargeting(e, 'note');
         ctxmenu.innerHTML = `
-            <button onclick="renameObject('note', '${idTarget}')"><i class="ti ti-pencil"></i> ${t("ctx.note.rename")} <kbd>F2</kbd></button>
-            <button class="danger" onclick="deleteConfirmation('note', '${idTarget}')"><i class="ti ti-trash"></i> ${t("ctx.note.delete")} <kbd></kbd></button>
+            <button onclick="renameObject('note', '${idTarget}')"><i class="ti ti-pencil"></i> ${t("ctx.note.rename")} <kbd>${ks("renameCurrentNote")}</kbd></button>
+            <button class="danger" onclick="deleteConfirmation('note', '${idTarget}', event.shiftKey)"><i class="ti ti-trash"></i> ${t("ctx.note.delete")} <kbd></kbd></button>
         `;
     } else if (e.target.closest(".folder header")) {
         const idTarget = handleTargeting(e, 'folder');
         ctxmenu.innerHTML = `
             <button onclick="renameObject('folder', '${idTarget}')"><i class="ti ti-pencil"></i> ${t("ctx.folder.rename")} <kbd>F2</kbd></button>
-            <button class="danger" onclick="deleteConfirmation('folder', '${idTarget}')"><i class="ti ti-trash"></i> ${t("ctx.folder.delete")} <kbd></kbd></button>
+            <button class="danger" onclick="deleteConfirmation('folder', '${idTarget}', event.shiftKey)"><i class="ti ti-trash"></i> ${t("ctx.folder.delete")} <kbd></kbd></button>
         `;
     } else if (e.target.closest("#formatting")) {
         ctxmenu.innerHTML = `

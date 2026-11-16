@@ -102,6 +102,7 @@ const listRecent = document.getElementById("il-recentitems");
 const sectionsContainer = document.getElementById("navnoteslistarea");
 
 var notesRef = {};
+var REMEMBER_FOLDERS = true;
 var recentNotes = [];
 var folders = {};
 
@@ -164,11 +165,11 @@ function renderNav() {
     // open folders that were open before reload
     document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
         const folderId = folder.querySelector(".idreference").innerText;
-        if (openFolders.includes(folderId)) {
+        if (openFolders.includes(folderId) && REMEMBER_FOLDERS) {
             folder.classList.add("expanded");
         }
     });
-    if (openFolders.includes("recent")) {
+    if (openFolders.includes("recent") && REMEMBER_FOLDERS) {
         document.getElementById("recentnotessection").classList.add('expanded');
     }
 }
@@ -246,22 +247,28 @@ function openNote(id, isInitializing = false) {
         renderNav();
     }
 }
-
+var NEWNOTE_ACTION = "focus"; // settings hook
 function createObject(type, name) {
+    var id;
     if (type == "folder") {
-        const id = generateId(16);
+        id = generateId(16);
         folders[id] = {"id": id, "name": name || id};
         storeS("folders", folders);
     } else if (type == "note") {
-        const id = generateId(16);
+        id = generateId(16);
         // if blank name, set name as the id
         notesRef[id] = {"id": id, "name": name || id, "location": "", "locked": false};
         storeS("notes_reference", notesRef);
         storeS("note_"+id, {ops:[]});
         noteContents[id] = storeL("note_"+id, "");
+
+        if (NEWNOTE_ACTION == "focus") {
+            openNote(id);
+        }
     }
     closeDialog('newobject');
     renderNav();
+    return id; // for places where an object is automatically created and the script needs to know the ID easily
 }
 
 function deleteNote(id) {
@@ -307,7 +314,12 @@ function deleteFolder(id) {
 
 const confirmBtn = document.getElementById("deleteconfirmationBtn");
 const confirmNameText = document.getElementById("deleteconfirmationName");
-function deleteConfirmation(type, id) {
+function deleteConfirmation(type, id, skip) {
+    if (skip == true) {
+        if (type == "note") deleteNote(id);
+        if (type == "folder") deleteFolder(id);
+        return;
+    }
     if (type == 'note') {
         confirmBtn.onclick = () => deleteNote(id);
         confirmNameText.innerText = t("modal.deleteConfirmation.confirmName.note", {name: notesRef[id].name});
@@ -317,7 +329,6 @@ function deleteConfirmation(type, id) {
     }
     openDialog('deleteconfirmation');
 }
-
 
 function expandAllFolders() {
     document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
@@ -339,14 +350,23 @@ function handleNoNoteOpen() {
     }
 }
 
-
 function renameObject(type, id) {
     const nameSpan = document.getElementById("objectName-"+id);
     const tempIfCancel = nameSpan.innerText;
     nameSpan.contentEditable = true;
     nameSpan.focus();
+    // highlight all
+    const range = document.createRange();
+    range.selectNodeContents(nameSpan);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    // remove highlighted background for better visibility, is restored later
+    const isActiveNote = nameSpan.parentElement.classList.contains("current");
+    if (isActiveNote == true) nameSpan.parentElement.classList.remove("current");
     nameSpan.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
+            if (isActiveNote) nameSpan.parentElement.classList.add("current");
             nameSpan.contentEditable = false;
             nameSpan.innerText = tempIfCancel;
             document.removeEventListener("click", handleOutsideClick);
@@ -354,6 +374,7 @@ function renameObject(type, id) {
             e.preventDefault();
             nameSpan.contentEditable = false;
             if (type == 'note') {
+                if (isActiveNote) nameSpan.parentElement.classList.add("current");
                 notesRef[id].name = nameSpan.innerText;
                 storeS("notes_reference", notesRef);
             } else if (type == 'folder') {
@@ -369,6 +390,7 @@ function renameObject(type, id) {
     setTimeout(() => {
         handleOutsideClick = (e) => {
             if (!e.target.closest("#objectName-" + id)) {
+                if (isActiveNote) nameSpan.parentElement.classList.add("current");
                 nameSpan.contentEditable = false;
                 nameSpan.innerText = tempIfCancel;
                 document.removeEventListener("click", handleOutsideClick);

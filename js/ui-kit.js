@@ -256,8 +256,50 @@ class CustomFileInput extends HTMLElement {
         const file = this.input.files[0];
         if (!file) return this.#commit("");
 
+        // If it's not an image (e.g. PDF), just read as raw data URL without resizing
+        if (!file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = () => this.#commit(reader.result);
+            reader.readAsDataURL(file);
+            return;
+        }
+
         const reader = new FileReader();
-        reader.onload = () => this.#commit(reader.result);   // data URL
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                // Set target maximum dimensions (e.g., 800px max width/height)
+                const MAX_WIDTH = 800;
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to JPEG with a compression quality factor (0.0 to 1.0)
+                // 0.7 quality at 800px max bounds easily hits ~20KB - 50KB for most images.
+                const resizedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+                this.#commit(resizedDataUrl);
+            };
+            img.src = e.target.result;
+        };
         reader.readAsDataURL(file);
     }
 

@@ -118,3 +118,10 @@ function storeR(key, method = 'localStorage') {
     localStorage.removeItem(key);
   }
 }
+
+
+function formatBytes(bytes, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), 3);
+  return `${+(bytes / 1024 ** i).toFixed(decimals)} ${['Bytes', 'KB', 'MB', 'GB'][i]}`;
+};
