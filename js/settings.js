@@ -934,7 +934,7 @@ function generateInput(field, onChange, parent) {
                     <p>
                         <span><span data-i18n="settings.storageDisplay.statusLabel">${t("settings.storageDisplay.statusLabel")}</span> &nbsp; ${generate("status")}</span>
                         <p class="info">
-                            <span><b data-i18n="settings.storageDisplay.itemsCount.label"></b> <span id="itemsCountData">${t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference)).length + Object.entries(JSON.parse(localStorage.folders)).length, notes: Object.entries(JSON.parse(localStorage.notes_reference)).length, folders: Object.entries(JSON.parse(localStorage.folders)).length})}</span></span><br>
+                            <span><b data-i18n="settings.storageDisplay.itemsCount.label"></b> <span id="itemsCountData">${t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference || "{}")).length + Object.entries(JSON.parse(localStorage.folders || "{}")).length, notes: Object.entries(JSON.parse(localStorage.notes_reference || "{}")).length, folders: Object.entries(JSON.parse(localStorage.folders || "{}")).length})}</span></span><br>
                             <span><b data-i18n="settings.storageDisplay.lastModified.label"></b> <span>Unknown</span></span><br>
                             <span><b data-i18n="settings.storageDisplay.lastBackup.label"></b> <span>Unknown</span></span><br>
                             <br>
@@ -951,8 +951,9 @@ function generateInput(field, onChange, parent) {
                     <ul>${generate("list")}</ul>
                 </div>
             `;
+
             document.addEventListener("localechange", () => {
-                document.getElementById("itemsCountData").innerText = t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference)).length + Object.entries(JSON.parse(localStorage.folders)).length, notes: Object.entries(JSON.parse(localStorage.notes_reference)).length, folders: Object.entries(JSON.parse(localStorage.folders)).length});
+                document.getElementById("itemsCountData").innerText = t("settings.storageDisplay.itemsCount.data", {total: Object.entries(JSON.parse(localStorage.notes_reference || "{}")).length + Object.entries(JSON.parse(localStorage.folders || "{}")).length, notes: Object.entries(JSON.parse(localStorage.notes_reference || "{}")).length, folders: Object.entries(JSON.parse(localStorage.folders || "{}")).length});
             });
 
             function generate(section) {
