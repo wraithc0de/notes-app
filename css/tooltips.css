@@ -12,9 +12,8 @@
         position: absolute;
         background: var(--bg);
         border: 1px solid var(--border-sep);
-        box-shadow: 0 0 8px #000;
         padding: 0.2rem 0.3rem;
-        border-radius: 2px;
+        border-radius: var(--corners);
         transition: opacity 0.15s ease;
         z-index: 9999;
         font-size: 0.9em;
@@ -22,7 +21,7 @@
         color: var(--textb);
     }
 
-    &:hover:after {
+    &:not(:has(.ql-table-select-container:hover, .ql-picker-options:hover)):hover:after {
         transition-delay: 1s;
         opacity: 1;
     }

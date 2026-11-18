@@ -1,35 +1,35 @@
-var dialogs = document.querySelectorAll(".dialog-container");
+var modals = document.querySelectorAll(".modal-container");
 
-function closeAllDialogs() {
-    document.querySelectorAll(".dialog-container").forEach(dialog => {
-        dialog.classList.remove("dialog-open");
+function closeAllModals() {
+    document.querySelectorAll(".modal-container").forEach(modal => {
+        modal.classList.remove("modal-open");
     });
 }
 
-function openDialog(id) {
-    closeAllDialogs();
-    document.getElementById("dialog-"+id).classList.add("dialog-open");
+function openModal(id) {
+    closeAllModals();
+    document.getElementById("modal-"+id).classList.add("modal-open");
 }
 
-function closeDialog(id) {
-    document.getElementById("dialog-"+id).classList.remove("dialog-open");
+function closeModal(id) {
+    document.getElementById("modal-"+id).classList.remove("modal-open");
 }
 
-function closeDialogByPointer(pointer) {
-    pointer.classList.remove("dialog-open");
+function closeModalByPointer(pointer) {
+    pointer.classList.remove("modal-open");
 }
 
-dialogs.forEach(dialog => {
+modals.forEach(modal => {
     // x button
-    const closeButton = dialog.querySelector(".dialog-close");
-    if (closeButton) closeButton.addEventListener("click", () => { closeDialogByPointer(dialog); });
-    // click outside dialog window
-    dialog.addEventListener("click", (event) => {
-        if (event.target === event.currentTarget) { closeDialogByPointer(dialog); }
+    const closeButton = modal.querySelector(".modal-close");
+    if (closeButton) closeButton.addEventListener("click", () => { closeModalByPointer(modal); });
+    // click outside modal window
+    modal.addEventListener("click", (event) => {
+        if (event.target === event.currentTarget) { closeModalByPointer(modal); }
     });
     // esc key close
-    dialog.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") { closeDialogByPointer(dialog); }
+    modal.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") { closeModalByPointer(modal); }
     });
 });
 var NOTIFS_ENABLED = true;
@@ -71,7 +71,9 @@ function removeNotif(pointer) {
 document.querySelectorAll(".cinput:not(:has(button ~ button)) input").forEach(i => {
     i.addEventListener("keydown", (e) => {
         if (e.key === 'Enter') {
-            i.querySelector("button").click();
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            i.parentElement.querySelector("button.submit").click();
         }
     });
 });

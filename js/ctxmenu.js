@@ -2,13 +2,13 @@ const ctxmenu = document.getElementById("ctxmenu");
 
 document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
-    if (e.target === document.querySelector("#midsect>nav") || e.target === sectionsContainer) {
+    if (e.target === document.querySelector("#midsect>nav") || e.target === sectionsContainer || e.target === document.querySelector(".treespacer")) {
         ctxmenu.innerHTML = `
-            <button onclick="openDialog('newobject')"><i class="ti ti-plus"></i> ${t("ctx.manager.newObject")} <kbd>Ctrl + N</kbd></button>
+            <button onclick="openModal('newobject')"><i class="ti ti-plus"></i> ${t("ctx.manager.newObject")} <kbd></kbd></button>
             <button onclick="openSetting('appearance.theme')"><i class="ti ti-color-swatch"></i> ${t("ctx.manager.changeTheme")} <kbd></kbd></button>
             <hr>
-            <button onclick="expandAllFolders()"><i class="ti ti-arrow-bar-down"></i> ${t("ctx.manager.expandAll")} <kbd>Ctrl + Alt + E</kbd></button>
-            <button onclick="collapseAllFolders()"><i class="ti ti-arrow-bar-to-up"></i> ${t("ctx.manager.collapseAll")} <kbd>Ctrl + Alt + C</kbd></button>
+            <button onclick="expandAllFolders()"><i class="ti ti-arrow-bar-down"></i> ${t("ctx.manager.expandAll")} <kbd>${ks("expandAllFolders")}</kbd></button>
+            <button onclick="collapseAllFolders()"><i class="ti ti-arrow-bar-to-up"></i> ${t("ctx.manager.collapseAll")} <kbd>${ks("collapseAllFolders")}</kbd></button>
         `;
     } else if (e.target.closest(".item:not(#il-recentitems .item)")) {
         const idTarget = handleTargeting(e, 'note');

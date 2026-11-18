@@ -121,7 +121,7 @@ function renderNav() {
                 <b class="idreference" style="display: none !important;">${f.id}</b>
             </header>
             <div id="il-${f.id}" class="itemlist">
-                <span class="no-notes" style="margin-left: 1rem;">${t("manager.placeholder.folderEmpty")}</span>
+                <span class="no-notes">${t("manager.placeholder.folderEmpty")}</span>
             </div>
         `;
         folder.querySelector("header").addEventListener("click", () => {
@@ -199,10 +199,12 @@ function renderRecent() {
 
 var noteContents = {};
 var currentNote = null;
+const Delta = Quill.import('delta');
 
 var historyCache = {};
 
 function openNote(id, isInitializing = false) {
+    document.querySelector(".ql-table-menus-container")?.classList.add("ql-hidden");
     if (!id) return;
     if (currentNote != id) {
         const history = quill.getModule('history');
@@ -218,7 +220,7 @@ function openNote(id, isInitializing = false) {
         currentNote = id;
         handleNoNoteOpen();
         // 'silent' so quill doesn't think switching is a user action
-        quill.setContents(noteContents[id], 'silent');
+        quill.updateContents(quill.getContents().diff(new Delta(noteContents[id])), 'silent');
         quill.focus();
 
         // remove previous note's history stack from memory and set to the current one's
@@ -266,13 +268,13 @@ function createObject(type, name) {
             openNote(id);
         }
     }
-    closeDialog('newobject');
+    closeModal('newobject');
     renderNav();
     return id; // for places where an object is automatically created and the script needs to know the ID easily
 }
 
 function deleteNote(id) {
-    closeDialog('deleteconfirmation');
+    closeModal('deleteconfirmation');
     confirmBtn.onclick = null;
 
     if (!notesRef[id]) return;
@@ -301,7 +303,7 @@ function deleteNote(id) {
 }
 
 function deleteFolder(id) {
-    closeDialog('deleteconfirmation');
+    closeModal('deleteconfirmation');
     confirmBtn.onclick = null;
     const folderName = folders[id].name;
     delete folders[id];
@@ -327,19 +329,29 @@ function deleteConfirmation(type, id, skip) {
         confirmBtn.onclick = () => deleteFolder(id);
         confirmNameText.innerText = t("modal.deleteConfirmation.confirmName.folder", {name: folders[id].name});
     }
-    openDialog('deleteconfirmation');
+    openModal('deleteconfirmation');
 }
 
 function expandAllFolders() {
     document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
         folder.classList.add("expanded");
     });
+    document.getElementById("recentnotessection").classList.add("expanded");
+    openFolders = [];
+    Object.values(folders).forEach((f) => {
+        openFolders.push(f.id);
+    });
+    openFolders.push("recent");
+    storeS("open_folders", openFolders);
 }
 
 function collapseAllFolders() {
     document.querySelectorAll("#navnoteslistarea > section").forEach((folder) => {
         folder.classList.remove("expanded");
     });
+    document.getElementById("recentnotessection").classList.remove("expanded");
+    openFolders = [];
+    storeS("open_folders", openFolders);
 }
 
 function handleNoNoteOpen() {

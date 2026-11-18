@@ -15,6 +15,8 @@
 
         <script src="/assets/quill.js"></script>
         <link href="/assets/quill.snow.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.css" rel="stylesheet"/>
+        <script src="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.js"></script>
 
         <script src="/js/ui-kit.js"></script>
         <link rel="stylesheet" href="/css/ui-kit.css">
@@ -51,10 +53,10 @@
                     </div>
                 </div>
             </div>
-            <button onclick="openDialog('settings')" data-i18n="header.button.settings">Settings</button>
+            <button onclick="openModal('settings')" data-i18n="header.button.settings">Settings</button>
             <div class="spacer"></div>
-            <span id="versionSpan">v0.5.4</span>
-            <button onclick="openDialog('about')" data-i18n="header.button.about">About</button>
+            <span id="versionSpan">v0.5.6</span>
+            <button onclick="openModal('about')" data-i18n="header.button.about">About</button>
         </header>
 
         <div id="midsect">
@@ -62,9 +64,9 @@
                 <header>
                     <span data-i18n="manager.title">Manager</span>
                     <div class="spacer"></div>
-                    <button onclick="openDialog('newobject')" class="tt-b-m" data-tooltip="New object" data-i18n-tooltip="manager.newObject"><i class="ti ti-plus"></i></button>
+                    <button onclick="openModal('newobject')" class="tt-b-m" data-tooltip="New object" data-i18n-tooltip="manager.newObject"><i class="ti ti-plus"></i></button>
                     <button onclick="activateNavSearch()" id="navsearchbtn" class="tt-b-m" data-tooltip="Search your notes" data-i18n-tooltip="manager.searchBtn"><i class="ti ti-search"></i></button>
-                    <!--<button onclick="openDialog('unlocknotes');document.getElementById('lockednotesinput').focus()" class="tt-b-m" data-tooltip="Locked notes" data-i18n-tooltip="manager.lockedNotes"><i class="ti ti-lock"></i></button>-->
+                    <!--<button onclick="openModal('unlocknotes');document.getElementById('lockednotesinput').focus()" class="tt-b-m" data-tooltip="Locked notes" data-i18n-tooltip="manager.lockedNotes"><i class="ti ti-lock"></i></button>-->
                 </header>
                 <section id="navsearch">
                     <header>
@@ -115,7 +117,8 @@
                         <span class="ql-formats">
                             <button class="tt-b-m ql-blockquote" data-tooltip="Blockquote" data-i18n-tooltip="editor.toolbar.blockquote"></button>
                             <button class="tt-b-m ql-code-block" data-tooltip="Code block" data-i18n-tooltip="editor.toolbar.codeBlock"></button>
-                            <button class="tt-b-m ql-link" data-tooltip="Link" data-i18n-tooltip="editor.toolbar.link"></button>    
+                            <button class="tt-b-m ql-link" data-tooltip="Link" data-i18n-tooltip="editor.toolbar.link"></button>
+                            <button class="tt-b-m ql-table-better" data-tooltip="Table" data-i18n-tooltip="editor.toolbar.table"></button>
                         </span>
                         <span class="ql-formats">
                             <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1" data-i18n-tooltip="editor.toolbar.heading1"></button>
@@ -203,26 +206,26 @@
         </div>
 
         <!-- POPUP WINDOWS -->
-        <div class="dialog-container" id="dialog-about">
-            <div class="dialog-window">
+        <div class="modal-container" id="modal-about">
+            <div class="modal-window">
                 <header>
                     <h2 data-i18n="modal.about.header">About</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
+                    <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <p>wNotes, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting both desktop and mobile devices, wNotes targets user-friendliness and functionality above all else.</p>
+                    <p>Vellum, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting both desktop and mobile devices, Vellum targets user-friendliness and functionality above all else.</p>
                     <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. <span data-i18n="modal.about.reserved">All rights reserved.</span></p>
                 </main>
             </div>
         </div>
 
-        <div class="dialog-container dialog-open" id="dialog-settings">
-            <div class="dialog-window">
+        <div class="modal-container" id="modal-settings">
+            <div class="modal-window">
                 <header>
                     <h2 data-i18n="modal.settings.header">Settings</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
+                    <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <nav>
@@ -242,12 +245,12 @@
             </div>
         </div>
 
-        <div class="dialog-container" id="dialog-newobject">
-            <div class="dialog-window">
+        <div class="modal-container" id="modal-newobject">
+            <div class="modal-window">
                 <header>
                     <h2 data-i18n="modal.newObject.header">New Object</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
+                    <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <div>
@@ -256,40 +259,40 @@
                     </div>
                     <div class="cinput">
                         <input placeholder="Name..." data-i18n-placeholder="modal.newObject.nameInput.placeholder">
-                        <button class="tt-t-m" data-tooltip="Create" data-i18n-tooltip="modal.newObject.confirmCreation" onclick="createObject(document.getElementById('noop1').checked?'note':'folder', this.parentElement.querySelector('input').value.trim())"><i class="ti ti-chevron-right"></i></button>
+                        <button class="tt-t-m submit" data-tooltip="Create" data-i18n-tooltip="modal.newObject.confirmCreation" onclick="createObject(document.getElementById('noop1').checked?'note':'folder', this.parentElement.querySelector('input').value.trim())"><i class="ti ti-chevron-right"></i></button>
                     </div>
                 </main>
             </div>
         </div>
 
-        <div class="dialog-container" id="dialog-unlocknotes">
-            <div class="dialog-window">
+        <div class="modal-container" id="modal-unlocknotes">
+            <div class="modal-window">
                 <header>
                     <h2 data-i18n="modal.unlockNotes.header">Enter Passcode</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
+                    <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <div class="cinput">
                         <input type="password" placeholder="Enter passcode..." data-i18n-placeholder="modal.unlockNotes.passwordInput.placeholder" id="lockednotesinput">
                         <button onclick="alert('gonna do this next ship')" class="tt-t-m" data-tooltip="Unlock" data-i18n-tooltip="modal.unlockNotes.submit"><i class="ti ti-chevron-right"></i></button>
                     </div>
-                    <button onclick="closeDialog('unlocknotes');openSetting('security.lockedNotes')" data-i18n="modal.unlockNotes.changePassword">Change</button>
+                    <button onclick="closeModal('unlocknotes');openSetting('security.lockedNotes')" data-i18n="modal.unlockNotes.changePassword">Change</button>
                 </main>
             </div>
         </div>
 
-        <div class="dialog-container" id="dialog-deleteconfirmation">
-            <div class="dialog-window">
+        <div class="modal-container" id="modal-deleteconfirmation">
+            <div class="modal-window">
                 <header>
                     <h2 data-i18n="modal.deleteConfirmation.header">Confirm Deletion</h2>
                     <div class="spacer"></div>
-                    <button class="dialog-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
+                    <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
                     <span><span data-i18n="modal.deleteConfirmation.prompt.segment1">Are you sure you want to delete</span> <b id="deleteconfirmationName"></b><span data-i18n="modal.deleteConfirmation.prompt.segment2">?</span></span>
                     <div>
-                        <button onclick="closeDialog('deleteconfirmation')" data-i18n="modal.deleteConfirmation.cancel">Cancel</button>
+                        <button onclick="closeModal('deleteconfirmation')" data-i18n="modal.deleteConfirmation.cancel">Cancel</button>
                         <button id="deleteconfirmationBtn" data-i18n="modal.deleteConfirmation.confirm">Confirm</button>
                     </div>
                 </main>

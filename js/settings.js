@@ -47,7 +47,7 @@ function initSettings() {
     SHORTHANDS = getValue("editor.smartTypography.shorthands")
         .map(({find, replace, id}) => ({find, replace, id: id ?? generateId(16)}));
     renderSettings();
-    settingsPage('editor');
+    settingsPage('appearance');
 }
 
 const userSettings = storeL("settings", {});
@@ -358,11 +358,7 @@ const settingsSchema = {
                         shorthands: {
                             id: "editor.smartTypography.shorthands",
                             type: "dualEditTable",
-                            default: [
-                                { find: '--', replace: '—', id: 'jei2878b3rja7eg5' },
-                                { find: '...', replace: '…', id: 'jei2878b3rja7eg6' },
-                                { find: '->', replace: '→', id: 'jei2878b3rja7eg7' }
-                            ],
+                            default: [],
                             conditions: [
                                 {field: "editor.smartTypography.enabled", equals: true}
                             ]
@@ -429,9 +425,6 @@ const settingsSchema = {
                             type: "dropdown",
                             options: [
                                 {value: "en", content: "English"},
-                                {value: "es", content: "Español"},
-                                {value: "zh", content: "中文"},
-                                {value: "lt", content: "Lietuvių"},
                                 {value: "de", content: "Deutsch"}
                             ],
                             default: "en"
@@ -487,19 +480,37 @@ const settingsSchema = {
                                     id: "newNote",
                                     name: "shortcut.newNote",
                                     type: "keysEntry",
-                                    keys: ["Ctrl", "Alt", "O"],
+                                    keys: ["Alt", "N"],
                                 },
                                 newFolder: {
                                     id: "newFolder",
                                     name: "shortcut.newFolder",
                                     type: "keysEntry",
-                                    keys: ["Ctrl", "Alt", "P"]
+                                    keys: ["Alt", "M"]
                                 },
                                 renameCurrentNote: {
                                     id: "renameCurrentNote",
                                     name: "shortcut.renameCurrentNote",
                                     type: "keysEntry",
                                     keys: ["F2"]
+                                },
+                                openSettings: {
+                                    id: "openSettings",
+                                    name: "shortcut.openSettings",
+                                    type: "keysEntry",
+                                    keys: ["Alt", "/"],
+                                },
+                                expandAllFolders: {
+                                    id: "expandAllFolders",
+                                    name: "shortcut.expandAllFolders",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "Alt", "E"]
+                                },
+                                collapseAllFolders: {
+                                    id: "collapseAllFolders",
+                                    name: "shortcut.collapseAllFolders",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "Alt", "C"]
                                 }
                             }
                         }
@@ -689,22 +700,18 @@ function fillSmartTypographyTemplate() {
         { find: "...", replace: "…", id: "a2a2a2a2a2a2a2a2" },
         { find: "->", replace: "→", id: "a4a4a4a4a4a4a4a4" },
         { find: "<-", replace: "←", id: "a5a5a5a5a5a5a5a5" },
-        { find: "<->", replace: "↔", id: "a6a6a6a6a6a6a6a6" },
         { find: "=>", replace: "⇒", id: "a7a7a7a7a7a7a7a7" },
-        { find: "!=", replace: "≠", id: "a8a8a8a8a8a8a8a8" },
+        { find: "/=", replace: "≠", id: "a8a8a8a8a8a8a8a8" },
         { find: "<=", replace: "≤", id: "a9a9a9a9a9a9a9a9" },
         { find: ">=", replace: "≥", id: "a0a0a0a0a0a0a0a0" },
         { find: "+-", replace: "±", id: "b1b1b1b1b1b1b1b1" },
         { find: "(c)", replace: "©", id: "b2b2b2b2b2b2b2b2" },
         { find: "(r)", replace: "®", id: "b3b3b3b3b3b3b3b3" },
         { find: "(tm)", replace: "™", id: "b4b4b4b4b4b4b4b4" },
+        { find: "deg", replace: "°", id: "b8b8b8b8b8b8b8b8" },
         { find: "1/2", replace: "½", id: "b5b5b5b5b5b5b5b5" },
         { find: "1/4", replace: "¼", id: "b6b6b6b6b6b6b6b6" },
         { find: "3/4", replace: "¾", id: "b7b7b7b7b7b7b7b7" },
-        { find: "deg", replace: "°", id: "b8b8b8b8b8b8b8b8" },
-        { find: " x ", replace: " × ", id: "b9b9b9b9b9b9b9b9" },
-        { find: "?!", replace: "‽", id: "b0b0b0b0b0b0b0b0" },
-
         { find: "1/3", replace: "⅓", id: "c1c1c1c1c1c1c1c1" },
         { find: "2/3", replace: "⅔", id: "c2c2c2c2c2c2c2c2" },
         { find: "1/5", replace: "⅕", id: "c3c3c3c3c3c3c3c3" },
@@ -717,56 +724,6 @@ function fillSmartTypographyTemplate() {
         { find: "3/8", replace: "⅜", id: "c0c0c0c0c0c0c0c0" },
         { find: "5/8", replace: "⅝", id: "d1d1d1d1d1d1d1d1" },
         { find: "7/8", replace: "⅞", id: "d2d2d2d2d2d2d2d2" },
-        { find: "~=", replace: "≈", id: "d3d3d3d3d3d3d3d3" },
-        { find: "===", replace: "≡", id: "d4d4d4d4d4d4d4d4" },
-        { find: " / ", replace: " ÷ ", id: "d5d5d5d5d5d5d5d5" },
-        { find: "sqrt", replace: "√", id: "d6d6d6d6d6d6d6d6" },
-        { find: "inf", replace: "∞", id: "d7d7d7d7d7d7d7d7" },
-        { find: "pi", replace: "π", id: "d8d8d8d8d8d8d8d8" },
-        { find: "^2", replace: "²", id: "d9d9d9d9d9d9d9d9" },
-        { find: "^3", replace: "³", id: "d0d0d0d0d0d0d0d0" },
-
-        { find: "<<", replace: "«", id: "e1e1e1e1e1e1e1e1" },
-        { find: ">>", replace: "»", id: "e2e2e2e2e2e2e2e2" },
-        { find: "(p)", replace: "℗", id: "e3e3e3e3e3e3e3e3" },
-        { find: "(sm)", replace: "℠", id: "e4e4e4e4e4e4e4e4" },
-        { find: "sec*", replace: "§", id: "e5e5e5e5e5e5e5e5" },
-        { find: "para*", replace: "¶", id: "e6e6e6e6e6e6e6e6" },
-        { find: "dag*", replace: "†", id: "e7e7e7e7e7e7e7e7" },
-        { find: "ddag*", replace: "‡", id: "e8e8e8e8e8e8e8e8" },
-        { find: "bull*", replace: "•", id: "e9e9e9e9e9e9e9e9" },
-        { find: "permil", replace: "‰", id: "e0e0e0e0e0e0e0e0" },
-        { find: ",,", replace: "„", id: "f1f1f1f1f1f1f1f1" },
-        { find: "''", replace: "”", id: "f2f2f2f2f2f2f2f2" },
-        { find: "``", replace: "“", id: "f3f3f3f3f3f3f3f3" },
-        { find: " !", replace: "!", id: "f4f4f4f4f4f4f4f4" },
-        { find: " ?", replace: "?", id: "f5f5f5f5f5f5f5f5" },
-        { find: " ,", replace: ",", id: "f6f6f6f6f6f6f6f6" },
-        { find: " .", replace: ".", id: "f7f7f7f7f7f7f7f7" },
-        { find: " ;", replace: ";", id: "f8f8f8f8f8f8f8f8" },
-        { find: " :", replace: ":", id: "f9f9f9f9f9f9f9f9" },
-        { find: " - ", replace: " – ", id: "f0f0f0f0f0f0f0f0" },
-
-        { find: "<=", replace: "⇐", id: "g1g1g1g1g1g1g1g1" },
-        { find: "<=>", replace: "⇔", id: "g2g2g2g2g2g2g2g2" },
-        { find: "^|", replace: "↑", id: "g3g3g3g3g3g3g3g3" },
-        { find: "v|", replace: "↓", id: "g4g4g4g4g4g4g4g4" },
-        { find: "[]", replace: "☐", id: "g5g5g5g5g5g5g5g5" },
-        { find: "[x]", replace: "☑", id: "g6g6g6g6g6g6g6g6" },
-        { find: "[/]", replace: "✓", id: "g7g7g7g7g7g7g7g7" },
-        { find: "[!]", replace: "⚠", id: "g8g8g8g8g8g8g8g8" },
-        { find: "(*)", replace: "★", id: "g9g9g9g9g9g9g9g9" },
-        { find: "( )", replace: "☆", id: "g0g0g0g0g0g0g0g0" },
-        { find: "EUR", replace: "€", id: "h1h1h1h1h1h1h1h1" },
-        { find: "GBP", replace: "£", id: "h2h2h2h2h2h2h2h2" },
-        { find: "JPY", replace: "¥", id: "h3h3h3h3h3h3h3h3" },
-        { find: "cent*", replace: "¢", id: "h4h4h4h4h4h4h4h4" },
-        { find: "INR", replace: "₹", id: "h5h5h5h5h5h5h5h5" },
-        { find: "KRW", replace: "₩", id: "h6h6h6h6h6h6h6h6" },
-        { find: "BTC", replace: "₿", id: "h7h7h7h7h7h7h7h7" },
-        { find: "cmd*", replace: "⌘", id: "h8h8h8h8h8h8h8h8" },
-        { find: "opt*", replace: "⌥", id: "h9h9h9h9h9h9h9h9" },
-        { find: "shft*", replace: "⇧", id: "h0h0h0h0h0h0h0h0" },
 
         { find: "dont", replace: "don't", id: "i1i1i1i1i1i1i1i1" },
         { find: "cant", replace: "can't", id: "i2i2i2i2i2i2i2i2" },
@@ -781,10 +738,8 @@ function fillSmartTypographyTemplate() {
         { find: "shouldnt", replace: "shouldn't", id: "j1j1j1j1j1j1j1j1" },
         { find: "wouldnt", replace: "wouldn't", id: "j2j2j2j2j2j2j2j2" },
         { find: "couldnt", replace: "couldn't", id: "j3j3j3j3j3j3j3j3" },
-        { find: "im ", replace: "I'm ", id: "j4j4j4j4j4j4j4j4" },
-        { find: "ive ", replace: "I've ", id: "j5j5j5j5j5j5j5j5" },
-        { find: "id ", replace: "I'd ", id: "j6j6j6j6j6j6j6j6" },
-        { find: "ill ", replace: "I'll ", id: "j7j7j7j7j7j7j7j7" },
+        { find: "im", replace: "I'm ", id: "j4j4j4j4j4j4j4j4" },
+        { find: "ive", replace: "I've ", id: "j5j5j5j5j5j5j5j5" },
         { find: "youre", replace: "you're", id: "j8j8j8j8j8j8j8j8" },
         { find: "theyre", replace: "they're", id: "j9j9j9j9j9j9j9j9" },
         { find: "thats", replace: "that's", id: "j0j0j0j0j0j0j0j0" }
@@ -846,9 +801,11 @@ const applications = {
     },
     "appearance.background.image": (val, loading) => {
         document.documentElement.style.setProperty("--wallpaper", `url("${val}")`);
+        onChange("appearance.background.fitMode", getValue("appearance.background.fitMode"));
     },
     "appearance.background.imageUrl": (val, loading) => {
         document.documentElement.style.setProperty("--wallpaper", `url("${val}")`);
+        onChange("appearance.background.fitMode", getValue("appearance.background.fitMode"));
     },
     "appearance.background.blur": (val, loading) => {
         document.documentElement.style.setProperty("--wallpaper-blur", val+"px");
@@ -936,6 +893,7 @@ const applications = {
         if (!loading) console.log("User notes have been cleared.")
     }
 }
+
 var createShorthandRow;
 var SHORTHANDS = [];
 function generateInput(field, onChange, parent) {
@@ -1008,11 +966,16 @@ function generateInput(field, onChange, parent) {
             break;
         case "dualEditTable":
             elem = document.createElement("table");
+            elem.classList.add("dualEditTable"); // so the css knows to make the 3rd column smol for the buttons
             // js the header
-            elem.innerHTML = `<tbody><tr><th data-i18n="settingInput.dualTable.header.shorthand">${t("settingInput.dualTable.header.shorthand")}</th><th data-i18n="settingInput.dualTable.header.result">${t("settingInput.dualTable.header.result")}</th></tr></tbody>`;
+            elem.innerHTML = `<tbody><tr>
+                <th data-i18n="settingInput.dualTable.header.shorthand">${t("settingInput.dualTable.header.shorthand")}</th>
+                <th data-i18n="settingInput.dualTable.header.result">${t("settingInput.dualTable.header.result")}</th>
+                <th></th>
+                </tr></tbody>`;
             const newEntryRow = document.createElement("tr");
             newEntryRow.id = "newEntryRow";
-            newEntryRow.innerHTML = `<td colspan="2"><button class="new-row"><i class="ti ti-plus"></i> <span data-i18n="settingInput.dualTable.button.newEntry">${t("settingInput.dualTable.button.newEntry")}</span></button></td>`;
+            newEntryRow.innerHTML = `<td colspan="3"><button class="new-row"><i class="ti ti-plus"></i> <span data-i18n="settingInput.dualTable.button.newEntry">${t("settingInput.dualTable.button.newEntry")}</span></button></td>`;
             elem.querySelector('tbody').appendChild(newEntryRow);
             createShorthandRow = (pair) => {
                 const row = document.createElement("tr");
@@ -1020,8 +983,10 @@ function generateInput(field, onChange, parent) {
                 row.innerHTML = `
                     <td contenteditable="plaintext-only" data-rule-property="find"></td>
                     <td contenteditable="plaintext-only" data-rule-property="replace"></td>
+                    <td><button><i class="ti ti-x"></i></button></td>
                 `;
-                const cells = row.querySelectorAll("td");
+                row.querySelector("td:nth-child(3)>button").addEventListener("click", () => {SHORTHANDS = SHORTHANDS.filter(({id}) => id !== row.dataset.id); row.remove(); onChange(field, SHORTHANDS);})
+                const cells = row.querySelectorAll("td:not(:nth-child(3))");
                 cells.forEach((cell) => {
                     cell.textContent = pair[cell.dataset.ruleProperty];
                     cell.addEventListener("input", () => {
@@ -1221,17 +1186,26 @@ function generateInput(field, onChange, parent) {
 // KEYBOARD SHORTCUTS RHAHHH
 const shortcutActions = {
     newNote: () => {
-        closeAllDialogs();
+        closeAllModals();
         const id = createObject("note"); // createObject returns the id of what it created
         renameObject("note", id);
     },
     newFolder: () => {
-        closeAllDialogs();
+        closeAllModals();
         const id = createObject("folder");
         renameObject("folder", id);
     },
     renameCurrentNote: () => {
         renameObject("note", currentNote);
+    },
+    openSettings: () => {
+        openModal("settings");
+    },
+    expandAllFolders: () => {
+        expandAllFolders();
+    },
+    collapseAllFolders: () => {
+        collapseAllFolders();
     }
 };
 
@@ -1280,7 +1254,7 @@ function settingsPage(name) {
 
 function openSetting(location) {
     const [page, header] = location.split(".");
-    openDialog("settings");
+    openModal("settings");
     settingsPage(page);
     const targetElement = document.getElementById(`sph-${page}-${header}`);
 
@@ -1319,7 +1293,7 @@ searchBar.addEventListener("blur", () => {
     document.querySelector("#settingsPageButtons>button#spb-"+currentSettingsPage).classList.add("current");
 });
 
-searchBar.addEventListener("keyup", (e) => {
+searchBar.addEventListener("keyup", () => {
     renderSearch();
 });
 

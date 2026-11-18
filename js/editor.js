@@ -26,6 +26,7 @@ icons['align']['center'] = '<i class="ti ti-align-center"></i>';
 icons['align']['justify'] = '<i class="ti ti-align-justified"></i>';
 icons['align']['right'] = '<i class="ti ti-align-right"></i>';
 icons['clean'] = '<i class="ti ti-clear-formatting"></i>';
+icons['table-better'] = '<i class="ti ti-table"></i>';
 
 class SmartTypography {
     constructor(quill, options = {}) {
@@ -140,6 +141,9 @@ class SmartTypography {
 }
 
 Quill.register('modules/smartTypography', SmartTypography);
+Quill.register({
+  'modules/table-better': QuillTableBetter
+}, true);
 
 var CLOSEPAIRS_ENABLED = false;
 
@@ -204,6 +208,7 @@ function initQuill() {
         theme: 'snow',
         placeholder: t("editor.empty.placeholder"),
         modules: {
+            table: false, // disable defaut quill tables bc they ahh n interfere w table-better
             toolbar: {
                 container: '#formatting',
                 handlers: {
@@ -243,11 +248,32 @@ function initQuill() {
                             // allow normal backspace behavior
                             return true;
                         }
-                    }
+                    },
+                    ...QuillTableBetter.keyboardBindings
                 }
             },
             smartTypography: {
                 rules: getValue("editor.smartTypography.shorthands")
+            },
+            'table-better': {
+                language: "en_US",
+                menus: [
+                    {name: "column", icon: "<i class='ti ti-table-column'></i>"},
+                    {name: "row", icon: "<i class='ti ti-table-row'></i>"},
+                    {name: "merge", icon: "<i class='ti ti-stack-forward'></i>"},
+                    //{name: "table", icon: "<i class='ti ti-table'></i>"},
+                    //{name: "cell", icon: "<i class='ti ti-border-outer'></i>"},
+                    {name: "wrap", icon: "<i class='ti ti-text-wrap'></i>"},
+                    {name: "copy", icon: "<i class='ti ti-copy'></i>"},
+                    {name: "delete", icon: "<i class='ti ti-trash'></i>"}
+                ],
+                toolbarTable: true/*,
+                language: {
+                    name: "i18n",
+                    content: {
+                        // REFERENCE https://github.com/attoae/quill-table-better/blob/develop/src/language/en_US.ts
+                    }
+                }*/
             }
         }
     });
@@ -291,6 +317,13 @@ function handleQuillPrint(quillInstance) {
     document.body.removeChild(iframe);
   }, 350);
 }
+
+document.addEventListener("localechange", () => {
+    try {
+        quill.options.placeholder = t("editor.empty.placeholder");
+        quill.root.dataset.placeholder = t("editor.empty.placeholder");
+    } catch (e) {}
+});
 
 function updateWordCounter() {
     // rmv trailing newline quill always adds

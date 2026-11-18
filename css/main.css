@@ -10,7 +10,7 @@
     --panel-opacity: 100;
     --panel-blur: 0px;
     --wallpaper: url("");
-    --wallpaper-fit: auto;
+    --wallpaper-fit: cover;
     --wallpaper-repeat: no-repeat;
     --wallpaper-blur: 0px;
     --wallpaper-opacity: 1.0;
@@ -167,7 +167,7 @@ body {
         }
     }
 
-    .dialog-container {
+    .modal-container {
         height: 100vh;
         width: 100vw;
         backdrop-filter: brightness(100%) blur(0px);
@@ -181,7 +181,7 @@ body {
         transition: all 0.15s ease;
         z-index: 100;
 
-        .dialog-window {
+        .modal-window {
             background: color-mix(in srgb, var(--bg) calc(var(--panel-opacity) * 1%), transparent);
             backdrop-filter: blur(var(--panel-blur));
             padding: 0.5rem;
@@ -190,8 +190,8 @@ body {
             position: relative;
             min-width: 100px;
             min-height: 50px;
-            max-width: 90%;
-            max-height: 80%;
+            max-width: 50rem;
+            max-height: 80vw;
             opacity: 0;
             transform: scale(0.2);
             transition: all 0.15s ease;
@@ -219,11 +219,11 @@ body {
             }
         }
 
-        &.dialog-open {
+        &.modal-open {
             backdrop-filter: brightness(60%) blur(2px);
             pointer-events: all;
 
-            .dialog-window {
+            .modal-window {
                 opacity: 1;
                 transform: scale(1);
             }
@@ -444,7 +444,7 @@ body {
             flex-direction: column;
             flex-shrink: 0;
             position: relative;
-            z-index: 0;
+            z-index: 1;
 
             #navnoteslistarea {
                 overflow-y: scroll;
@@ -896,8 +896,8 @@ body {
 }
 
 
-#dialog-settings {
-    .dialog-window {
+#modal-settings {
+    .modal-window {
         padding-bottom: 0;
         padding-right: 0;
         height: 80vh;
@@ -1050,7 +1050,7 @@ body {
                     .label-description {
                         margin-top: 0.25rem;
                         color: var(--textm);
-                        font-size: 0.8em;
+                        font-size: 0.9em;
                     }
 
 
@@ -1157,7 +1157,7 @@ body {
     }
 }
 
-#dialog-deleteconfirmation {
+#modal-deleteconfirmation {
 
     #deleteconfirmationBtn {
         color: var(--danger);

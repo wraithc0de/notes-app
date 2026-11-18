@@ -59,6 +59,11 @@
             }
         }
 
+        .ql-table-button-disabled {
+            background-color: var(--bg-2) !important;
+            opacity: 0.5;
+        }
+
         .ql-picker {
             height: 100%;
             border-radius: var(--corners);
@@ -205,4 +210,159 @@
             color: var(--accent);
         }
     }
+
+    /*********
+      TABLES
+    *********/
+    td, th {
+        border: 1px solid var(--border-m);
+    }
+
+    th {
+        background: var(--bg-3);
+    }
+
+    .ql-table-select-container {
+        background: var(--bg-3);
+        border-radius: var(--corners);
+        border: 1px solid var(--border-m);
+        
+        .ql-table-select-list {
+            span {
+                border: 1px solid var(--border-m);
+
+                &.ql-cell-selected {
+                    border: 1px solid var(--accent);
+                    background: var(--accentm);
+                    &:after {display: none;}
+                }
+            }
+        }
+
+        .ql-table-select-label {
+            color: var(--textm);
+        }
+    }
+
+    .ql-table-menus-container {
+        background: var(--bg-3);
+        border-radius: var(--corners);
+        border: 1px solid var(--border-m);
+
+        &.ql-table-triangle-down {
+            &:after {
+                color: var(--bg-3);
+                border-bottom-color: var(--bg-3) !important;
+            }
+        }
+
+        &.ql-table-triangle-up {
+            &:after {
+                color: var(--bg-3);
+                border-top-color: var(--bg-3) !important;
+            }
+        }
+    }
+
+    .ql-table-dropdown {
+        svg path {
+            stroke: var(--textm);
+        }
+
+        &:hover {
+            background: var(--btn-highlight);
+        }
+
+        .ql-table-tooltip {
+            background: var(--bg);
+            border: 1px solid var(--border-sep);
+            padding: 0.2rem 0.3rem !important;
+            border-radius: var(--corners);
+            font-size: 0.9em;
+
+            &:before {display: none;}
+        }
+    }
+
+    .ql-table-dropdown-list {
+        background: var(--bg-3);
+        border-radius: var(--corners);
+        border: 1px solid var(--border-m);
+
+        li:hover {
+            background: var(--btn-highlight);
+        }
+
+        .ql-table-divider {
+            background: var(--border-m);
+        }
+
+        .ql-table-switch {
+            position: relative;
+            display: inline-block;
+            height: 1em;
+            width: 2em;
+            vertical-align: text-bottom;
+        }
+
+        .ql-table-switch .ql-table-switch-inner {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            background: transparent;
+            outline: 1px solid var(--border-m);
+            outline-offset: 0.125em;
+            border-radius: 1em;
+            transition: all 0.15s ease;
+        }
+
+        .ql-table-switch .ql-table-switch-inner:before {
+            content: "";
+            position: static;
+            display: block;
+            height: 1em;
+            width: 1em;
+            background: var(--border-sep);
+            border-radius: 1em;
+            transform: translateX(0);
+            transition: all 0.15s ease;
+        }
+
+        .ql-table-switch:hover .ql-table-switch-inner {
+            outline-color: var(--textm);
+        }
+
+        .ql-table-switch .ql-table-switch-inner[aria-checked="true"] {
+            outline-color: var(--accent);
+            background: var(--accentm);
+        }
+
+        .ql-table-switch .ql-table-switch-inner[aria-checked="true"]:before {
+            transform: translateX(1em);
+            background: var(--accent);
+        }
+    }
+
+    .ql-cell-focused:after {
+        background: none;
+        border-color: var(--accent);
+    }
+
+    .ql-cell-selected:after {
+        background: color-mix(in srgb, var(--accent) 45%, transparent);
+        border: 1px solid var(--accentm);
+    }
+
+    .ql-operate-line {
+        background: var(--accent);
+    }
+
+    .ql-operate-block {
+        border: 1px solid var(--border-m);
+    }
+
+    .ql-operate-drag-table {
+        border: 1px dashed var(--accent);
+    }
+
 }
