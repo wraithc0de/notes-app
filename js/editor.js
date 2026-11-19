@@ -142,7 +142,7 @@ class SmartTypography {
 
 Quill.register('modules/smartTypography', SmartTypography);
 Quill.register({'modules/table-better': QuillTableBetter}, true);
-Quill.register({'modules/emojiModule': EmojiModule});
+Quill.register(EmojiModule, true);
 
 var CLOSEPAIRS_ENABLED = false;
 
@@ -271,7 +271,9 @@ function initQuill() {
                     content: {}
                 }
             },
-            'emojiModule': true
+            emoji: {
+                icon: '<i class="ti ti-mood-smile"></i>'
+            }
         }
     });
     
