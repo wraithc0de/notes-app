@@ -91,6 +91,7 @@
     "manager.lockedNotes": "Locked notes",
     "manager.search.placeholder": "Search notes...",
     "manager.search.empty": "Enter a search query.",
+    "manager.search.sort": "Sort",
     "manager.search.noResults": "No results.",
     "manager.recent": "Recent",
     "manager.placeholder.rootEmpty": "Nothing to display.",

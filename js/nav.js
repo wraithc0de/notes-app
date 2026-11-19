@@ -59,12 +59,18 @@ document.addEventListener("click", (event) => {
         deactivateNavSearch();
     }
 });
-
-nsearchinput.addEventListener("input", () => {
+var SORT_WAY = "a-z";
+function renderNavSearch() {
     nresults.innerHTML = "";
     var numResults = 0;
-    for (var id in notesRef) {
-        const note = notesRef[id];
+    var sorted = notesRef;
+    switch (SORT_WAY) {
+        case "a-z": sorted = Object.fromEntries(Object.entries(notesRef).sort().reverse()); break;
+        case "z-a": sorted = Object.fromEntries(Object.entries(notesRef).sort()); break;
+    }
+    
+    for (var id in sorted) {
+        const note = sorted[id];
         if (note.name.toLowerCase().includes(nsearchinput.value.toLowerCase())) {
             numResults++;
             var result = document.createElement("div");
@@ -80,6 +86,10 @@ nsearchinput.addEventListener("input", () => {
     if (nsearchinput.value.trim() == "") {
         nresults.innerHTML = `<span>${t("manager.search.empty")}</span>`;
     }
+}
+
+nsearchinput.addEventListener("input", () => {
+    renderNavSearch();
 });
 
 // end searching

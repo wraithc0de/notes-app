@@ -57,7 +57,7 @@
             </div>
             <button onclick="openModal('settings')" data-i18n="header.button.settings">Settings</button>
             <div class="spacer"></div>
-            <span id="versionSpan">v0.5.6</span>
+            <span id="versionSpan">v0.6.3</span>
             <button onclick="openModal('about')" data-i18n="header.button.about">About</button>
         </header>
 
@@ -74,6 +74,13 @@
                     <header>
                         <div class="cinput">
                             <input placeholder="Search notes..." id="navsearchinput" data-i18n-placeholder="manager.search.placeholder">
+                            <div class="header-dropdown">
+                                <button class="tt-t-m" data-tooltip="Sort" data-i18n-tooltip="manager.search.sort"><i class="ti ti-filter-2"></i></button>
+                                <div>
+                                    <button onclick="SORT_WAY = 'a-z';renderNavSearch()">A-Z</button>
+                                    <button onclick="SORT_WAY = 'z-a';renderNavSearch()">Z-A</button>
+                                </div>
+                            </div>
                         </div>
                     </header>
                     <div id="navsearchresults" class="itemlist" style="margin-top: 4px;">
@@ -217,7 +224,7 @@
                     <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <p>Vellum, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting both desktop and mobile devices, Vellum targets user-friendliness and functionality above all else.</p>
+                    <p>Vellum, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Aiming to support both desktop and mobile devices in the future, Vellum targets user-friendliness and functionality above all else.</p>
                     <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. <span data-i18n="modal.about.reserved">All rights reserved.</span></p>
                 </main>
             </div>

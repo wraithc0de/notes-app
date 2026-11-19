@@ -372,53 +372,54 @@ body {
             color: var(--textm);
             margin-right: 1rem;
         }
+    }
+    
+    .header-dropdown {
+        position: relative;
+        display: flex;
 
-        .header-dropdown {
-            position: relative;
-            display: flex;
+        &:focus-within > div {
+            opacity: 1;
+            pointer-events: all;
+        }
 
-            &:hover > div {
-                opacity: 1;
-                pointer-events: all;
+        &:focus-within >button {
+            background: var(--btn-highlight);
+        }
+
+        >div {
+            position: absolute;
+            top: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border-sep);
+            border-radius: var(--corners);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.15s ease;
+            transition-delay: 0.1s;
+            box-shadow: 0 0 4px #000;
+            z-index: 7;
+
+            button {
+                height: 1.4rem;
+                width: 100%;
+                display: flex;
+                gap: 2em;
+                justify-content: space-between;
+                white-space: nowrap;
             }
 
-            &:has(>div:hover) >button {
-                background: var(--btn-highlight);
-            }
-
-            >div {
-                position: absolute;
-                top: 100%;
-                background: var(--bg);
-                border: 1px solid var(--border-sep);
-                border-radius: var(--corners);
-                opacity: 0;
-                pointer-events: none;
-                transition: all 0.15s ease;
-                transition-delay: 0.1s;
-                box-shadow: 0 0 4px #000;
-
-                button {
-                    height: 1.4rem;
-                    width: 100%;
-                    display: flex;
-                    gap: 2em;
-                    justify-content: space-between;
-                    white-space: nowrap;
+            /* sub-dropdowns */
+            .header-dropdown {
+                >button:after {
+                    font-family: 'tabler-icons';
+                    content: "\ea61";
+                    font-size: 1.2em;
+                    margin-top: 0.1em;
                 }
-
-                /* sub-dropdowns */
-                .header-dropdown {
-                    >button:after {
-                        font-family: 'tabler-icons';
-                        content: "\ea61";
-                        font-size: 1.2em;
-                        margin-top: 0.1em;
-                    }
-                    div {
-                        top: 0;
-                        left: 100%;
-                    }
+                div {
+                    top: 0;
+                    left: 100%;
                 }
             }
         }
