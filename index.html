@@ -17,6 +17,7 @@
         <link href="/assets/quill.snow.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.css" rel="stylesheet"/>
         <script src="https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.js"></script>
+        <script src="/js/emojiModule.js"></script>
 
         <script src="/js/ui-kit.js"></script>
         <link rel="stylesheet" href="/css/ui-kit.css">
@@ -103,49 +104,49 @@
                     <section id="formatting">
                         <!-- some are missing icons bc they're defined in editor.js -->
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-print" data-tooltip="Print" data-i18n-tooltip="editor.toolbar.print"></button>
-                            <button class="tt-b-m ql-undo" data-tooltip="Undo" data-i18n-tooltip="editor.toolbar.undo"></button>
-                            <button class="tt-b-m ql-redo" data-tooltip="Redo" data-i18n-tooltip="editor.toolbar.redo"></button>
+                            <button class="tt-b-m ql-print" data-tooltip="Print" data-i18n-tooltip="toolbar.print"></button>
+                            <button class="tt-b-m ql-undo" data-tooltip="Undo" data-i18n-tooltip="toolbar.undo"></button>
+                            <button class="tt-b-m ql-redo" data-tooltip="Redo" data-i18n-tooltip="toolbar.redo"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-bold" data-tooltip="Bold" data-i18n-tooltip="editor.toolbar.bold"></button>
-                            <button class="tt-b-m ql-italic" data-tooltip="Italic" data-i18n-tooltip="editor.toolbar.italic"></button>
-                            <button class="tt-b-m ql-underline" data-tooltip="Underline" data-i18n-tooltip="editor.toolbar.underline"></button>
-                            <button class="tt-b-m ql-strike" data-tooltip="Strikethrough" data-i18n-tooltip="editor.toolbar.strikethrough"></button>
-                            <button class="tt-b-m ql-highlight" data-tooltip="Highlight" data-i18n-tooltip="editor.toolbar.highlight"></button>
+                            <button class="tt-b-m ql-bold" data-tooltip="Bold" data-i18n-tooltip="toolbar.bold"></button>
+                            <button class="tt-b-m ql-italic" data-tooltip="Italic" data-i18n-tooltip="toolbar.italic"></button>
+                            <button class="tt-b-m ql-underline" data-tooltip="Underline" data-i18n-tooltip="toolbar.underline"></button>
+                            <button class="tt-b-m ql-strike" data-tooltip="Strikethrough" data-i18n-tooltip="toolbar.strikethrough"></button>
+                            <button class="tt-b-m ql-highlight" data-tooltip="Highlight" data-i18n-tooltip="toolbar.highlight"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-blockquote" data-tooltip="Blockquote" data-i18n-tooltip="editor.toolbar.blockquote"></button>
-                            <button class="tt-b-m ql-code-block" data-tooltip="Code block" data-i18n-tooltip="editor.toolbar.codeBlock"></button>
-                            <button class="tt-b-m ql-link" data-tooltip="Link" data-i18n-tooltip="editor.toolbar.link"></button>
-                            <button class="tt-b-m ql-table-better" data-tooltip="Table" data-i18n-tooltip="editor.toolbar.table"></button>
+                            <button class="tt-b-m ql-blockquote" data-tooltip="Blockquote" data-i18n-tooltip="toolbar.blockquote"></button>
+                            <button class="tt-b-m ql-code-block" data-tooltip="Code block" data-i18n-tooltip="toolbar.codeBlock"></button>
+                            <button class="tt-b-m ql-link" data-tooltip="Link" data-i18n-tooltip="toolbar.link"></button>
+                            <button class="tt-b-m ql-table-better" data-tooltip="Table" data-i18n-tooltip="toolbar.table"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1" data-i18n-tooltip="editor.toolbar.heading1"></button>
-                            <button class="tt-b-m ql-header" value="2" data-tooltip="Heading 2" data-i18n-tooltip="editor.toolbar.heading2"></button>
-                            <button class="tt-b-m ql-header" value="3" data-tooltip="Heading 3" data-i18n-tooltip="editor.toolbar.heading3"></button>
+                            <button class="tt-b-m ql-header" value="1" data-tooltip="Heading 1" data-i18n-tooltip="toolbar.heading1"></button>
+                            <button class="tt-b-m ql-header" value="2" data-tooltip="Heading 2" data-i18n-tooltip="toolbar.heading2"></button>
+                            <button class="tt-b-m ql-header" value="3" data-tooltip="Heading 3" data-i18n-tooltip="toolbar.heading3"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-list" value="bullet" data-tooltip="Bulleted list" data-i18n-tooltip="editor.toolbar.list.bullet"></button>
-                            <button class="tt-b-m ql-list" value="ordered" data-tooltip="Ordered list" data-i18n-tooltip="editor.toolbar.list.ordered"></button>
-                            <button class="tt-b-m ql-list" value="check" data-tooltip="Checkbox list" data-i18n-tooltip="editor.toolbar.list.checkbox"></button>
+                            <button class="tt-b-m ql-list" value="bullet" data-tooltip="Bulleted list" data-i18n-tooltip="toolbar.list.bullet"></button>
+                            <button class="tt-b-m ql-list" value="ordered" data-tooltip="Ordered list" data-i18n-tooltip="toolbar.list.ordered"></button>
+                            <button class="tt-b-m ql-list" value="check" data-tooltip="Checkbox list" data-i18n-tooltip="toolbar.list.checkbox"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-script" value="sub" data-tooltip="Subscript" data-i18n-tooltip="editor.toolbar.subscript"></button>
-                            <button class="tt-b-m ql-script" value="super" data-tooltip="Superscript" data-i18n-tooltip="editor.toolbar.superscript"></button>
+                            <button class="tt-b-m ql-script" value="sub" data-tooltip="Subscript" data-i18n-tooltip="toolbar.subscript"></button>
+                            <button class="tt-b-m ql-script" value="super" data-tooltip="Superscript" data-i18n-tooltip="toolbar.superscript"></button>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-indent" value="-1" data-tooltip="Decrease indent" data-i18n-tooltip="editor.toolbar.indent.decrease"></button>
-                            <button class="tt-b-m ql-indent" value="+1" data-tooltip="Increase indent" data-i18n-tooltip="editor.toolbar.indent.increase"></button>
-                            <select class="ql-align tt-b-m" data-tooltip="Alignment" data-i18n-tooltip="editor.toolbar.alignment">
-                                <option value="" class="tt-b-m" data-tooltip="Align to left" data-i18n-tooltip="editor.toolbar.align.left"></option>
-                                <option value="center" class="tt-b-m" data-tooltip="Align center" data-i18n-tooltip="editor.toolbar.align.center"></option>
-                                <option value="right" class="tt-b-m" data-tooltip="Align to right" data-i18n-tooltip="editor.toolbar.align.right"></option>
-                                <option value="justify" class="tt-b-m" data-tooltip="Align justified" data-i18n-tooltip="editor.toolbar.align.justified"></option>
+                            <button class="tt-b-m ql-indent" value="-1" data-tooltip="Decrease indent" data-i18n-tooltip="toolbar.indent.decrease"></button>
+                            <button class="tt-b-m ql-indent" value="+1" data-tooltip="Increase indent" data-i18n-tooltip="toolbar.indent.increase"></button>
+                            <select class="ql-align tt-b-m" data-tooltip="Alignment" data-i18n-tooltip="toolbar.alignment">
+                                <option value="" class="tt-b-m" data-tooltip="Align to left" data-i18n-tooltip="toolbar.align.left"></option>
+                                <option value="center" class="tt-b-m" data-tooltip="Align center" data-i18n-tooltip="toolbar.align.center"></option>
+                                <option value="right" class="tt-b-m" data-tooltip="Align to right" data-i18n-tooltip="toolbar.align.right"></option>
+                                <option value="justify" class="tt-b-m" data-tooltip="Align justified" data-i18n-tooltip="toolbar.align.justified"></option>
                             </select>
                         </span>
                         <span class="ql-formats">
-                            <button class="tt-b-m ql-clean" data-tooltip="Clear formatting" data-i18n-tooltip="editor.toolbar.clearFormat"></button>
+                            <button class="tt-b-m ql-clean" data-tooltip="Clear formatting" data-i18n-tooltip="toolbar.clearFormat"></button>
                         </span>
                     </section>
                     <div id="editorWrapper">

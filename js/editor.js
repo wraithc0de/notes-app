@@ -141,9 +141,8 @@ class SmartTypography {
 }
 
 Quill.register('modules/smartTypography', SmartTypography);
-Quill.register({
-  'modules/table-better': QuillTableBetter
-}, true);
+Quill.register({'modules/table-better': QuillTableBetter}, true);
+Quill.register({'modules/emojiModule': EmojiModule});
 
 var CLOSEPAIRS_ENABLED = false;
 
@@ -256,7 +255,6 @@ function initQuill() {
                 rules: getValue("editor.smartTypography.shorthands")
             },
             'table-better': {
-                language: "en_US",
                 menus: [
                     {name: "column", icon: "<i class='ti ti-table-column'></i>"},
                     {name: "row", icon: "<i class='ti ti-table-row'></i>"},
@@ -267,16 +265,16 @@ function initQuill() {
                     {name: "copy", icon: "<i class='ti ti-copy'></i>"},
                     {name: "delete", icon: "<i class='ti ti-trash'></i>"}
                 ],
-                toolbarTable: true/*,
+                toolbarTable: true,
                 language: {
                     name: "i18n",
-                    content: {
-                        // REFERENCE https://github.com/attoae/quill-table-better/blob/develop/src/language/en_US.ts
-                    }
-                }*/
-            }
+                    content: {}
+                }
+            },
+            'emojiModule': true
         }
     });
+    
 }
 
 function handleQuillPrint(quillInstance) {
@@ -322,6 +320,7 @@ document.addEventListener("localechange", () => {
     try {
         quill.options.placeholder = t("editor.empty.placeholder");
         quill.root.dataset.placeholder = t("editor.empty.placeholder");
+        updateTableLanguage(quill);
     } catch (e) {}
 });
 
@@ -340,3 +339,61 @@ function updateWordCounter() {
     document.getElementById("wordcounterSentences").textContent = sentences;
     document.getElementById("wordcounterParagraphs").textContent = paragraphs;
 }
+
+const getTableTranslations = () => ({
+    name: 'i18n',
+    content: {
+        col: t('editor.table.col'),
+        insColL: t('editor.table.insColL'),
+        insColR: t('editor.table.insColR'),
+        delCol: t('editor.table.delCol'),
+        selCol: t('editor.table.selCol'),
+        row: t('editor.table.row'),
+        headerRow: t('editor.table.headerRow'),
+        insRowAbv: t('editor.table.insRowAbv'),
+        insRowBlw: t('editor.table.insRowBlw'),
+        selRow: t('editor.table.selRow'),
+        delRow: t('editor.table.delRow'),
+        mCells: t('editor.table.mCells'),
+        sCell: t('editor.table.sCell'),
+        insParaOTbl: t('editor.table.insParaOTbl'),
+        insB4: t('editor.table.insB4'),
+        insAft: t('editor.table.insAft'),
+        copyTable: t('editor.table.copyTable'),
+        delTable: t('editor.table.delTable'),
+    },
+});
+
+
+function updateTableLanguage(quill) {
+  const tableModule = quill?.getModule('table-better');
+  if (!tableModule) console.log(1);
+  const langObj = getTableTranslations();
+
+  // 1. Hide any open table tooltip/menu
+  tableModule.hideTools();
+
+  // 2. Update the options and active i18n dictionary
+  tableModule.options.language = langObj;
+
+    const translations = langObj.content;
+    
+    if (langObj.name) {
+      tableModule.language.name = langObj.name;
+    }
+
+    tableModule.language.config.i18n = {
+      ...tableModule.language.config['en_US'],
+      ...translations
+    };
+
+    // rebuild floating menu dom
+    if (tableModule.tableMenus) {
+        const oldMenus = tableModule.tableMenus.root || document.querySelector('.ql-table-better');
+        if (oldMenus) oldMenus.remove();
+
+        const TableMenusClass = tableModule.tableMenus.constructor;
+        tableModule.tableMenus = new TableMenusClass(quill, tableModule);
+    }
+}
+
