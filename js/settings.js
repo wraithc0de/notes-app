@@ -47,7 +47,7 @@ function initSettings() {
     SHORTHANDS = getValue("editor.smartTypography.shorthands")
         .map(({find, replace, id}) => ({find, replace, id: id ?? generateId(16)}));
     renderSettings();
-    settingsPage('appearance');
+    settingsPage('storage');
 }
 
 const userSettings = storeL("settings", {});
@@ -391,7 +391,7 @@ const settingsSchema = {
                             description: "setting.storage.management.preferredMethod.description"
                         }
                     }
-                },
+                }/*,
                 exporting: {
                     id: "exporting",
                     name: "modal.settings.section.storage.exporting",
@@ -407,7 +407,7 @@ const settingsSchema = {
                             default: "pdf"
                         }
                     }
-                }
+                }*/
             }
         },
         system: {
@@ -529,7 +529,7 @@ const settingsSchema = {
                     fields: {}
                 }
             }
-        },*/
+        },*//*
         danger: {
             id: "danger",
             name: "settings.page.danger",
@@ -557,7 +557,7 @@ const settingsSchema = {
                     }
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -602,6 +602,7 @@ function onChange(field, value) {
     if (userSettings[field.id] == fieldIndex.get(field.id)?.default) delete userSettings[field.id];
     if (isEnabled(field)) applications[field.id]?.(value);
     refreshConditions();
+    if (document.querySelector(".storageDisplay")) refreshStorageDisplay();
     storeS("settings", userSettings);
 }
 
@@ -611,6 +612,7 @@ function applyInitialSetting(field) {
 }
 
 function renderNavButtons() {
+    sNavBtnsContainer.innerHTML = "";
     Object.values(settingsSchema.pages).forEach((page) => {
         const button = document.createElement("button");
         button.id = "spb-"+page.id;
@@ -630,6 +632,7 @@ function renderSettings() {
     renderNavButtons();
 
     // build ui * * * * * * * * * *
+    sPagesContainer.innerHTML = "";
     // yes it's looping through the same base "array" but this is more organized
     Object.values(settingsSchema.pages).forEach((page) => {
         // create page container
@@ -685,6 +688,14 @@ function renderSettings() {
         });
     });
     refreshConditions();
+}
+
+function refreshStorageDisplay() {
+    const oldDisplay = document.querySelector(".storageDisplay");
+    const newDisplay = generateInput({type: "storageDisplay"});
+    oldDisplay.before(newDisplay);
+    translateDOM(newDisplay);
+    oldDisplay.remove();
 }
 
 function setTheme(theme) {
@@ -1061,8 +1072,8 @@ function generateInput(field, onChange, parent) {
                             <span><b data-i18n="settings.storageDisplay.storageLocation.label">Storage Location:</b> <span>Local</span></span>
                         </p>
                         <div class="buttons">
-                            <button disabled>Backup</button>
-                            <button disabled>Restore</button>
+                            <button onclick="backupStorage()" data-i18n="settings.storageDisplay.button.backup">Backup</button>
+                            <button onclick="loadStorage()" data-i18n="settings.storageDisplay.button.restore">Restore</button>
                         </div>
                     </p>
                 </div>
@@ -1321,4 +1332,38 @@ function renderSearch() {
             }
         });
     });
+}
+
+// importing/exporting
+function backupStorage() {
+    const blob = new Blob([JSON.stringify(localStorage, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "vellum-backup.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function loadStorage() {
+    const input = document.createElement('input');
+    input.type = "file";
+    input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const data = JSON.parse(await file.text());
+        console.log(data);
+        for (const [key, value] of Object.entries(data)) {
+            // Ensure objects/arrays are stringified, while strings stay as strings
+            const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+            localStorage.setItem(key, stringValue);
+        }
+        notification('success', t("notification.storageLoaded"), t("notificationSource.settings"));
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+    };
+    input.click();
 }

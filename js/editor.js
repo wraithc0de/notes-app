@@ -259,8 +259,6 @@ function initQuill() {
                     {name: "column", icon: "<i class='ti ti-table-column'></i>"},
                     {name: "row", icon: "<i class='ti ti-table-row'></i>"},
                     {name: "merge", icon: "<i class='ti ti-stack-forward'></i>"},
-                    //{name: "table", icon: "<i class='ti ti-table'></i>"},
-                    //{name: "cell", icon: "<i class='ti ti-border-outer'></i>"},
                     {name: "wrap", icon: "<i class='ti ti-text-wrap'></i>"},
                     {name: "copy", icon: "<i class='ti ti-copy'></i>"},
                     {name: "delete", icon: "<i class='ti ti-trash'></i>"}
@@ -372,10 +370,7 @@ function updateTableLanguage(quill) {
   if (!tableModule) console.log(1);
   const langObj = getTableTranslations();
 
-  // 1. Hide any open table tooltip/menu
   tableModule.hideTools();
-
-  // 2. Update the options and active i18n dictionary
   tableModule.options.language = langObj;
 
     const translations = langObj.content;

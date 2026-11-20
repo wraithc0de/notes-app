@@ -280,6 +280,7 @@ function createObject(type, name) {
     }
     closeModal('newobject');
     renderNav();
+    refreshStorageDisplay();
     return id; // for places where an object is automatically created and the script needs to know the ID easily
 }
 
@@ -309,6 +310,7 @@ function deleteNote(id) {
         }
     }
     renderNav();
+    refreshStorageDisplay();
     notification('success', t("notification.noteDeleted", {name: noteName}));
 }
 
@@ -321,6 +323,7 @@ function deleteFolder(id) {
     if (openFolders.includes(id)) {openFolders.splice(openFolders.indexOf(id), 1)};
     storeS("open_folders", openFolders);
     renderNav();
+    refreshStorageDisplay();
     notification('success', t("notification.folderDeleted", {name: folderName}));
 }
 

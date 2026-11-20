@@ -9,6 +9,7 @@ function closeAllModals() {
 function openModal(id) {
     closeAllModals();
     document.getElementById("modal-"+id).classList.add("modal-open");
+    if (id == "settings") refreshStorageDisplay();
 }
 
 function closeModal(id) {

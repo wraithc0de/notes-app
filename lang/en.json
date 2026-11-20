@@ -10,6 +10,7 @@
     "header.button.tools": "Tools",
     "header.button.settings": "Settings",
     "header.button.about": "About",
+    "header.button.feedback": "Feedback",
     "header.file.export": "Export",
     "header.file.import": "Import",
     "header.tools.wordcounter": "Word Counter",
@@ -239,6 +240,8 @@
     "settings.storageDisplay.lastModified.label": "Last Modified:",
     "settings.storageDisplay.lastBackup.label": "Last Backup:",
     "settings.storageDisplay.storageLocation.label": "Storage Location:",
+    "settings.storageDisplay.button.backup": "Backup",
+    "settings.storageDisplay.button.restore": "Restore",
 
     "shortcut.newNote": "New Note",
     "shortcut.newFolder": "New Folder",
@@ -279,6 +282,7 @@
     "notification.systemTheme.on": "System theme toggled on.",
     "notification.systemTheme.off": "System theme toggled off.",
     "notification.languageChanged": "Language changed to {lang}.",
+    "notification.storageLoaded": "Imported storage has successfully been applied.",
 
     "ctx.manager.newObject": "New object",
     "ctx.manager.changeTheme": "Change theme",
