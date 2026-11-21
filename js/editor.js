@@ -270,7 +270,38 @@ function initQuill() {
                 }
             },
             emoji: {
-                icon: '<i class="ti ti-mood-smile"></i>'
+                icons: {
+                    recent: '<i class="ti ti-clock"></i>',
+                    smilies_emotion: '<i class="ti ti-mood-smile"></i>',
+                    people_body: '<i class="ti ti-walk"></i>',
+                    animals_nature: '<i class="ti ti-leaf"></i>',
+                    food_drink: '<i class="ti ti-coffee"></i>',
+                    travel_places: '<i class="ti ti-plane-departure"></i>',
+                    activities: '<i class="ti ti-ball-american-football"></i>',
+                    objects: '<i class="ti ti-bulb"></i>',
+                    symbols: '<i class="ti ti-heart"></i>',
+                    flags: '<i class="ti ti-flag"></i>'
+                },
+                language: {
+                    search_placeholder: 'Search...',
+                    smilies_emotion: 'Smilies & Emotion',
+                    people_body: 'People & Body',
+                    animals_nature: 'Animals & Nature',
+                    food_drink: 'Food & Drink',
+                    activities: 'Activities',
+                    travel_places: 'Travel & Places',
+                    objects: 'Objects',
+                    symbols: 'Symbols',
+                    flags: 'Flags'
+                },
+                styles: {
+                    background: 'var(--bg)',
+                    text: 'var(--textb)',
+                    text_muted: 'var(--textm)',
+                    border: 'var(--border-m)',
+                    accent: 'var(--accent)',
+                    corners: 'var(--corners)'
+                }
             }
         }
     });
