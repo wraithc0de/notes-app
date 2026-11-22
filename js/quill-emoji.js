@@ -6,11 +6,33 @@
  * Licensed under the MIT License (https://github.com/tabler/tabler-icons/blob/main/LICENSE)
  */
 
-// lowk js fooling quill n getting rid of error, ts a placeholder basically
-const Inline = Quill.import("blots/inline");
-class EmojiFormat extends Inline {
+const Embed = Quill.import('blots/embed');
+
+class EmojiFormat extends Embed {
     static blotName = 'emoji';
     static tagName = 'span';
+    static className = 'ql-emoji';
+
+    static create(value) {
+        let node = super.create();
+        node.dataset.emoji = value;
+        node.textContent = value;
+        node.setAttribute('contenteditable', 'false');
+        return node;
+    }
+
+    static value(node) {
+        return node.dataset.emoji || node.textContent.replace(/\uFEFF/g, '');
+    }
+
+    optimize(context) {
+        super.optimize(context);
+        this.domNode.childNodes.forEach(child => {
+            if (child.nodeType === Node.TEXT_NODE && child.textContent.includes('\uFEFF')) {
+                child.remove();
+            }
+        });
+    }
 }
 Quill.register(EmojiFormat, true);
 
@@ -84,7 +106,7 @@ class EmojiModule {
         };
 
         // apply icon
-        let button = toolbar.container.querySelector(".ql-emoji");
+        const button = toolbar.container.querySelector(".ql-emoji");
         if (!button.innerHTML.trim() || options?.icons?.toolbar) {
             button.innerHTML = options?.icons?.toolbar || iconDefaults.toolbar;
         }
@@ -113,350 +135,391 @@ class EmojiModule {
                 </div>
             </div>
         `;
-        const nav = picker.querySelector(".ql-emoji-nav");
-        const indicator = nav.querySelector(".ql-emoji-nav-indicator");
-        const grid = picker.querySelector(".ql-emoji-grid");
-        let currentLeft = 0;
-        let currentWidth = 0;
+        document.body.appendChild(picker);
+        this.nav = picker.querySelector(".ql-emoji-nav");
+        this.grid = picker.querySelector(".ql-emoji-grid");
+        this.indicator = picker.querySelector(".ql-emoji-nav-indicator");
+        this.searchInput = picker.querySelector(".ql-emoji-picker-search");
 
-        function stretchTo(target, duration = 300) {
-            const wrapperRect = nav.getBoundingClientRect();
-            const targetRect = target.getBoundingClientRect();
-            const targetLeft = targetRect.left - wrapperRect.left + nav.scrollLeft;
-            const targetWidth = targetRect.width;
-            const isMovingRight = targetLeft >= currentLeft;
+        this.indicCurLeft = 0;
+        this.indicCurWidth = 0;
+        this.searchActive = false;
+        this.searchReturnState = null;
+        this.isManualScrolling = false;
+        document.addEventListener("localechange", () => this.updateLocale());
 
-            let stretchLeft, stretchWidth;
-            if (isMovingRight) {
-                stretchLeft = currentLeft;
-                stretchWidth = (targetLeft + targetWidth) - currentLeft;
-            } else {
-                stretchLeft = targetLeft;
-                stretchWidth = (currentLeft + currentWidth) - targetLeft;
-            }
-
-            const animation = indicator.animate(
-                [
-                    {transform: `translateX(${currentLeft}px)`, width: `${currentWidth}px`},
-                    {transform: `translateX(${stretchLeft}px)`, width: `${stretchWidth}px`, offset: 0.5},
-                    {transform: `translateX(${targetLeft}px)`, width: `${targetWidth}px`}
-                ],
-                {duration: duration, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards"}
-            );
-            animation.onfinish = () => {
-                indicator.style.transform = `translateX(${targetLeft}px)`;
-                indicator.style.width = `${targetWidth}px`;
-                animation.cancel();
-            };
-            currentLeft = targetLeft;
-            currentWidth = targetWidth;
-        }
-
-        async function getEmojiData(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error("Fetch failed:", error);
-            }
-        }
-        const emojiData = getEmojiData("https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/compact.json").then((data) => {return data});
-        buildPickerContent().then(() => {
+        this.buildPickerContent().then(() => {
             picker.classList.add("rendering"); 
-            switchPage("smileys_emotion", false); 
+            this.switchPage("smileys_emotion", false); 
+            this.updateLocale();
             picker.classList.remove("rendering");
-            setupScrollObserver();
+            this.setupScrollObserver();
         });
 
-        var currentPage = null;
-        var isManualScrolling = false;
-
-        async function switchPage(slug, smoothScroll = true) {
-            input.value = "";
-            triggerSearch();
-            if (currentPage == slug) return;
-            currentPage = slug;
-            nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
-            const targetNavBtn = nav.querySelector(`button[data-category='${slug}']`);
-            if (!targetNavBtn) return;
-            targetNavBtn.classList.add('active');
-            stretchTo(targetNavBtn);
-            
-            if (smoothScroll) {
-                isManualScrolling = true;
-                const header = grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
-                if (header) {
-                    grid.scrollTo({
-                        top: header.offsetTop - grid.offsetTop, 
-                        behavior: "smooth"
-                    });
-                    // Reset manual scroll flag after smooth scroll finishes
-                    setTimeout(() => { isManualScrolling = false; }, 400);
-                }
-            }
-        }
-
-        function setupScrollObserver() {
-            const sections = grid.querySelectorAll(".ql-emoji-category-section");
-            const observerOptions = {
-                root: grid,
-                rootMargin: "-10px 0px -50% 0px",
-                threshold: 0
-            };
-            const observer = new IntersectionObserver((entries) => {
-                if (isManualScrolling) return; 
-
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const slug = entry.target.dataset.category;
-                        if (currentPage != slug) {
-                            currentPage = slug;
-                            nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
-                            const targetNavBtn = nav.querySelector(`button[data-category='${slug}']`);
-                            if (targetNavBtn && !isExpanded) {
-                                targetNavBtn.classList.add('active');
-                                stretchTo(targetNavBtn);
-                            }
-                        }
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach((section) => observer.observe(section));
-        }
-
-        async function buildPickerContent() {
-            const grid = picker.querySelector(".ql-emoji-grid");
-            const data = await emojiData;
-            const renderedCategories = [];
-
-            const previewChar = picker.querySelector(".ql-emoji-preview-character");
-            const previewName = picker.querySelector(".ql-emoji-preview-name");
-            const previewCode = picker.querySelector(".ql-emoji-preview-code");
-
-            let currentSectionDiv = null;
-
-            data.forEach((emoji) => {
-                const categoryId = emoji.group;
-                if (categoryId == 2) return;
-                const section = categoryMap[categoryId];
-                if (!section) return;
-
-                const emojiName = emoji.label || emoji.name || "";
-                // generate slug instead of fecthing separate file to reduce size/memory
-                const emojiSlug = emojiName
-                    .normalize("NFD") // splits accented characters (eg ô becomes o + ^)
-                    .replace(/[\u0300-\u036f]/g, "") // strips out said accent marks
-                    .replace("&", "and")
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "_") // replace spaces and punctuation w underscores
-                    .replace(/^_+|_+$/g, ""); // trim trailing/leading underscores
-
-                if (!renderedCategories.includes(categoryId)) {
-                    renderedCategories.push(categoryId);
-                    // create wrapper container for category section
-                    currentSectionDiv = document.createElement("div");
-                    currentSectionDiv.classList.add("ql-emoji-category-section");
-                    currentSectionDiv.dataset.category = section.slug;
-                    grid.appendChild(currentSectionDiv);
-
-                    const navButton = document.createElement("button");
-                    navButton.dataset.qlEmojiTooltip = options?.language?.[section.slug] || section.name;
-                    navButton.dataset.category = section.slug;
-                    navButton.innerHTML = options?.icons?.[section.slug] || iconDefaults[section.slug];
-                    navButton.onclick = () => switchPage(section.slug);
-                    nav.appendChild(navButton);
-
-                    const header = document.createElement("span");
-                    header.classList.add("ql-emoji-grid-category-header");
-                    header.textContent = section.name;
-                    header.dataset.category = section.slug;
-                    currentSectionDiv.appendChild(header);
-                }
-
-                const emojiGridElement = document.createElement("button");
-                emojiGridElement.innerHTML = emoji.unicode || emoji.emoji;
-                emojiGridElement.dataset.slug = emojiSlug;
-                emojiGridElement.dataset.name = emojiName;
-                emojiGridElement.dataset.category = section.slug;
-                // check if emoji has skin variants
-                if (emoji.skins && emoji.skins.length > 0) {
-                    emojiGridElement.classList.add("ql-emoji-has-skins");
-                    let pressTimer = null;
-                    let isLongPressActive = false;
-
-                    emojiGridElement.addEventListener("pointerdown", (e) => {
-                        // only trigger on primary click
-                        if (e.button !== 0 && e.pointerType === "mouse") return;
-                        isLongPressActive = false;
-                        pressTimer = setTimeout(() => {
-                            isLongPressActive = true;
-                            showDragSkinTonePopup(emoji, emojiGridElement, picker, quill, e);
-                        }, 450);
-                    });
-                    emojiGridElement.addEventListener("pointermove", () => {
-                        // if user moves mouse before 450ms, cancel the long press
-                        if (pressTimer && !isLongPressActive) {
-                            clearTimeout(pressTimer);
-                            pressTimer = null;
-                        }
-                    });
-                    emojiGridElement.addEventListener("pointerup", (e) => {
-                        if (pressTimer) {
-                            clearTimeout(pressTimer);
-                            pressTimer = null;
-                        }
-                        // if it wasnt a long press, treat it as a normal click
-                        if (!isLongPressActive) {
-                            this.insertEmoji(emoji.unicode || emoji.emoji);
-                        }
-                    });
-                    emojiGridElement.addEventListener("pointercancel", () => {
-                        if (pressTimer) {
-                            clearTimeout(pressTimer);
-                            pressTimer = null;
-                        }
-                    });
-                } else {
-                    // normal emoji click
-                    emojiGridElement.onclick = () => {
-                        this.insertEmoji(emoji.unicode || emoji.emoji);
-                    };
-                }
-                emojiGridElement.onclick = () => {
-                    this.insertEmoji(emoji.unicode || emoji.emoji);
-                };
-                emojiGridElement.addEventListener("mouseover", () => {
-                    previewChar.textContent = emoji.unicode || emoji.emoji;
-                    previewName.textContent = emojiName.replace("family ", "family: ");
-                    previewCode.textContent = `:${emojiSlug}:`;
-                });
-                // append inside respective cotnainer
-                currentSectionDiv.appendChild(emojiGridElement);
-            });
-        }
-
-        document.body.appendChild(picker);
         // escape picker on outside click
         document.addEventListener("click", (e) => {
             if (!e.target.closest(".ql-emoji-picker") && !e.target.closest(".ql-emoji")) picker.classList.remove("shown");
         });
 
-        function showDragSkinTonePopup(baseEmoji, targetElement, picker, quill, initialEvent) {
-            // remove any existing popups
-            if (picker.querySelector(".ql-emoji-skin-popup")) existingPopup.remove();
-            const popup = document.createElement("div");
-            popup.classList.add("ql-emoji-skin-popup");
-
-            const variants = [baseEmoji, ...baseEmoji.skins];
-            const variantButtons = [];
-            variants.forEach((variant) => {
-                const btn = document.createElement("button");
-                btn.innerHTML = variant.unicode || variant.emoji;
-                btn.dataset.emoji = variant.unicode || variant.emoji;
-                popup.appendChild(btn);
-                variantButtons.push(btn);
-            });
-            
-            picker.appendChild(popup);
-
-            // position the popup centered right above the pressed emoji
-            const rect = targetElement.getBoundingClientRect();
-            const pickerRect = picker.getBoundingClientRect();
-            
-            popup.style.position = "absolute";
-            popup.style.top = `${rect.top - pickerRect.top - 48}px`;
-            popup.style.left = `${rect.left - pickerRect.left - (variants.length * 10)}px`;
-
-
-            // Function to check which variant button the pointer is currently over
-            const handleMove = (e) => {
-                const target = document.elementFromPoint(e.clientX, e.clientY);
-                variantButtons.forEach((btn) => {
-                    if (btn === target || btn.contains(target)) {
-                        btn.classList.add("active-drag");
-                    } else {
-                        btn.classList.remove("active-drag");
-                    }
-                });
-            };
-
-            // Function to finalize selection on release
-            const handleUp = (e) => {
-                const target = document.elementFromPoint(e.clientX, e.clientY);
-                const selectedBtn = variantButtons.find((btn) => btn === target || btn.contains(target));
-
-                if (selectedBtn) {
-                    this.insertEmoji(selectedBtn.dataset.emoji);
-                }
-
-                popup.remove();
-                window.removeEventListener("pointermove", handleMove);
-                window.removeEventListener("pointerup", handleUp);
-            };
-
-            window.addEventListener("pointermove", handleMove);
-            window.addEventListener("pointerup", handleUp);
-        }
-
-        // SEARCHING
         const input = picker.querySelector(".ql-emoji-picker-search");
-        var lastText = "";
-        var origWidth = "";
-        var origLeft = "";
-        var isExpanded = false;
-        function triggerSearch() {
-            // expand indicator to full width when searching;
-            if (!isExpanded) {
-                origLeft = indicator.style.transform;
-                origWidth = indicator.style.width;
-                grid.scrollTo({top: 0});
-            }
-
-            if (input.value.trim() == "") {
-                isExpanded = false;
-                indicator.style.width = origWidth;
-                indicator.style.transform = origLeft;
-            } else {
-                isExpanded = true;
-                indicator.style.width = "100%";
-                indicator.style.transform = "translateX(0px)";
-            }
-            const buttons = grid.querySelectorAll("button");
-            const headers = grid.querySelectorAll(".ql-emoji-grid-category-header");
-            // for hiding empty category headers
-            let hasResults = [];
-            buttons.forEach((button) => {
-                if (button.dataset.name.includes(input.value) || button.dataset.slug.includes(input.value)) {
-                    button.style.display = "block";
-                    if (!hasResults.includes(button.dataset.category)) hasResults.push(button.dataset.category);
-                } else {
-                    button.style.display = "none";
-                }
-            });
-            headers.forEach((header) => {
-                header.style.display = hasResults.includes(header.dataset.category) ? "block" : "none";
-            });
-        }
         input.addEventListener("input", (e) => {
-            triggerSearch();
+            this.triggerSearch();
         });
 
     }
 
-    togglePicker(val) {
+    togglePicker() {
         const buttonBox = document.querySelector(".ql-emoji").getBoundingClientRect();
         const gap = 4;
         this.picker.classList.toggle("shown");
         if (this.picker.classList.contains("shown")) {
             this.picker.style.top = buttonBox.bottom + window.scrollY + gap + "px";
             this.picker.style.left = buttonBox.left + window.scrollX + "px";
+            // make sure it doesn't go off right edge of screen
+            if (this.picker.getBoundingClientRect().right > document.documentElement.clientWidth) {
+                this.picker.style.left = document.documentElement.clientWidth - this.picker.clientWidth + "px";
+            }
         }
     }
 
+    updateLocale() {
+        const searchKey = "emojiPicker.search.placeholder";
+        const translatedSearchPlaceholder = t(searchKey);
+        this.searchInput.placeholder = translatedSearchPlaceholder === searchKey
+            ? this.options?.language?.search_placeholder || "Search..."
+            : translatedSearchPlaceholder;
+
+        this.nav.querySelectorAll("button[data-category]").forEach((button) => {
+            const slug = button.dataset.category;
+            const labelKey = `emojiPicker.category.${slug}`;
+            const translatedLabel = t(labelKey);
+            const fallbackLabel = this.options?.language?.[slug]
+                || Object.values(categoryMap).find((category) => category.slug === slug)?.name
+                || slug;
+            const label = translatedLabel === labelKey ? fallbackLabel : translatedLabel;
+            button.dataset.qlEmojiTooltip = label;
+
+            const header = this.grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
+            if (header) header.textContent = label;
+        });
+    }
+    
+    setupScrollObserver() {
+        const sections = this.grid.querySelectorAll(".ql-emoji-category-section");
+        const observerOptions = {
+            root: this.grid,
+            rootMargin: "-10px 0px -50% 0px",
+            threshold: 0
+        };
+        const observer = new IntersectionObserver((entries) => {
+            if (this.isManualScrolling || this.searchActive) return;
+
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const slug = entry.target.dataset.category;
+                    if (this.currentPage != slug) {
+                        this.currentPage = slug;
+                        this.nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
+                        const targetNavBtn = this.nav.querySelector(`button[data-category='${slug}']`);
+                        if (targetNavBtn && !this.searchActive) {
+                            targetNavBtn.classList.add('active');
+                            this.stretchTo(targetNavBtn);
+                        }
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach((section) => observer.observe(section));
+    }
+
+    async getEmojiData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Fetch failed:", error);
+        }
+    }
+
+    stretchTo(target, duration = 300) {
+        const wrapperRect = this.nav.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+        const targetLeft = targetRect.left - wrapperRect.left + this.nav.scrollLeft;
+        const targetWidth = targetRect.width;
+        const isMovingRight = targetLeft >= this.indicCurLeft;
+        let stretchLeft, stretchWidth;
+        if (isMovingRight) {
+            stretchLeft = this.indicCurLeft;
+            stretchWidth = (targetLeft + targetWidth) - this.indicCurLeft;
+        } else {
+            stretchLeft = targetLeft;
+            stretchWidth = (this.indicCurLeft + this.indicCurWidth) - targetLeft;
+        }
+
+        const animation = this.indicator.animate(
+            [
+                {transform: `translateX(${this.indicCurLeft}px)`, width: `${this.indicCurWidth}px`},
+                {transform: `translateX(${stretchLeft}px)`, width: `${stretchWidth}px`, offset: 0.5},
+                {transform: `translateX(${targetLeft}px)`, width: `${targetWidth}px`}
+            ],
+            {duration: duration, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards"}
+        );
+        animation.onfinish = () => {
+            this.indicator.style.transform = `translateX(${targetLeft}px)`;
+            this.indicator.style.width = `${targetWidth}px`;
+            animation.cancel();
+        };
+        this.indicCurLeft = targetLeft;
+        this.indicCurWidth = targetWidth;
+    }
+
+    switchPage(slug, smoothScroll = true) {
+        const wasSearching = this.searchActive;
+        if (wasSearching) {
+            this.searchInput.value = "";
+            this.triggerSearch({restorePosition: false});
+        }
+        if (this.currentPage == slug && !wasSearching) return;
+        const targetNavBtn = this.nav.querySelector(`button[data-category='${slug}']`);
+        if (!targetNavBtn) return;
+        this.currentPage = slug;
+        this.nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
+        targetNavBtn.classList.add('active');
+        this.stretchTo(targetNavBtn);
+        
+        if (smoothScroll) {
+            this.isManualScrolling = true;
+            const header = this.grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
+            if (header) {
+                this.grid.scrollTo({
+                    top: header.getBoundingClientRect().top - this.grid.getBoundingClientRect().top + this.grid.scrollTop,
+                    behavior: "smooth"
+                });
+                // Reset manual scroll flag after smooth scroll finishes
+                clearTimeout(this.manualScrollTimer);
+                this.manualScrollTimer = setTimeout(() => { this.isManualScrolling = false; }, 500);
+            }
+        }
+    }
+
+    async buildPickerContent() {
+        const emojiData = this.getEmojiData("https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/compact.json").then((data) => {return data});
+        const data = await emojiData;
+        const renderedCategories = [];
+
+        const previewChar = this.picker.querySelector(".ql-emoji-preview-character");
+        const previewName = this.picker.querySelector(".ql-emoji-preview-name");
+        const previewCode = this.picker.querySelector(".ql-emoji-preview-code");
+
+        let currentSectionDiv = null;
+
+        const self = this;
+        data.forEach((emoji) => {
+            const categoryId = emoji.group;
+            if (categoryId == 2) return;
+            const section = categoryMap[categoryId];
+            if (!section) return;
+
+            const emojiName = emoji.label || emoji.name || "";
+            // generate slug instead of fecthing separate file to reduce size/memory
+            const emojiSlug = emojiName
+                .normalize("NFD") // splits accented characters (eg ô becomes o + ^)
+                .replace(/[\u0300-\u036f]/g, "") // strips out said accent marks
+                .replace("&", "and")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "_") // replace spaces and punctuation w underscores
+                .replace(/^_+|_+$/g, ""); // trim trailing/leading underscores
+
+            if (!renderedCategories.includes(categoryId)) {
+                renderedCategories.push(categoryId);
+                // create wrapper container for category section
+                currentSectionDiv = document.createElement("div");
+                currentSectionDiv.classList.add("ql-emoji-category-section");
+                currentSectionDiv.dataset.category = section.slug;
+                this.grid.appendChild(currentSectionDiv);
+
+                const navButton = document.createElement("button");
+                navButton.dataset.qlEmojiTooltip = this.options?.language?.[section.slug] || section.name;
+                navButton.dataset.category = section.slug;
+                navButton.innerHTML = this.options?.icons?.[section.slug] || iconDefaults[section.slug];
+                navButton.onclick = () => this.switchPage(section.slug);
+                this.nav.appendChild(navButton);
+
+                const header = document.createElement("span");
+                header.classList.add("ql-emoji-grid-category-header");
+                header.textContent = this.options?.language?.[section.slug] || section.name;
+                header.dataset.category = section.slug;
+                currentSectionDiv.appendChild(header);
+            }
+
+            const emojiGridElement = document.createElement("button");
+            emojiGridElement.innerHTML = emoji.unicode || emoji.emoji;
+            emojiGridElement.dataset.slug = emojiSlug;
+            emojiGridElement.dataset.name = emojiName;
+            emojiGridElement.dataset.category = section.slug;
+            // check if emoji has skin variants
+            if (emoji.skins && emoji.skins.length > 0) {
+                emojiGridElement.classList.add("ql-emoji-has-skins");
+                let pressTimer = null;
+                let isLongPressActive = false;
+
+                emojiGridElement.addEventListener("pointerdown", (e) => {
+                    // only trigger on primary click
+                    if (e.button !== 0 && e.pointerType === "mouse") return;
+                    isLongPressActive = false;
+                    pressTimer = setTimeout(() => {
+                        isLongPressActive = true;
+                        this.showDragSkinTonePopup(emoji, emojiGridElement, this.picker, this.quill, e);
+                    }, 450);
+                });
+                emojiGridElement.addEventListener("pointermove", () => {
+                    // if user moves mouse before 450ms, cancel the long press
+                    if (pressTimer && !isLongPressActive) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                });
+                emojiGridElement.addEventListener("pointerup", (e) => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                    // if it wasnt a long press, treat it as a normal click
+                    if (!isLongPressActive) {
+                        self.insertEmoji(emoji.unicode || emoji.emoji);
+                    }
+                });
+                emojiGridElement.addEventListener("pointercancel", () => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                });
+            } else {
+                // normal emoji click
+                emojiGridElement.onclick = () => {
+                    self.insertEmoji(emoji.unicode || emoji.emoji);
+                };
+            }
+            emojiGridElement.onclick = () => {
+                self.insertEmoji(emoji.unicode || emoji.emoji);
+            };
+            emojiGridElement.addEventListener("mouseover", () => {
+                previewChar.textContent = emoji.unicode || emoji.emoji;
+                previewName.textContent = emojiName.replace("family ", "family: ");
+                previewCode.textContent = `:${emojiSlug}:`;
+            });
+            // append inside respective cotnainer
+            currentSectionDiv.appendChild(emojiGridElement);
+        });
+    }
+
+    triggerSearch({restorePosition = true} = {}) {
+        const query = this.searchInput.value.trim();
+        const wasSearching = this.searchActive;
+        if (query && !wasSearching) {
+            this.searchReturnState = {
+                scrollTop: this.grid.scrollTop,
+                page: this.currentPage
+            };
+        }
+        this.searchActive = Boolean(query);
+        const buttons = this.grid.querySelectorAll("button");
+        const headers = this.grid.querySelectorAll(".ql-emoji-grid-category-header");
+        // for hiding empty category headers
+        let hasResults = [];
+        buttons.forEach((button) => {
+            if (button.dataset.name.includes(query) || button.dataset.slug.includes(query)) {
+                button.style.display = "block";
+                if (!hasResults.includes(button.dataset.category)) hasResults.push(button.dataset.category);
+            } else {
+                button.style.display = "none";
+            }
+        });
+        headers.forEach((header) => {
+            header.style.display = !query || hasResults.includes(header.dataset.category) ? "block" : "none";
+        });
+
+        if (this.searchActive) {
+            this.indicator.style.width = "100%";
+            this.indicator.style.transform = "translateX(0px)";
+        } else if (wasSearching) {
+            const returnState = this.searchReturnState;
+            this.searchReturnState = null;
+            if (returnState && restorePosition) {
+                this.grid.scrollTop = returnState.scrollTop;
+                this.currentPage = returnState.page;
+                this.nav.querySelectorAll("button").forEach((button) => {
+                    button.classList.toggle("active", button.dataset.category === returnState.page);
+                });
+                const targetNavBtn = this.nav.querySelector(`button[data-category='${returnState.page}']`);
+                if (targetNavBtn) this.stretchTo(targetNavBtn);
+            }
+        }
+    }
+    
+    showDragSkinTonePopup(baseEmoji, targetElement) {
+        // remove any existing popups
+        if (this.picker.querySelector(".ql-emoji-skin-popup")) existingPopup.remove();
+        const popup = document.createElement("div");
+        popup.classList.add("ql-emoji-skin-popup");
+
+        const variants = [baseEmoji, ...baseEmoji.skins];
+        const variantButtons = [];
+        variants.forEach((variant) => {
+            const btn = document.createElement("button");
+            btn.innerHTML = variant.unicode || variant.emoji;
+            btn.dataset.emoji = variant.unicode || variant.emoji;
+            popup.appendChild(btn);
+            variantButtons.push(btn);
+        });
+        
+        this.picker.appendChild(popup);
+
+        // position the popup centered right above the pressed emoji
+        const rect = targetElement.getBoundingClientRect();
+        const pickerRect = this.picker.getBoundingClientRect();
+        
+        popup.style.position = "absolute";
+        popup.style.top = `${rect.top - pickerRect.top - popup.offsetHeight}px`;
+        popup.style.left = `${rect.left - pickerRect.left - popup.offsetWidth/2 + targetElement.offsetWidth/2}px`;
+
+
+        // check which variant button the pointer is currently over
+        const handleMove = (e) => {
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            variantButtons.forEach((btn) => {
+                if (btn === target || btn.contains(target)) {
+                    btn.classList.add("active-drag");
+                } else {
+                    btn.classList.remove("active-drag");
+                }
+            });
+        };
+
+        // finalize selection on release
+        const handleUp = (e) => {
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            const selectedBtn = variantButtons.find((btn) => btn === target || btn.contains(target));
+
+            if (selectedBtn) {
+                this.insertEmoji(selectedBtn.dataset.emoji);
+            }
+
+            popup.remove();
+            window.removeEventListener("pointermove", handleMove);
+            window.removeEventListener("pointerup", handleUp);
+        };
+
+        window.addEventListener("pointermove", handleMove);
+        window.addEventListener("pointerup", handleUp);
+    }
+
     insertEmoji(char) {
+        console.log("Inserting emoji:", char);
         const range = this.quill.getSelection(true);
         const index = range ? range.index : this.quill.getLength();
         this.quill.insertEmbed(index, 'emoji', char, 'user');

@@ -28,7 +28,7 @@ const refreshSearchObj = () => settingsSearch = {
     "editor.smartTypography.shorthands": {name: t("setting.editor.smartTypography.shorthands"), icon: "replace", id: "editor.smartTypography.shorthands", terms: t("setting.editor.smartTypography.shorthands.searchTerms"), location: "editor.smartTypography"},
 
     "storage.management.preferredMethod": {name: t("setting.storage.management.preferredMethod"), icon: "database", id: "storage.management.preferredMethod", terms: t("setting.storage.management.preferredMethod.searchTerms"), location: "storage.management"},
-    "storage.exporting.exportAs": {name: t("setting.storage.exporting.exportAs"), icon: "file-export", id: "storage.exporting.exportAs", terms: t("setting.storage.exporting.exportAs.searchTerms"), location: "storage.exporting"},
+    //"storage.exporting.exportAs": {name: t("setting.storage.exporting.exportAs"), icon: "file-export", id: "storage.exporting.exportAs", terms: t("setting.storage.exporting.exportAs.searchTerms"), location: "storage.exporting"},
 
     "system.language.lang": {name: t("setting.system.language.lang"), icon: "language", id: "system.language.lang", terms: t("setting.system.language.lang.searchTerms"), location: "system.language"},
     "system.behavior.notifications": {name: t("setting.system.behavior.notifications"), icon: "bell", id: "system.behavior.notifications", terms: t("setting.system.behavior.notifications.searchTerms"), location: "system.behavior"},
@@ -37,8 +37,8 @@ const refreshSearchObj = () => settingsSearch = {
     "system.behavior.newNoteCustomPlaceholder": {name: t("setting.system.behavior.newNoteCustomPlaceholder"), icon: "text-recognition", id: "system.behavior.newNoteCustomContent", terms: t("setting.system.behavior.newNoteCustomPlaceholder.searchTerms"), location: "system.behavior"},
     "system.shortcuts.entries": {name: t("setting.system.shortcuts.entries"), icon: "keyboard", id: "system.shortcuts.entries", terms: t("setting.system.shortcuts.entries.searchTerms"), location: "system.shortcuts"},
 
-    "danger.reset.settings": {name: t("setting.danger.reset.settings"), icon: "settings-x", id: "danger.reset.settings", terms: t("setting.danger.reset.settings.searchTerms"), location: "danger.reset"},
-    "danger.reset.notes": {name: t("setting.danger.reset.notes"), icon: "file-shredder", id: "danger.reset.notes", terms: t("setting.danger.reset.notes.searchTerms"), location: "danger.reset"}
+    //"danger.reset.settings": {name: t("setting.danger.reset.settings"), icon: "settings-x", id: "danger.reset.settings", terms: t("setting.danger.reset.settings.searchTerms"), location: "danger.reset"},
+    //"danger.reset.notes": {name: t("setting.danger.reset.notes"), icon: "file-shredder", id: "danger.reset.notes", terms: t("setting.danger.reset.notes.searchTerms"), location: "danger.reset"}
 };
 
 function initSettings() {
@@ -47,7 +47,7 @@ function initSettings() {
     SHORTHANDS = getValue("editor.smartTypography.shorthands")
         .map(({find, replace, id}) => ({find, replace, id: id ?? generateId(16)}));
     renderSettings();
-    settingsPage('storage');
+    settingsPage('appearance');
 }
 
 const userSettings = storeL("settings", {});
@@ -425,7 +425,9 @@ const settingsSchema = {
                             type: "dropdown",
                             options: [
                                 {value: "en", content: "English"},
-                                {value: "de", content: "Deutsch"}
+                                {value: "fr", content: "Français"},
+                                {value: "de", content: "Deutsch"},
+                                {value: "zh", content: "中国人"}
                             ],
                             default: "en"
                         }
@@ -511,13 +513,25 @@ const settingsSchema = {
                                     name: "shortcut.collapseAllFolders",
                                     type: "keysEntry",
                                     keys: ["Ctrl", "Alt", "C"]
+                                },
+                                exportCurrent: {
+                                    id: "exportCurrent",
+                                    name: "system.shortcut.exportCurrent",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "E"]
+                                },
+                                importNote: {
+                                    id: "importNote",
+                                    name: "system.shortcut.importNote",
+                                    type: "keysEntry",
+                                    keys: ["Ctrl", "Shift", "Y"]
                                 }
                             }
                         }
                     }
                 }
             }
-        },/*
+        }/*,
         security: {
             id: "security",
             name: "settings.page.security",
@@ -529,7 +543,7 @@ const settingsSchema = {
                     fields: {}
                 }
             }
-        },*//*
+        },
         danger: {
             id: "danger",
             name: "settings.page.danger",
@@ -670,7 +684,10 @@ function renderSettings() {
                     applyInitialSetting(field);
                 } else if (field.type == "separator") {
                     optionContainer = document.createElement(field.text ? "h3" : "hr");
-                    if (field.text) optionContainer.innerText = t(field.text);
+                    if (field.text) {
+                        optionContainer.dataset.i18n = field.text;
+                        optionContainer.innerText = t(field.text);
+                    }
                 } else {
                     optionContainer = document.createElement("div");
                     optionContainer.dataset.path = field.id;
@@ -1217,7 +1234,9 @@ const shortcutActions = {
     },
     collapseAllFolders: () => {
         collapseAllFolders();
-    }
+    },
+    exportCurrent: () => exportCurrentNote(),
+    importNote: () => importNote()
 };
 
 var SHORTCUTS = {};
@@ -1228,6 +1247,10 @@ function refreshShortcuts() {
     // replace defaults with user-custom if exist
     Object.entries(modifiedShortcuts).forEach((s) => {
         SHORTCUTS[s[0].replace("system.shortcut.", "")].keys = s[1];
+    });
+    document.querySelectorAll("[data-shortcut-id]").forEach((element) => {
+        const shortcut = SHORTCUTS[element.dataset.shortcutId];
+        if (shortcut) element.textContent = shortcut.keys.join(" + ");
     });
 }
 
@@ -1240,9 +1263,13 @@ function checkShortcut(e) {
     // normalize
     keys.push(e.key == " " ? "Space" : e.key.length == 1 ? e.key.toUpperCase() : ["Control", "Shift", "Alt", "Meta"].includes(e.key) ? "" : e.key);
     // if the specific combination exists, execute
-    Object.values(SHORTCUTS).forEach((s) => {
-        if (keys.join("") == s.keys.join("")) shortcutActions[s.id]?.();
-    });
+    for (const s of Object.values(SHORTCUTS)) {
+        if (keys.join("") == s.keys.join("") && shortcutActions[s.id]) {
+            e.preventDefault();
+            shortcutActions[s.id]();
+            break;
+        }
+    }
 }
 
 window.addEventListener("keydown", checkShortcut);
@@ -1291,6 +1318,11 @@ function generateThemeDropdownSchema() {
 
 // SEARCHING ***********************************************
 const searchBar = document.getElementById("settingsSearchInput");
+
+document.addEventListener("localechange", () => {
+    refreshSearchObj();
+    if (document.activeElement === searchBar) renderSearch();
+});
 
 searchBar.addEventListener("focus", () => {
     renderSearch();

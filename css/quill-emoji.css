@@ -10,7 +10,7 @@
 
 .ql-emoji-picker * {box-sizing: border-box; color: var(--ql-emoji-text-base);}
 
-.ql-emoji-category-section button, .ql-emoji-preview-character, .ql-emoji-skin-popup button {
+.ql-emoji-category-section button, .ql-emoji-preview-character, .ql-emoji-skin-popup button, .ql-editor span.ql-emoji span {
     font-family: 'Noto Color Emoji', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -110,14 +110,17 @@
 .ql-emoji-grid {
     width: 100%;
     min-height: 56px;
-    max-height: 146px;
+    max-height: 162px;
     overflow: scroll;
+
+    &::-webkit-scrollbar {
+        width: 0;
+    }
 }
 
 .ql-emoji-category-section {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    overflow: scroll;
     width: clamp(100%, 100%, 100%);
 
     button {
@@ -148,7 +151,7 @@
 .ql-emoji-skin-popup {
     position: absolute;
     display: grid;
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     background: var(--ql-emoji-background);
     border: 1px solid var(--ql-emoji-border);
     border-radius: 4px;
@@ -173,12 +176,6 @@
 .ql-emoji-skin-popup button:hover {
     cursor: pointer;
     background: color-mix(in srgb, var(--ql-emoji-background) 80%, var(--ql-emoji-text-base));
-}
-
-.ql-emoji-skin-popup button.active-drag,
-.ql-emoji-skin-popup button:hover {
-    color: var(--ql-emoji-text-base);
-    border-radius: 50%;
 }
 
 .ql-emoji-grid-category-header {

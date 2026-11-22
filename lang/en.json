@@ -86,6 +86,17 @@
     "wordcounter.label.sentences": "Sentences:",
     "wordcounter.label.paragraphs": "Paragraphs:",
 
+    "emojiPicker.search.placeholder": "Search...",
+    "emojiPicker.category.smileys_emotion": "Smileys & Emotion",
+    "emojiPicker.category.people_body": "People & Body",
+    "emojiPicker.category.animals_nature": "Animals & Nature",
+    "emojiPicker.category.food_drink": "Food & Drink",
+    "emojiPicker.category.activities": "Activities",
+    "emojiPicker.category.travel_places": "Travel & Places",
+    "emojiPicker.category.objects": "Objects",
+    "emojiPicker.category.symbols": "Symbols",
+    "emojiPicker.category.flags": "Flags",
+
     "manager.title": "Manager",
     "manager.newObject": "New object",
     "manager.searchBtn": "Search your notes",
@@ -283,6 +294,9 @@
     "notification.systemTheme.off": "System theme toggled off.",
     "notification.languageChanged": "Language changed to {lang}.",
     "notification.storageLoaded": "Imported storage has successfully been applied.",
+    "notification.file.noOpenNote": "Open a note before exporting.",
+    "notification.file.imported": "Imported \"{name}\" as a new note.",
+    "notification.file.importFailed": "Could not import that file. Choose a note JSON or plain text file.",
 
     "ctx.manager.newObject": "New object",
     "ctx.manager.changeTheme": "Change theme",

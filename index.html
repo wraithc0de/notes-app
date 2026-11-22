@@ -36,11 +36,11 @@
         </div>
         
         <header>
-            <div class="header-dropdown" inert>
-                <button data-i18n="header.button.file" style="color: var(--textm)">File</button>
+            <div class="header-dropdown">
+                <button data-i18n="header.button.file">File</button>
                 <div>
-                    <button><span data-i18n="header.file.export">Export</span> <kbd>Ctrl + E</kbd></button>
-                    <button><span data-i18n="header.file.import">Import</span> <kbd>Ctrl + Y</kbd></button>
+                    <button type="button" data-file-action="export"><span data-i18n="header.file.export">Export</span> <kbd data-shortcut-id="exportCurrent">Ctrl + E</kbd></button>
+                    <button type="button" data-file-action="import"><span data-i18n="header.file.import">Import</span> <kbd data-shortcut-id="importNote">Ctrl + Shift + Y</kbd></button>
                 </div>
             </div>
             <div class="header-dropdown">
@@ -57,7 +57,7 @@
             </div>
             <button onclick="openModal('settings')" data-i18n="header.button.settings">Settings</button>
             <div class="spacer"></div>
-            <span id="versionSpan">v0.6.6</span>
+            <span id="versionSpan">v0.6.7</span>
             <button onclick="openModal('about')" data-i18n="header.button.about">About</button>
             <button onclick="window.open('https:\/\/forms.gle/byoc6eXpLvk4rmub8', '_blank', 'noopener,noreferrer')" data-i18n="header.button.feedback"></button>
         </header>
@@ -225,7 +225,7 @@
                     <button class="modal-close tt-b-m" data-tooltip="close" data-i18n-tooltip="modal.global.close"><i class="ti ti-x"></i></button>
                 </header>
                 <main>
-                    <p>Vellum, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Aiming to support both desktop and mobile devices in the future, Vellum targets user-friendliness and functionality above all else.</p>
+                    <p>Vellum, part of the wraithApp suite, aims to be an alternative to other bloated and slow notes apps. Supporting desktop, Vellum targets user-friendliness and functionality above all else.</p>
                     <p>&copy; <script>document.write(new Date().getFullYear());</script> wraithcode. <span data-i18n="modal.about.reserved">All rights reserved.</span></p>
                 </main>
             </div>

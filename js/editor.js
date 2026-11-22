@@ -271,7 +271,6 @@ function initQuill() {
             },
             emoji: {
                 icons: {
-                    recent: '<i class="ti ti-clock"></i>',
                     smileys_emotion: '<i class="ti ti-mood-smile"></i>',
                     people_body: '<i class="ti ti-walk"></i>',
                     animals_nature: '<i class="ti ti-leaf"></i>',
@@ -283,16 +282,16 @@ function initQuill() {
                     flags: '<i class="ti ti-flag"></i>'
                 },
                 language: {
-                    search_placeholder: 'Search...',
-                    smilies_emotion: 'Smileys & Emotion',
-                    people_body: 'People & Body',
-                    animals_nature: 'Animals & Nature',
-                    food_drink: 'Food & Drink',
-                    activities: 'Activities',
-                    travel_places: 'Travel & Places',
-                    objects: 'Objects',
-                    symbols: 'Symbols',
-                    flags: 'Flags'
+                    search_placeholder: t("emojiPicker.search.placeholder"),
+                    smileys_emotion: t("emojiPicker.category.smileys_emotion"),
+                    people_body: t("emojiPicker.category.people_body"),
+                    animals_nature: t("emojiPicker.category.animals_nature"),
+                    food_drink: t("emojiPicker.category.food_drink"),
+                    activities: t("emojiPicker.category.activities"),
+                    travel_places: t("emojiPicker.category.travel_places"),
+                    objects: t("emojiPicker.category.objects"),
+                    symbols: t("emojiPicker.category.symbols"),
+                    flags: t("emojiPicker.category.flags")
                 },
                 styles: {
                     background: 'var(--bg)',
@@ -346,6 +345,80 @@ function handleQuillPrint(quillInstance) {
     document.body.removeChild(iframe);
   }, 350);
 }
+
+function exportCurrentNote() {
+    if (!currentNote || !notesRef[currentNote]) {
+        notification("error", t("notification.file.noOpenNote"));
+        return;
+    }
+
+    const note = notesRef[currentNote];
+    const delta = quill.getContents();
+    const filename = (note.name || "note")
+        .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_")
+        .trim() || "note";
+    const blob = new Blob([JSON.stringify(delta, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function importNote() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,.txt,application/json,text/plain";
+    input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        try {
+            const contents = await file.text();
+            let delta;
+            if (file.name.toLowerCase().endsWith(".json")) {
+                delta = JSON.parse(contents);
+                if (!delta || !Array.isArray(delta.ops) ||
+                    !delta.ops.every(op => op && typeof op === "object" && "insert" in op)) {
+                    throw new Error("The file does not contain a valid note Delta.");
+                }
+            } else {
+                delta = {ops: [{insert: contents.endsWith("\n") ? contents : `${contents}\n`}]};
+            }
+
+            const noteName = file.name.replace(/\.(json|txt)$/i, "") || file.name;
+            const id = createObject("note", noteName);
+            noteContents[id] = delta;
+            storeS(`note_${id}`, delta);
+
+            if (currentNote === id) {
+                quill.setContents(delta, "silent");
+                noteContents[id] = quill.getContents();
+                storeS(`note_${id}`, noteContents[id]);
+            } else {
+                openNote(id);
+            }
+            renderNav();
+            notification("success", t("notification.file.imported", {name: noteName}));
+        } catch (error) {
+            console.error("Could not import note:", error);
+            notification("error", t("notification.file.importFailed"));
+        }
+    };
+    input.click();
+}
+
+document.querySelector('[data-file-action="export"]').addEventListener("click", (event) => {
+    exportCurrentNote();
+    event.currentTarget.blur();
+});
+document.querySelector('[data-file-action="import"]').addEventListener("click", (event) => {
+    importNote();
+    event.currentTarget.blur();
+});
 
 document.addEventListener("localechange", () => {
     try {
@@ -424,4 +497,3 @@ function updateTableLanguage(quill) {
         tableModule.tableMenus = new TableMenusClass(quill, tableModule);
     }
 }
-
