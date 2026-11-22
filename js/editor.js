@@ -284,7 +284,7 @@ function initQuill() {
                 },
                 language: {
                     search_placeholder: 'Search...',
-                    smilies_emotion: 'Smilies & Emotion',
+                    smilies_emotion: 'Smileys & Emotion',
                     people_body: 'People & Body',
                     animals_nature: 'Animals & Nature',
                     food_drink: 'Food & Drink',

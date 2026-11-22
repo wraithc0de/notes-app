@@ -18,7 +18,6 @@ Quill.register(EmojiFormat, true);
 const Icons = Quill.import('ui/icons');
 const iconDefaults = {
     toolbar: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mood-smile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 10l.01 0"/><path d="M15 10l.01 0"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>',
-    recent: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="icon icon-tabler icons-tabler-outline icon-tabler-clock" viewBox="0 0 24 24"><path stroke="none" d="M0 0h24v24H0z"/><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/><path d="M12 7v5l3 3"/></svg>',
     smileys_emotion: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mood-smile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M9 10l.01 0"/><path d="M15 10l.01 0"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>',
     people_body: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-fall"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11 21l1 -5l-1 -4l-3 -4h4l3 -3"/><path d="M6 16l-1 -4l3 -4"/><path d="M5 5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M13.5 12h2.5l4 2"/></svg>',
     animals_nature: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-leaf"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 21c.5 -4.5 2.5 -8 7 -10"/><path d="M9 18c6.218 0 10.5 -3.288 11 -12v-2h-4.014c-9 0 -11.986 4 -12 9c0 1 0 3 2 5h3l.014 0"/></svg>',
@@ -30,6 +29,48 @@ const iconDefaults = {
     flags: '<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-flag"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5a5 5 0 0 1 7 0a5 5 0 0 0 7 0v9a5 5 0 0 1 -7 0a5 5 0 0 0 -7 0v-9"/><path d="M5 21v-7"/></svg>'
 }
 Icons['emoji'] = iconDefaults.toolbar;
+const categoryMap = {
+    0: {
+        slug: "smileys_emotion",
+        name: "Smileys & Emotion"
+    },
+    1: {
+        slug: "people_body",
+        name: "People & Body"
+    },
+    2: {
+        slug: "components",
+        name: "Components"
+    },
+    3: {
+        slug: "animals_nature",
+        name: "Animals & Nature"
+    },
+    4: {
+        slug: "food_drink",
+        name: "Food & Drink"
+    },
+    5: {
+        slug: "travel_places",
+        name: "Travel & Places"
+    },
+    6: {
+        slug: "activities",
+        name: "Activities"
+    },
+    7: {
+        slug: "objects",
+        name: "Objects"
+    },
+    8: {
+        slug: "symbols",
+        name: "Symbols"
+    },
+    9: {
+        slug: "flags",
+        name: "Flags"
+    }
+}
 
 class EmojiModule {
     constructor(quill, options = {}) {
@@ -39,7 +80,7 @@ class EmojiModule {
         const toolbar = this.quill.getModule("toolbar");
         if (!toolbar) return;
         toolbar.handlers.emoji = (val) => {
-            this.handleClick(val);
+            this.togglePicker(val);
         };
 
         // apply icon
@@ -117,59 +158,183 @@ class EmojiModule {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
                 return data;
-            } catch (e) {
+            } catch (error) {
                 console.error("Fetch failed:", error);
             }
         }
-        const emojiData = getEmojiData("/assets/emojis.json").then((data) => {return data});
-        buildPickerContent().then(() => {picker.classList.add("rendering"); switchPage("smileys_emotion"); picker.classList.remove("rendering")});
+        const emojiData = getEmojiData("https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/compact.json").then((data) => {return data});
+        buildPickerContent().then(() => {
+            picker.classList.add("rendering"); 
+            switchPage("smileys_emotion", false); 
+            picker.classList.remove("rendering");
+            setupScrollObserver();
+        });
 
         var currentPage = null;
-        async function switchPage(slug) {
+        var isManualScrolling = false;
+
+        async function switchPage(slug, smoothScroll = true) {
+            input.value = "";
+            triggerSearch();
             if (currentPage == slug) return;
             currentPage = slug;
             nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
             const targetNavBtn = nav.querySelector(`button[data-category='${slug}']`);
+            if (!targetNavBtn) return;
             targetNavBtn.classList.add('active');
             stretchTo(targetNavBtn);
             
-            const header = grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
-            grid.scrollTo({top: header.getBoundingClientRect().top - grid.getBoundingClientRect().top + grid.scrollTop, behavior: "smooth"});
+            if (smoothScroll) {
+                isManualScrolling = true;
+                const header = grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
+                if (header) {
+                    grid.scrollTo({
+                        top: header.offsetTop - grid.offsetTop, 
+                        behavior: "smooth"
+                    });
+                    // Reset manual scroll flag after smooth scroll finishes
+                    setTimeout(() => { isManualScrolling = false; }, 400);
+                }
+            }
+        }
+
+        function setupScrollObserver() {
+            const sections = grid.querySelectorAll(".ql-emoji-category-section");
+            const observerOptions = {
+                root: grid,
+                rootMargin: "-10px 0px -50% 0px",
+                threshold: 0
+            };
+            const observer = new IntersectionObserver((entries) => {
+                if (isManualScrolling) return; 
+
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const slug = entry.target.dataset.category;
+                        if (currentPage != slug) {
+                            currentPage = slug;
+                            nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
+                            const targetNavBtn = nav.querySelector(`button[data-category='${slug}']`);
+                            if (targetNavBtn && !isExpanded) {
+                                targetNavBtn.classList.add('active');
+                                stretchTo(targetNavBtn);
+                            }
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach((section) => observer.observe(section));
         }
 
         async function buildPickerContent() {
             const grid = picker.querySelector(".ql-emoji-grid");
             const data = await emojiData;
-            data.forEach((section) => {
-                const navButton = document.createElement("button");
-                navButton.dataset.qlEmojiTooltip = options?.language?.[section.slug] || section.name;
-                navButton.dataset.category = section.slug;
-                navButton.innerHTML = options?.icons?.[section.slug] || iconDefaults[section.slug];
-                navButton.onclick = () => switchPage(section.slug);
-                nav.appendChild(navButton);
-                // section header
-                const header = document.createElement("span");
-                header.classList.add("ql-emoji-grid-category-header");
-                header.textContent = section.name;
-                header.dataset.category = section.slug;
-                grid.appendChild(header);
+            const renderedCategories = [];
 
-                section.emojis.forEach((emoji) => {
-                    const emojiGridElement = document.createElement("button");
-                    emojiGridElement.innerHTML = emoji.emoji;
-                    emojiGridElement.dataset.slug = emoji.slug;
-                    emojiGridElement.dataset.name = emoji.name;
-                    emojiGridElement.dataset.category = section.slug;
-                    emojiGridElement.addEventListener("mouseover", () => {
-                        picker.querySelector(".ql-emoji-preview-character").textContent = emoji.emoji;
-                        // capitalize, and add colon if it's a complex family
-                        //previewName.textContent = emoji.name.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ").replace("Family ", "Family: ");
-                        picker.querySelector(".ql-emoji-preview-name").textContent = emoji.name.replace("family ", "family: ");
-                        picker.querySelector(".ql-emoji-preview-code").textContent = `:${emoji.slug}:`;
+            const previewChar = picker.querySelector(".ql-emoji-preview-character");
+            const previewName = picker.querySelector(".ql-emoji-preview-name");
+            const previewCode = picker.querySelector(".ql-emoji-preview-code");
+
+            let currentSectionDiv = null;
+
+            data.forEach((emoji) => {
+                const categoryId = emoji.group;
+                if (categoryId == 2) return;
+                const section = categoryMap[categoryId];
+                if (!section) return;
+
+                const emojiName = emoji.label || emoji.name || "";
+                // generate slug instead of fecthing separate file to reduce size/memory
+                const emojiSlug = emojiName
+                    .normalize("NFD") // splits accented characters (eg ô becomes o + ^)
+                    .replace(/[\u0300-\u036f]/g, "") // strips out said accent marks
+                    .replace("&", "and")
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "_") // replace spaces and punctuation w underscores
+                    .replace(/^_+|_+$/g, ""); // trim trailing/leading underscores
+
+                if (!renderedCategories.includes(categoryId)) {
+                    renderedCategories.push(categoryId);
+                    // create wrapper container for category section
+                    currentSectionDiv = document.createElement("div");
+                    currentSectionDiv.classList.add("ql-emoji-category-section");
+                    currentSectionDiv.dataset.category = section.slug;
+                    grid.appendChild(currentSectionDiv);
+
+                    const navButton = document.createElement("button");
+                    navButton.dataset.qlEmojiTooltip = options?.language?.[section.slug] || section.name;
+                    navButton.dataset.category = section.slug;
+                    navButton.innerHTML = options?.icons?.[section.slug] || iconDefaults[section.slug];
+                    navButton.onclick = () => switchPage(section.slug);
+                    nav.appendChild(navButton);
+
+                    const header = document.createElement("span");
+                    header.classList.add("ql-emoji-grid-category-header");
+                    header.textContent = section.name;
+                    header.dataset.category = section.slug;
+                    currentSectionDiv.appendChild(header);
+                }
+
+                const emojiGridElement = document.createElement("button");
+                emojiGridElement.innerHTML = emoji.unicode || emoji.emoji;
+                emojiGridElement.dataset.slug = emojiSlug;
+                emojiGridElement.dataset.name = emojiName;
+                emojiGridElement.dataset.category = section.slug;
+                // check if emoji has skin variants
+                if (emoji.skins && emoji.skins.length > 0) {
+                    emojiGridElement.classList.add("ql-emoji-has-skins");
+                    let pressTimer = null;
+                    let isLongPressActive = false;
+
+                    emojiGridElement.addEventListener("pointerdown", (e) => {
+                        // only trigger on primary click
+                        if (e.button !== 0 && e.pointerType === "mouse") return;
+                        isLongPressActive = false;
+                        pressTimer = setTimeout(() => {
+                            isLongPressActive = true;
+                            showDragSkinTonePopup(emoji, emojiGridElement, picker, quill, e);
+                        }, 450);
                     });
-
-                    grid.appendChild(emojiGridElement);
+                    emojiGridElement.addEventListener("pointermove", () => {
+                        // if user moves mouse before 450ms, cancel the long press
+                        if (pressTimer && !isLongPressActive) {
+                            clearTimeout(pressTimer);
+                            pressTimer = null;
+                        }
+                    });
+                    emojiGridElement.addEventListener("pointerup", (e) => {
+                        if (pressTimer) {
+                            clearTimeout(pressTimer);
+                            pressTimer = null;
+                        }
+                        // if it wasnt a long press, treat it as a normal click
+                        if (!isLongPressActive) {
+                            this.insertEmoji(emoji.unicode || emoji.emoji);
+                        }
+                    });
+                    emojiGridElement.addEventListener("pointercancel", () => {
+                        if (pressTimer) {
+                            clearTimeout(pressTimer);
+                            pressTimer = null;
+                        }
+                    });
+                } else {
+                    // normal emoji click
+                    emojiGridElement.onclick = () => {
+                        this.insertEmoji(emoji.unicode || emoji.emoji);
+                    };
+                }
+                emojiGridElement.onclick = () => {
+                    this.insertEmoji(emoji.unicode || emoji.emoji);
+                };
+                emojiGridElement.addEventListener("mouseover", () => {
+                    previewChar.textContent = emoji.unicode || emoji.emoji;
+                    previewName.textContent = emojiName.replace("family ", "family: ");
+                    previewCode.textContent = `:${emojiSlug}:`;
                 });
+                // append inside respective cotnainer
+                currentSectionDiv.appendChild(emojiGridElement);
             });
         }
 
@@ -179,17 +344,75 @@ class EmojiModule {
             if (!e.target.closest(".ql-emoji-picker") && !e.target.closest(".ql-emoji")) picker.classList.remove("shown");
         });
 
+        function showDragSkinTonePopup(baseEmoji, targetElement, picker, quill, initialEvent) {
+            // remove any existing popups
+            if (picker.querySelector(".ql-emoji-skin-popup")) existingPopup.remove();
+            const popup = document.createElement("div");
+            popup.classList.add("ql-emoji-skin-popup");
+
+            const variants = [baseEmoji, ...baseEmoji.skins];
+            const variantButtons = [];
+            variants.forEach((variant) => {
+                const btn = document.createElement("button");
+                btn.innerHTML = variant.unicode || variant.emoji;
+                btn.dataset.emoji = variant.unicode || variant.emoji;
+                popup.appendChild(btn);
+                variantButtons.push(btn);
+            });
+            
+            picker.appendChild(popup);
+
+            // position the popup centered right above the pressed emoji
+            const rect = targetElement.getBoundingClientRect();
+            const pickerRect = picker.getBoundingClientRect();
+            
+            popup.style.position = "absolute";
+            popup.style.top = `${rect.top - pickerRect.top - 48}px`;
+            popup.style.left = `${rect.left - pickerRect.left - (variants.length * 10)}px`;
+
+
+            // Function to check which variant button the pointer is currently over
+            const handleMove = (e) => {
+                const target = document.elementFromPoint(e.clientX, e.clientY);
+                variantButtons.forEach((btn) => {
+                    if (btn === target || btn.contains(target)) {
+                        btn.classList.add("active-drag");
+                    } else {
+                        btn.classList.remove("active-drag");
+                    }
+                });
+            };
+
+            // Function to finalize selection on release
+            const handleUp = (e) => {
+                const target = document.elementFromPoint(e.clientX, e.clientY);
+                const selectedBtn = variantButtons.find((btn) => btn === target || btn.contains(target));
+
+                if (selectedBtn) {
+                    this.insertEmoji(selectedBtn.dataset.emoji);
+                }
+
+                popup.remove();
+                window.removeEventListener("pointermove", handleMove);
+                window.removeEventListener("pointerup", handleUp);
+            };
+
+            window.addEventListener("pointermove", handleMove);
+            window.addEventListener("pointerup", handleUp);
+        }
+
         // SEARCHING
         const input = picker.querySelector(".ql-emoji-picker-search");
         var lastText = "";
         var origWidth = "";
         var origLeft = "";
         var isExpanded = false;
-        input.addEventListener("input", (e) => {
+        function triggerSearch() {
             // expand indicator to full width when searching;
             if (!isExpanded) {
                 origLeft = indicator.style.transform;
                 origWidth = indicator.style.width;
+                grid.scrollTo({top: 0});
             }
 
             if (input.value.trim() == "") {
@@ -201,7 +424,6 @@ class EmojiModule {
                 indicator.style.width = "100%";
                 indicator.style.transform = "translateX(0px)";
             }
-
             const buttons = grid.querySelectorAll("button");
             const headers = grid.querySelectorAll(".ql-emoji-grid-category-header");
             // for hiding empty category headers
@@ -214,15 +436,17 @@ class EmojiModule {
                     button.style.display = "none";
                 }
             });
-            console.log(hasResults);
             headers.forEach((header) => {
                 header.style.display = hasResults.includes(header.dataset.category) ? "block" : "none";
             });
+        }
+        input.addEventListener("input", (e) => {
+            triggerSearch();
         });
 
     }
 
-    handleClick(val) {
+    togglePicker(val) {
         const buttonBox = document.querySelector(".ql-emoji").getBoundingClientRect();
         const gap = 4;
         this.picker.classList.toggle("shown");
@@ -230,6 +454,13 @@ class EmojiModule {
             this.picker.style.top = buttonBox.bottom + window.scrollY + gap + "px";
             this.picker.style.left = buttonBox.left + window.scrollX + "px";
         }
+    }
+
+    insertEmoji(char) {
+        const range = this.quill.getSelection(true);
+        const index = range ? range.index : this.quill.getLength();
+        this.quill.insertEmbed(index, 'emoji', char, 'user');
+        this.quill.setSelection(index + 1, 'user');
     }
 }
 
