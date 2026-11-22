@@ -60,29 +60,21 @@ class EmojiModule {
         picker.innerHTML = `
             <input class="ql-emoji-picker-search" placeholder="${options?.language?.search_placeholder || 'Search...'}">
             <nav class="ql-emoji-nav">
-                <button data-ql-emoji-tooltip="${options?.language?.smileys_emotion || 'Smileys & Emotion'}" data-category="smileys_emotion">${options?.icons?.smileys_emotion || iconDefaults.smileys_emotion}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.people_body || 'People & Body'}" data-category="people_body">${options?.icons?.people_body || iconDefaults.people_body}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.animals_nature || 'Animals & Nature'}" data-category="animals_nature">${options?.icons?.animals_nature || iconDefaults.animals_nature}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.food_drink || 'Food & Drink'}" data-category="food_drink">${options?.icons?.food_drink || iconDefaults.food_drink}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.activities || 'Activities'}" data-category="activities">${options?.icons?.activities || iconDefaults.activities}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.travel_places || 'Travel & Places'}" data-category="travel_places">${options?.icons?.travel_places || iconDefaults.travel_places}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.objects || 'Objects'}" data-category="objects">${options?.icons?.objects || iconDefaults.objects}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.symbols || 'Sybols'}" data-category="symbols">${options?.icons?.symbols || iconDefaults.symbols}</button>
-                <button data-ql-emoji-tooltip="${options?.language?.flags || 'Flags'}" data-category="flags">${options?.icons?.flags || iconDefaults.flags}</button>
+                <!-- js -->
                 <span class="ql-emoji-nav-indicator"></span>
             </nav>
             <div class="ql-emoji-grid"></div>
             <div class="ql-emoji-preview">
-                <span class="ql-emoji-preview-character">🥀</span>
+                <span class="ql-emoji-preview-character">😀</span>
                 <div>
-                    <span class="ql-emoji-preview-name">Wilted Flower</span>
-                    <span class="ql-emoji-preview-code">:wilted_flower:</span>
+                    <span class="ql-emoji-preview-name">grinning face</span>
+                    <span class="ql-emoji-preview-code">:grinning_face:</span>
                 </div>
             </div>
         `;
         const nav = picker.querySelector(".ql-emoji-nav");
         const indicator = nav.querySelector(".ql-emoji-nav-indicator");
-        const buttons = nav.querySelectorAll("button");
+        const grid = picker.querySelector(".ql-emoji-grid");
         let currentLeft = 0;
         let currentWidth = 0;
 
@@ -108,7 +100,7 @@ class EmojiModule {
                     {transform: `translateX(${stretchLeft}px)`, width: `${stretchWidth}px`, offset: 0.5},
                     {transform: `translateX(${targetLeft}px)`, width: `${targetWidth}px`}
                 ],
-                {duration: duration, easing: "cubic-bezier(0.4, 0, 0.2, 1", fill: "forwards"}
+                {duration: duration, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards"}
             );
             animation.onfinish = () => {
                 indicator.style.transform = `translateX(${targetLeft}px)`;
@@ -130,50 +122,104 @@ class EmojiModule {
             }
         }
         const emojiData = getEmojiData("/assets/emojis.json").then((data) => {return data});
+        buildPickerContent().then(() => {picker.classList.add("rendering"); switchPage("smileys_emotion"); picker.classList.remove("rendering")});
 
         var currentPage = null;
         async function switchPage(slug) {
             if (currentPage == slug) return;
             currentPage = slug;
-            const grid = picker.querySelector(".ql-emoji-grid");
-            const previewEmoji = picker.querySelector(".ql-emoji-preview-character");
-            const previewName = picker.querySelector(".ql-emoji-preview-name");
-            const previewCode = picker.querySelector(".ql-emoji-preview-code");
-            const emojis = (await emojiData).filter((s) => s.slug === slug)[0].emojis;
-            grid.innerHTML = "";
-            emojis.forEach((emoji) => {
-                const emojiGridElement = document.createElement("button");
-                emojiGridElement.innerHTML = emoji.emoji;
-                emojiGridElement.dataset.slug = emoji.slug;
-                emojiGridElement.dataset.name = emoji.name;
-                emojiGridElement.addEventListener("mouseover", () => {
-                    previewEmoji.textContent = emoji.emoji;
-                    // capitalize, and add colon if it's a complex family
-                    previewName.textContent = emoji.name.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ").replace("Family ", "Family: ");
-                    previewCode.textContent = `:${emoji.slug}:`;
-                });
-
-                grid.appendChild(emojiGridElement);
-            });
-            grid.scrollTo({top: 0})
+            nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
+            const targetNavBtn = nav.querySelector(`button[data-category='${slug}']`);
+            targetNavBtn.classList.add('active');
+            stretchTo(targetNavBtn);
+            
+            const header = grid.querySelector(`.ql-emoji-grid-category-header[data-category='${slug}']`);
+            grid.scrollTo({top: header.getBoundingClientRect().top - grid.getBoundingClientRect().top + grid.scrollTop, behavior: "smooth"});
         }
 
-        nav.querySelectorAll("button").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                nav.querySelectorAll("button").forEach((b) => {b.classList.remove('active')});
-                btn.classList.add('active');
+        async function buildPickerContent() {
+            const grid = picker.querySelector(".ql-emoji-grid");
+            const data = await emojiData;
+            data.forEach((section) => {
+                const navButton = document.createElement("button");
+                navButton.dataset.qlEmojiTooltip = options?.language?.[section.slug] || section.name;
+                navButton.dataset.category = section.slug;
+                navButton.innerHTML = options?.icons?.[section.slug] || iconDefaults[section.slug];
+                navButton.onclick = () => switchPage(section.slug);
+                nav.appendChild(navButton);
+                // section header
+                const header = document.createElement("span");
+                header.classList.add("ql-emoji-grid-category-header");
+                header.textContent = section.name;
+                header.dataset.category = section.slug;
+                grid.appendChild(header);
 
-                stretchTo(btn);
-                switchPage(btn.dataset.category);
+                section.emojis.forEach((emoji) => {
+                    const emojiGridElement = document.createElement("button");
+                    emojiGridElement.innerHTML = emoji.emoji;
+                    emojiGridElement.dataset.slug = emoji.slug;
+                    emojiGridElement.dataset.name = emoji.name;
+                    emojiGridElement.dataset.category = section.slug;
+                    emojiGridElement.addEventListener("mouseover", () => {
+                        picker.querySelector(".ql-emoji-preview-character").textContent = emoji.emoji;
+                        // capitalize, and add colon if it's a complex family
+                        //previewName.textContent = emoji.name.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ").replace("Family ", "Family: ");
+                        picker.querySelector(".ql-emoji-preview-name").textContent = emoji.name.replace("family ", "family: ");
+                        picker.querySelector(".ql-emoji-preview-code").textContent = `:${emoji.slug}:`;
+                    });
+
+                    grid.appendChild(emojiGridElement);
+                });
             });
-        });
-        document.body.appendChild(picker);
+        }
 
+        document.body.appendChild(picker);
+        // escape picker on outside click
         document.addEventListener("click", (e) => {
             if (!e.target.closest(".ql-emoji-picker") && !e.target.closest(".ql-emoji")) picker.classList.remove("shown");
         });
 
-        switchPage("smileys_emotion");
+        // SEARCHING
+        const input = picker.querySelector(".ql-emoji-picker-search");
+        var lastText = "";
+        var origWidth = "";
+        var origLeft = "";
+        var isExpanded = false;
+        input.addEventListener("input", (e) => {
+            // expand indicator to full width when searching;
+            if (!isExpanded) {
+                origLeft = indicator.style.transform;
+                origWidth = indicator.style.width;
+            }
+
+            if (input.value.trim() == "") {
+                isExpanded = false;
+                indicator.style.width = origWidth;
+                indicator.style.transform = origLeft;
+            } else {
+                isExpanded = true;
+                indicator.style.width = "100%";
+                indicator.style.transform = "translateX(0px)";
+            }
+
+            const buttons = grid.querySelectorAll("button");
+            const headers = grid.querySelectorAll(".ql-emoji-grid-category-header");
+            // for hiding empty category headers
+            let hasResults = [];
+            buttons.forEach((button) => {
+                if (button.dataset.name.includes(input.value) || button.dataset.slug.includes(input.value)) {
+                    button.style.display = "block";
+                    if (!hasResults.includes(button.dataset.category)) hasResults.push(button.dataset.category);
+                } else {
+                    button.style.display = "none";
+                }
+            });
+            console.log(hasResults);
+            headers.forEach((header) => {
+                header.style.display = hasResults.includes(header.dataset.category) ? "block" : "none";
+            });
+        });
+
     }
 
     handleClick(val) {

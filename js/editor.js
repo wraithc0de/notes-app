@@ -272,7 +272,7 @@ function initQuill() {
             emoji: {
                 icons: {
                     recent: '<i class="ti ti-clock"></i>',
-                    smilies_emotion: '<i class="ti ti-mood-smile"></i>',
+                    smileys_emotion: '<i class="ti ti-mood-smile"></i>',
                     people_body: '<i class="ti ti-walk"></i>',
                     animals_nature: '<i class="ti ti-leaf"></i>',
                     food_drink: '<i class="ti ti-coffee"></i>',
